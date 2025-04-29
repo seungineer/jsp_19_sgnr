@@ -100,7 +100,8 @@
 
     <form action="modifyOk" method="POST">
         <label for="id">아이디</label>
-        <input type="text" id="id" name="id" value="<%= member.getId() %>" readonly>
+        <input type="text" id="id" name="id" value="<%= member.getId() %>" readonly
+               style="background-color: #f4f4f4; cursor: not-allowed;">
 
         <label for="paswd">비밀번호</label>
         <input type="password" id="paswd" name="paswd" required>
