@@ -5,6 +5,7 @@ import org.jsp.jsp_19_sgnr.dto.Member;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class MemberDao {
@@ -28,5 +29,34 @@ public class MemberDao {
         }
 
         return 0;
+    }
+
+    public Member findByIdAndPswd(String id, String paswd) {
+        String sql = "SELECT * FROM MEMBER WHERE id = ? AND paswd = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, id);
+            pstmt.setString(2, paswd);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    Member member = new Member();
+                    member.setId(rs.getString("id"));
+                    member.setPaswd(rs.getString("paswd"));
+                    member.setUsername(rs.getString("username"));
+                    member.setEmail(rs.getString("email"));
+                    member.setMobile(rs.getString("mobile"));
+                    member.setGender(rs.getString("gender"));
+
+                    return member;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }
