@@ -5,18 +5,37 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.jsp.jsp_19_sgnr.dao.MemberDao;
+import org.jsp.jsp_19_sgnr.dto.Member;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet("/hello")
+@WebServlet("/joinOk")
 public class JoinOk extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        PrintWriter out = resp.getWriter();
-        out.println("<html><body><h1>Hello, World!</h1></body></html>");
+        request.setCharacterEncoding("UTF-8"); // 한글 깨짐 방지
+
+        String id = request.getParameter("id");
+        String paswd = request.getParameter("paswd");
+        String username = request.getParameter("username");
+        String email = request.getParameter("email");
+        String mobile = request.getParameter("mobile");
+        String gender = request.getParameter("gender");
+
+        Member member = new Member(id, paswd, username, email, mobile, gender);
+
+        MemberDao memberDao = new MemberDao();
+        int result = memberDao.insert(member);
+
+        if (result > 0) {
+            response.sendRedirect("joinResult.jsp?status=success");
+        } else {
+            response.sendRedirect("joinResult.jsp?status=fail");
+        }
     }
 }
