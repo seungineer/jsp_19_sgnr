@@ -3,21 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <title>로그인</title>
+    <style>
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #outline {
+            padding: 30px 40px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 40%;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 320px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+
+            padding: 10px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #login-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        button {
+            width: 80%;
+            position: relative;
+            justify-content: center;
+            padding: 12px;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #3367d6;
+        }
+
+        a {
+            text-align: end;
+            margin-top: 20px;
+        }
+
+        .link {
+            display: block;
+            text-align: center;
+            margin-top: 16px;
+            color: #555;
+            text-decoration: none;
+        }
+
+        .link:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-<h1>로그인</h1>
+<div id="outline">
+    <h1>로그인</h1>
 
-<form action="loginOk" method="POST">
-    <label for="id">아이디:</label><br>
-    <input type="text" id="id" name="id" required><br><br>
+    <form action="loginOk" method="POST">
+        <label for="id">아이디</label>
+        <input type="text" id="id" name="id" required>
 
-    <label for="paswd">비밀번호:</label><br>
-    <input type="password" id="paswd" name="paswd" required><br><br>
-
-    <button type="submit">로그인</button>
-</form>
-
-<br>
-<a href="join.html">회원가입 하러 가기</a>
+        <label for="paswd">비밀번호</label>
+        <input type="password" id="paswd" name="paswd" required>
+        <div id = "login-container">
+            <button type="submit">로그인</button>
+        </div>
+        <a href="join.html">회원가입 하러 가기</a>
+    </form>
+</div>
 </body>
 </html>

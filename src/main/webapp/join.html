@@ -3,38 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <title>회원가입</title>
+    <style>
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #outline {
+            padding: 30px 40px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 40%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 24px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        select {
+            padding: 10px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #message {
+            color: red;
+            margin-bottom: 16px;
+        }
+
+        #join-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        button {
+            width: 80%;
+            padding: 12px;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #3367d6;
+        }
+
+        a {
+            display: block;
+            text-align: end;
+            margin-top: 16px;
+            color: #555;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-<h1>회원가입</h1>
+<div id="outline">
+    <h1>회원가입</h1>
 
-<form action="joinOk" method="POST">
-    <label for="id">아이디:</label><br>
-    <input type="text" id="id" name="id" required><br>
-    <div id="message"></div><br>
-    <label for="paswd">비밀번호:</label><br>
-    <input type="password" id="paswd" name="paswd" required><br><br>
+    <form action="joinOk" method="POST">
+        <label for="id">아이디</label>
+        <input type="text" id="id" name="id" required>
+        <div id="message"></div>
 
-    <label for="username">이름:</label><br>
-    <input type="text" id="username" name="username" required><br><br>
+        <label for="paswd">비밀번호</label>
+        <input type="password" id="paswd" name="paswd" required>
 
-    <label for="email">이메일:</label><br>
-    <input type="email" id="email" name="email" required><br><br>
+        <label for="username">이름</label>
+        <input type="text" id="username" name="username" required>
 
-    <label for="mobile">휴대폰 번호:</label><br>
-    <input type="text" id="mobile" name="mobile" required><br><br>
+        <label for="email">이메일</label>
+        <input type="email" id="email" name="email" required>
 
-    <label for="gender">성별:</label><br>
-    <select id="gender" name="gender" required>
-        <option value="">선택하세요</option>
-        <option value="M">남성</option>
-        <option value="F">여성</option>
-    </select><br><br>
+        <label for="mobile">휴대폰 번호</label>
+        <input type="text" id="mobile" name="mobile" required>
 
-    <button type="submit">회원가입</button>
-</form>
+        <label for="gender">성별</label>
+        <select id="gender" name="gender" required>
+            <option value="">선택하세요</option>
+            <option value="M">남성</option>
+            <option value="F">여성</option>
+        </select>
 
-<br>
-<a href="login.html">로그인 하러 가기</a>
+        <div id="join-container">
+            <button type="submit">회원가입</button>
+        </div>
+    </form>
+
+    <a href="login.html">로그인 하러 가기</a>
+</div>
 
 <script>
     const urlParams = new URLSearchParams(window.location.search);
@@ -42,7 +129,7 @@
 
     if (status === 'duplicate') {
         const messageDiv = document.getElementById('message');
-        messageDiv.innerHTML = '<p style="color:red;">이미 사용 중인 아이디입니다. 다른 아이디를 입력하세요.</p>';
+        messageDiv.innerHTML = '이미 사용 중인 아이디입니다. 다른 아이디를 입력하세요.';
     }
 </script>
 </body>
