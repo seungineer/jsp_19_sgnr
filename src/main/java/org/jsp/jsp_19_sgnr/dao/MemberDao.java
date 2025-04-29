@@ -59,4 +59,27 @@ public class MemberDao {
 
         return null;
     }
+
+    public int update(Member member) {
+        String sql = "UPDATE MEMBER " +
+                "SET paswd = ?, username = ?, email = ?, mobile = ?, gender = ? " +
+                "WHERE id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, member.getPaswd());
+            pstmt.setString(2, member.getUsername());
+            pstmt.setString(3, member.getEmail());
+            pstmt.setString(4, member.getMobile());
+            pstmt.setString(5, member.getGender());
+            pstmt.setString(6, member.getId());
+
+            return pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
 }
