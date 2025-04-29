@@ -18,7 +18,7 @@ public class JoinOk extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        request.setCharacterEncoding("UTF-8"); // 한글 깨짐 방지
+        request.setCharacterEncoding("UTF-8");
 
         String id = request.getParameter("id");
         String paswd = request.getParameter("paswd");
