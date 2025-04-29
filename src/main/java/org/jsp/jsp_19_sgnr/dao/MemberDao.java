@@ -31,6 +31,23 @@ public class MemberDao {
         return 0;
     }
 
+    public boolean existsById(String id) {
+        String sql = "SELECT * FROM MEMBER WHERE id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, id);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public Member findByIdAndPswd(String id, String paswd) {
         String sql = "SELECT * FROM MEMBER WHERE id = ? AND paswd = ?";
 

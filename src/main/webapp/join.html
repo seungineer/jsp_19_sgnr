@@ -9,8 +9,8 @@
 
 <form action="joinOk" method="POST">
     <label for="id">아이디:</label><br>
-    <input type="text" id="id" name="id" required><br><br>
-
+    <input type="text" id="id" name="id" required><br>
+    <div id="message"></div><br>
     <label for="paswd">비밀번호:</label><br>
     <input type="password" id="paswd" name="paswd" required><br><br>
 
@@ -35,5 +35,15 @@
 
 <br>
 <a href="login.html">로그인 하러 가기</a>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get('status');
+
+    if (status === 'duplicate') {
+        const messageDiv = document.getElementById('message');
+        messageDiv.innerHTML = '<p style="color:red;">이미 사용 중인 아이디입니다. 다른 아이디를 입력하세요.</p>';
+    }
+</script>
 </body>
 </html>

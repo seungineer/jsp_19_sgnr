@@ -28,8 +28,15 @@ public class JoinOk extends HttpServlet {
         String gender = request.getParameter("gender");
 
         Member member = new Member(id, paswd, username, email, mobile, gender);
-
         MemberDao memberDao = new MemberDao();
+
+        boolean isDuplicate = memberDao.existsById(id);
+
+        if (isDuplicate) {
+            response.sendRedirect("join.html?status=duplicate");
+            return;
+        }
+
         int result = memberDao.insert(member);
 
         if (result > 0) {
