@@ -62,6 +62,10 @@
             justify-content: center;
         }
 
+        #remember-container {
+            display: flex;
+        }
+
         button {
             width: 80%;
             position: relative;
@@ -107,11 +111,29 @@
 
         <label for="paswd">비밀번호</label>
         <input type="password" id="paswd" name="paswd" required>
+
+        <div id="remember-container">
+            <input type="checkbox" id="rememberId" name="rememberId">
+            <label for="rememberId">아이디 기억하기</label>
+        </div>
+
         <div id = "login-container">
             <button type="submit">로그인</button>
         </div>
         <a href="join.html">회원가입 하러 가기</a>
     </form>
 </div>
+<script>
+    function getCookie(name) {
+        const value = document.cookie.split('; ').find(row => row.startsWith(name + '='));
+        return value ? value.split('=')[1] : '';
+    }
+
+    const savedId = getCookie('savedId');
+    if (savedId) {
+        document.getElementById('id').value = decodeURIComponent(savedId);
+        document.getElementById('rememberId').checked = true;
+    }
+</script>
 </body>
 </html>
