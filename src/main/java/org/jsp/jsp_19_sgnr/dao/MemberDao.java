@@ -7,13 +7,17 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.jsp.jsp_19_sgnr.db.DBConnection.getConnection;
 
 public class MemberDao {
     public int insert(Member member) {
         String sql = "INSERT INTO TB_USER (ID_USER, NM_USER, NM_PASWD, NO_MOBILE, NM_EMAIL, ST_STATUS, CD_USER_TYPE) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DBConnection.getConnection();
+        try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, member.getEmail());
@@ -35,7 +39,7 @@ public class MemberDao {
     public boolean existsById(String id) {
         String sql = "SELECT * FROM TB_USER WHERE ID_USER = ?";
 
-        try (Connection conn = DBConnection.getConnection();
+        try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, id);
@@ -52,7 +56,7 @@ public class MemberDao {
     public Member findByIdAndPswd(String id, String paswd) {
         String sql = "SELECT * FROM TB_USER WHERE ID_USER = ? AND NM_PASWD = ?";
 
-        try (Connection conn = DBConnection.getConnection();
+        try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, id);
@@ -79,12 +83,34 @@ public class MemberDao {
         return null;
     }
 
+    public List<Member> findAllExceptAdmin() {
+        List<Member> list = new ArrayList<>();
+        String sql = "SELECT * FROM TB_USER WHERE CD_USER_TYPE != '20'";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                Member m = new Member();
+                m.setEmail(rs.getString("ID_USER"));
+                m.setName(rs.getString("NM_USER"));
+                m.setEmail(rs.getString("NM_EMAIL"));
+                m.setPhone(rs.getString("NO_MOBILE"));
+                m.setStatus(rs.getString("ST_STATUS"));
+                m.setUserType(rs.getString("CD_USER_TYPE"));
+                list.add(m);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public int update(Member member) {
         String sql = "UPDATE TB_USER " +
                 "SET nm_paswd = ?, nm_user = ?, nm_email = ?, no_mobile = ?, st_status = ?, cd_user_type = ? " +
                 "WHERE id_user = ?";
 
-        try (Connection conn = DBConnection.getConnection();
+        try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, member.getPassword());
@@ -101,5 +127,19 @@ public class MemberDao {
         }
 
         return 0;
+    }
+
+    public void updateMemberInfo(String id, String mobile, String status) {
+        String sql = "UPDATE TB_USER SET NO_MOBILE = ?, ST_STATUS = ? WHERE ID_USER = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, mobile);
+            pstmt.setString(2, status);
+            pstmt.setString(3, id);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
