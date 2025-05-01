@@ -26,7 +26,7 @@ public class LoginOk extends HttpServlet {
         MemberDao memberDao = new MemberDao();
         Member member = memberDao.findByIdAndPswd(id, paswd);
 
-        if (member != null && member.getPaswd().equals(paswd)) {
+        if (member != null && member.getPassword().equals(paswd)) {
             HttpSession session = request.getSession();
             session.setAttribute("member", member);
 
