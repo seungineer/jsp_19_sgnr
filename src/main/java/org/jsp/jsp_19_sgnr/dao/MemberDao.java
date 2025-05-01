@@ -19,8 +19,8 @@ public class MemberDao {
             pstmt.setString(1, member.getEmail());
             pstmt.setString(2, member.getName());
             pstmt.setString(3, member.getPassword());
-            pstmt.setString(4, member.getEmail());
-            pstmt.setString(5, member.getPhone());
+            pstmt.setString(4, member.getPhone());
+            pstmt.setString(5, member.getEmail());
             pstmt.setString(6, member.getStatus());
             pstmt.setString(7, member.getUserType());
 
