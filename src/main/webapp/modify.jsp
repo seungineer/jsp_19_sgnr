@@ -109,9 +109,6 @@
         <label for="username">이름</label>
         <input type="text" id="username" name="username" value="<%= member.getName() %>" required>
 
-        <label for="email">이메일</label>
-        <input type="email" id="email" name="email" value="<%= member.getEmail() %>" required>
-
         <label for="mobile">휴대폰 번호</label>
         <input type="text" id="mobile" name="mobile" value="<%= member.getPhone() %>" required>
 
