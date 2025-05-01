@@ -100,26 +100,24 @@
 
     <form action="modifyOk" method="POST">
         <label for="id">아이디</label>
-        <input type="text" id="id" name="id" value="<%= member.getId() %>" readonly
+        <input type="text" id="id" name="id" value="<%= member.getEmail() %>" readonly
                style="background-color: #f4f4f4; cursor: not-allowed;">
 
         <label for="paswd">비밀번호</label>
         <input type="password" id="paswd" name="paswd" required>
 
         <label for="username">이름</label>
-        <input type="text" id="username" name="username" value="<%= member.getUsername() %>" required>
+        <input type="text" id="username" name="username" value="<%= member.getName() %>" required>
 
         <label for="email">이메일</label>
         <input type="email" id="email" name="email" value="<%= member.getEmail() %>" required>
 
         <label for="mobile">휴대폰 번호</label>
-        <input type="text" id="mobile" name="mobile" value="<%= member.getMobile() %>" required>
+        <input type="text" id="mobile" name="mobile" value="<%= member.getPhone() %>" required>
 
-        <label for="gender">성별</label>
-        <select id="gender" name="gender" required>
-            <option value="M" <%= "M".equals(member.getGender()) ? "selected" : "" %>>남성</option>
-            <option value="F" <%= "F".equals(member.getGender()) ? "selected" : "" %>>여성</option>
-        </select>
+        <label for="id">사용자 구분</label>
+        <input type="text" id="type" name="type" value="<%= member.getStatus().equals("10") ? "일반사용자" : "관리자" %>" readonly
+               style="background-color: #f4f4f4; cursor: not-allowed;">
 
         <div id="button-container">
             <button type="submit">수정하기</button>

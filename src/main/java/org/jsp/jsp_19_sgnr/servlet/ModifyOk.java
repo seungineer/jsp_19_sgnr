@@ -34,9 +34,10 @@ public class ModifyOk extends HttpServlet {
         String username = request.getParameter("username");
         String email = request.getParameter("email");
         String mobile = request.getParameter("mobile");
-        String gender = request.getParameter("gender");
+        String type = oldMember.getUserType();
+        String status = oldMember.getStatus();
 
-        Member updatedMember = new Member(id, paswd, username, email, mobile, gender);
+        Member updatedMember = new Member(id, paswd, username, mobile, status, type);
 
         MemberDao memberDao = new MemberDao();
         int result = memberDao.update(updatedMember);
