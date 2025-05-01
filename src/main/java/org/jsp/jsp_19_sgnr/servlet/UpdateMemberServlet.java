@@ -1,0 +1,33 @@
+package org.jsp.jsp_19_sgnr.servlet;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.jsp.jsp_19_sgnr.dao.MemberDao;
+
+import java.io.IOException;
+
+@WebServlet("/admin/updateMember")
+public class UpdateMemberServlet extends HttpServlet {
+    private MemberDao memberDao = new MemberDao();
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+
+        String[] idList = req.getParameterValues("idList");
+        if (idList != null) {
+            for (String id : idList) {
+                String mobile = req.getParameter("mobile_" + id);
+                String status = req.getParameter("status_" + id);
+                if (mobile != null && status != null) {
+                    memberDao.updateMemberInfo(id, mobile, status);
+                }
+            }
+        }
+
+        resp.sendRedirect("admin.jsp?menu=member");
+    }
+}
