@@ -50,6 +50,7 @@
       flex: 1; padding: 40px; background-color: #f5f5f5;
     }
     .content-box {
+      height: 90%;
       background-color: white; padding: 30px 40px;
       border-radius: 15px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
