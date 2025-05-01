@@ -23,11 +23,9 @@ public class JoinOk extends HttpServlet {
         String id = request.getParameter("id");
         String paswd = request.getParameter("paswd");
         String username = request.getParameter("username");
-        String email = request.getParameter("email");
         String mobile = request.getParameter("mobile");
-        String gender = request.getParameter("gender");
 
-        Member member = new Member(id, paswd, username, email, mobile, gender);
+        Member member = new Member(id, paswd, username, mobile);
         MemberDao memberDao = new MemberDao();
 
         boolean isDuplicate = memberDao.existsById(id);

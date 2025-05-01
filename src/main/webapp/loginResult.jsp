@@ -57,7 +57,7 @@
 
             if (loggedInSession != null) {
                 Member member = (Member) loggedInSession.getAttribute("member");
-                String username = (member != null) ? member.getUsername() : "사용자";
+                String username = (member != null) ? member.getName() : "사용자";
     %>
     <h1>로그인 성공!</h1>
     <p><%= username %>님, 환영합니다.</p>
