@@ -68,18 +68,18 @@
     </div>
     <div class="user-info">
       <strong><%= userName %></strong> 님<br>
-      <a class="logout-link" href="logout.jsp">로그아웃</a>
+      <a class="logout-link" href="../logout.jsp">로그아웃</a>
     </div>
   </div>
 
   <div class="content">
     <div class="content-box">
       <% if ("member".equals(menu)) { %>
-      <jsp:include page="admin/member.jsp" />
+      <jsp:include page="member.jsp" />
       <% } else if ("approval".equals(menu)) { %>
-      <jsp:include page="admin/approval.jsp" />
+      <jsp:include page="approval.jsp" />
       <% } else if ("withdrawal".equals(menu)) { %>
-      <jsp:include page="admin/withdrawal.jsp" />
+      <jsp:include page="withdrawal.jsp" />
       <% } else { %>
       <p>좌측 메뉴를 클릭해주세요.</p>
       <% } %>
