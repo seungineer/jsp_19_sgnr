@@ -142,4 +142,54 @@ public class MemberDao {
             e.printStackTrace();
         }
     }
+
+    public List<Member> findByStatusAndUserType(String status, String userType) {
+        List<Member> list = new ArrayList<>();
+        String sql = "SELECT * FROM TB_USER WHERE ST_STATUS = ? AND CD_USER_TYPE = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, status);
+            pstmt.setString(2, userType);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Member m = new Member();
+                    m.setEmail(rs.getString("ID_USER"));
+                    m.setName(rs.getString("NM_USER"));
+                    m.setEmail(rs.getString("NM_EMAIL"));
+                    m.setPhone(rs.getString("NO_MOBILE"));
+                    m.setStatus(rs.getString("ST_STATUS"));
+                    m.setUserType(rs.getString("CD_USER_TYPE"));
+                    list.add(m);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public Member findById(String id) {
+        String sql = "SELECT * FROM TB_USER WHERE ID_USER = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    Member m = new Member();
+                    m.setEmail(rs.getString("ID_USER"));
+                    m.setName(rs.getString("NM_USER"));
+                    m.setEmail(rs.getString("NM_EMAIL"));
+                    m.setPhone(rs.getString("NO_MOBILE"));
+                    m.setStatus(rs.getString("ST_STATUS"));
+                    m.setUserType(rs.getString("CD_USER_TYPE"));
+                    return m;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
 }
