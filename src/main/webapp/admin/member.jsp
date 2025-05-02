@@ -6,6 +6,54 @@
     MemberDao memberDao = new MemberDao();
     List<Member> members = memberDao.findAllExceptAdmin();
 %>
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    thead {
+        background-color: #e3f0fb;
+    }
+
+    th, td {
+        padding: 12px;
+        border: 1px solid #c0d7ec;
+        text-align: center;
+    }
+
+    tr:hover {
+        background-color: #f0f8ff;
+    }
+
+    input[type="text"], select {
+        padding: 6px;
+        width: 95%;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .modified {
+        background-color: #d1f0d1 !important;
+    }
+
+    button[type="submit"] {
+        margin-top: 10px;
+        padding: 10px 20px;
+        background-color: #4285f4;
+        border: none;
+        color: white;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #3367d6;
+    }
+</style>
+
 <h3>회원 관리</h3>
 <p>회원 정보를 아래 테이블에서 수정할 수 있습니다.</p>
 
@@ -61,4 +109,17 @@
         alert("회원 정보가 성공적으로 수정되었습니다.");
         history.replaceState({}, "", location.pathname + location.search.replace(/&?status=success/, ""));
     }
+
+    document.querySelectorAll('input[type="text"], select').forEach((el) => {
+        const original = el.value;
+
+        el.addEventListener('change', () => {
+            if (el.value !== original) {
+                el.classList.add('modified');
+            } else {
+                el.classList.remove('modified');
+            }
+        });
+    });
+
 </script>
