@@ -29,6 +29,6 @@ public class UpdateMemberServlet extends HttpServlet {
             }
         }
 
-        resp.sendRedirect("admin.jsp?menu=member");
+        resp.sendRedirect("admin.jsp?menu=member&status=success");
     }
 }

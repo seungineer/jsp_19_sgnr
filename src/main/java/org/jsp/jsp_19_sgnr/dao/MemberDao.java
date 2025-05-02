@@ -105,6 +105,28 @@ public class MemberDao {
         return list;
     }
 
+    public List<Member> findOnlyAdmin() {
+        List<Member> list = new ArrayList<>();
+        String sql = "SELECT * FROM TB_USER WHERE CD_USER_TYPE = '20'";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                Member m = new Member();
+                m.setEmail(rs.getString("ID_USER"));
+                m.setName(rs.getString("NM_USER"));
+                m.setEmail(rs.getString("NM_EMAIL"));
+                m.setPhone(rs.getString("NO_MOBILE"));
+                m.setStatus(rs.getString("ST_STATUS"));
+                m.setUserType(rs.getString("CD_USER_TYPE"));
+                list.add(m);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public int update(Member member) {
         String sql = "UPDATE TB_USER " +
                 "SET nm_paswd = ?, nm_user = ?, nm_email = ?, no_mobile = ?, st_status = ?, cd_user_type = ? " +
