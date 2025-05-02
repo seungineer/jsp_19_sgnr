@@ -63,7 +63,11 @@
     <p><%= username %>님, 환영합니다.</p>
     <a href="modify.jsp">회원정보 수정하러 가기</a>
     <a href="logout.jsp">로그아웃</a>
-    <a href="admin/admin.jsp">관리자 페이지로 이동</a>
+    <%
+        if ("20".equals(member.getUserType())) {
+    %>
+        <a href="admin/admin.jsp">관리자 페이지로 이동</a>
+    <% } %>
     <%
     } else {
     %>
