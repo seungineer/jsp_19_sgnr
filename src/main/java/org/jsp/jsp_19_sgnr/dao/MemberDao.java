@@ -129,14 +129,15 @@ public class MemberDao {
         return 0;
     }
 
-    public void updateMemberInfo(String id, String mobile, String status) {
-        String sql = "UPDATE TB_USER SET NO_MOBILE = ?, ST_STATUS = ? WHERE ID_USER = ?";
+    public void updateMemberInfo(String id, String mobile, String status, String userType) {
+        String sql = "UPDATE TB_USER SET NO_MOBILE = ?, ST_STATUS = ?, CD_USER_TYPE = ? WHERE ID_USER = ?";
 
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, mobile);
             pstmt.setString(2, status);
-            pstmt.setString(3, id);
+            pstmt.setString(3, userType);
+            pstmt.setString(4, id);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

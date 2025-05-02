@@ -39,7 +39,10 @@
                 </select>
             </td>
             <td>
-                <%= "10".equals(m.getUserType()) ? "일반" : "(관리자)" %>
+                <select name="type_<%= m.getEmail() %>">
+                    <option value="10" <%= "10".equals(m.getUserType()) ? "selected" : "" %>>일반</option>
+                    <option value="20" <%= "20".equals(m.getUserType()) ? "selected" : "" %>>관리자</option>
+                </select>
             </td>
             <input type="hidden" name="idList" value="<%= m.getEmail() %>" />
         </tr>

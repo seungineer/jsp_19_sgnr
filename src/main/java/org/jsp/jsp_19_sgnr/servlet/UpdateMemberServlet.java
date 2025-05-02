@@ -22,8 +22,9 @@ public class UpdateMemberServlet extends HttpServlet {
             for (String id : idList) {
                 String mobile = req.getParameter("mobile_" + id);
                 String status = req.getParameter("status_" + id);
+                String type = req.getParameter("type_" + id);
                 if (mobile != null && status != null) {
-                    memberDao.updateMemberInfo(id, mobile, status);
+                    memberDao.updateMemberInfo(id, mobile, status, type);
                 }
             }
         }

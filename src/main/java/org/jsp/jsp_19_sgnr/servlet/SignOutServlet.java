@@ -27,8 +27,9 @@ public class SignOutServlet extends HttpServlet {
             if (loggedInMember != null) {
                 String userId = loggedInMember.getEmail();
                 String currentMobile = loggedInMember.getPhone();
+                String currentType = loggedInMember.getUserType();
                 try {
-                    memberDao.updateMemberInfo(userId, currentMobile, "ST03"); // ST03 = 일시 정지
+                    memberDao.updateMemberInfo(userId, currentMobile, "ST03", currentType); // ST03 = 일시 정지
                     success = true;
                 } catch (Exception e) {
                     e.printStackTrace();

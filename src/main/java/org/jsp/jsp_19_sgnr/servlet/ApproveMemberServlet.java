@@ -25,7 +25,8 @@ public class ApproveMemberServlet extends HttpServlet {
 
             if (member != null) {
                 String currentMobile = member.getPhone();
-                memberDao.updateMemberInfo(id, currentMobile, "ST01");
+                String currentType = member.getUserType();
+                memberDao.updateMemberInfo(id, currentMobile, "ST01", currentType);
             }
         }
 

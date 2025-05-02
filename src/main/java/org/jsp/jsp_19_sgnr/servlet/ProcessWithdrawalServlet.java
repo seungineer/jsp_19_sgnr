@@ -28,6 +28,7 @@ public class ProcessWithdrawalServlet extends HttpServlet {
             if (member != null) {
                 String phone = member.getPhone();
                 String newStatus = null;
+                String currentType = member.getUserType();
 
                 if ("approve".equals(action)) {
                     newStatus = "ST02";
@@ -36,7 +37,7 @@ public class ProcessWithdrawalServlet extends HttpServlet {
                 }
 
                 if (newStatus != null) {
-                    memberDao.updateMemberInfo(id, phone, newStatus);
+                    memberDao.updateMemberInfo(id, phone, newStatus, currentType);
                 }
             }
         }
