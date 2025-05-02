@@ -42,23 +42,26 @@ public class JoinOk extends HttpServlet {
         }
 
         MemberDao memberDao = new MemberDao();
-        boolean isDuplicate = memberDao.existsById(id);
+        Member existing = memberDao.findById(id);
 
-        if (isDuplicate) {
+        if (existing != null && "ST02".equals(existing.getStatus())) {
+            existing.setName(username);
+            existing.setPassword(paswd);
+            existing.setPhone(mobile);
+            existing.setStatus("ST00");
+
+            memberDao.updateForRejoin(existing);
+            response.sendRedirect("joinResult.jsp?status=rejoined");
+
+        } else if (existing != null) {
             response.sendRedirect("join.html?status=duplicate");
-            return;
-        }
-
-        Member member = new Member(id, paswd, username, mobile);
-        member.setStatus("ST00");
-        member.setUserType("10");
-
-        int result = memberDao.insert(member);
-
-        if (result > 0) {
-            response.sendRedirect("joinResult.jsp?status=success");
         } else {
-            response.sendRedirect("joinResult.jsp?status=fail");
+            Member newMember = new Member(id, paswd, username, mobile);
+            newMember.setStatus("ST00");
+            newMember.setUserType("10");
+            memberDao.insert(newMember);
+            response.sendRedirect("joinResult.jsp?status=success");
         }
+
     }
 }

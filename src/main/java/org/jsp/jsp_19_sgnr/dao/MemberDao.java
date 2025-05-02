@@ -54,7 +54,7 @@ public class MemberDao {
     }
 
     public Member findByIdAndPswd(String id, String paswd) {
-        String sql = "SELECT * FROM TB_USER WHERE ST_STATUS = 'ST01' AND ID_USER = ? AND NM_PASWD = ?";
+        String sql = "SELECT * FROM TB_USER WHERE ST_STATUS like 'ST01' AND ID_USER = ? AND NM_PASWD = ?";
 
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -127,45 +127,6 @@ public class MemberDao {
         return list;
     }
 
-    public int update(Member member) {
-        String sql = "UPDATE TB_USER " +
-                "SET nm_paswd = ?, nm_user = ?, nm_email = ?, no_mobile = ?, st_status = ?, cd_user_type = ? " +
-                "WHERE id_user = ?";
-
-        try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, member.getPassword());
-            pstmt.setString(2, member.getName());
-            pstmt.setString(3, member.getEmail());
-            pstmt.setString(4, member.getPhone());
-            pstmt.setString(5, member.getStatus());
-            pstmt.setString(6, member.getUserType());
-            pstmt.setString(7, member.getEmail());
-
-            return pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return 0;
-    }
-
-    public void updateMemberInfo(String id, String mobile, String status, String userType) {
-        String sql = "UPDATE TB_USER SET NO_MOBILE = ?, ST_STATUS = ?, CD_USER_TYPE = ? WHERE ID_USER = ?";
-
-        try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, mobile);
-            pstmt.setString(2, status);
-            pstmt.setString(3, userType);
-            pstmt.setString(4, id);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     public List<Member> findByStatusAndUserType(String status, String userType) {
         List<Member> list = new ArrayList<>();
         String sql = "SELECT * FROM TB_USER WHERE ST_STATUS = ? AND CD_USER_TYPE = ?";
@@ -214,5 +175,58 @@ public class MemberDao {
         return null;
     }
 
+    public int update(Member member) {
+        String sql = "UPDATE TB_USER " +
+                "SET nm_paswd = ?, nm_user = ?, nm_email = ?, no_mobile = ?, st_status = ?, cd_user_type = ? " +
+                "WHERE id_user = ?";
 
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, member.getPassword());
+            pstmt.setString(2, member.getName());
+            pstmt.setString(3, member.getEmail());
+            pstmt.setString(4, member.getPhone());
+            pstmt.setString(5, member.getStatus());
+            pstmt.setString(6, member.getUserType());
+            pstmt.setString(7, member.getEmail());
+
+            return pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    public void updateMemberInfo(String id, String mobile, String status, String userType) {
+        String sql = "UPDATE TB_USER SET NO_MOBILE = ?, ST_STATUS = ?, CD_USER_TYPE = ? WHERE ID_USER = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, mobile);
+            pstmt.setString(2, status);
+            pstmt.setString(3, userType);
+            pstmt.setString(4, id);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateForRejoin(Member member) {
+        String sql = "UPDATE TB_USER SET NM_USER = ?, NM_PASWD = ?, NO_MOBILE = ?, ST_STATUS = ?, DA_FIRST_DATE = SYSDATE WHERE ID_USER = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, member.getName());
+            pstmt.setString(2, member.getPassword());
+            pstmt.setString(3, member.getPhone());
+            pstmt.setString(4, member.getStatus());
+            pstmt.setString(5, member.getEmail());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
