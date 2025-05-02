@@ -42,9 +42,9 @@ public class LoginOk extends HttpServlet {
                 response.addCookie(idCookie);
             }
 
-            response.sendRedirect("loginResult.jsp?status=success");
+            response.sendRedirect("main.jsp?status=success");
         } else {
-            response.sendRedirect("loginResult.jsp?status=fail");
+            response.sendRedirect("main.jsp?status=fail");
         }
     }
 }

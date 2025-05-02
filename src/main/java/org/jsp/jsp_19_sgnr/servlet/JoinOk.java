@@ -38,9 +38,9 @@ public class JoinOk extends HttpServlet {
         int result = memberDao.insert(member);
 
         if (result > 0) {
-            response.sendRedirect("main.jsp?status=success");
+            response.sendRedirect("joinResult.jsp?status=success");
         } else {
-            response.sendRedirect("main.jsp?status=fail");
+            response.sendRedirect("joinResult.jsp?status=fail");
         }
     }
 }
