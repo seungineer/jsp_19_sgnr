@@ -29,10 +29,11 @@
             <td><%= m.getName() %></td>
             <td><%= m.getEmail() %></td>
             <td>
-                <input type="text" name="mobile_<%= m.getEmail() %>" value="<%= m.getPhone() %>" />
+                <input type="text" name="mobile_<%= m.getEmail() %>" value="<%= m.getPhone() %>"
+                        <%= "ST02".equals(m.getStatus()) ? "disabled" : "" %> />
             </td>
             <td>
-                <select name="status_<%= m.getEmail() %>">
+                <select name="status_<%= m.getEmail() %>" <%= "ST02".equals(m.getStatus()) ? "disabled" : "" %>>
                     <option value="ST00" <%= "ST00".equals(m.getStatus()) ? "selected" : "" %>>요청</option>
                     <option value="ST01" <%= "ST01".equals(m.getStatus()) ? "selected" : "" %>>정상</option>
                     <option value="ST02" <%= "ST02".equals(m.getStatus()) ? "selected" : "" %>>해지</option>
@@ -40,7 +41,7 @@
                 </select>
             </td>
             <td>
-                <select name="type_<%= m.getEmail() %>">
+                <select name="type_<%= m.getEmail() %>" <%= "ST02".equals(m.getStatus()) ? "disabled" : "" %>>
                     <option value="10" <%= "10".equals(m.getUserType()) ? "selected" : "" %>>일반</option>
                     <option value="20" <%= "20".equals(m.getUserType()) ? "selected" : "" %>>관리자</option>
                 </select>
