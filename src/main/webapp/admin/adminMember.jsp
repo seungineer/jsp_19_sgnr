@@ -75,7 +75,10 @@
         <% for (Member m : members) { %>
         <tr>
             <td><%= m.getEmail() %></td>
-            <td><%= m.getName() %></td>
+            <td>
+                <input type="text" name="name_<%= m.getEmail() %>" value="<%= m.getName() %>"
+                       <%= "ST02".equals(m.getStatus()) ? "disabled" : "" %> />
+            </td>
             <td><%= m.getEmail() %></td>
             <td>
                 <input type="text" name="mobile_<%= m.getEmail() %>" value="<%= m.getPhone() %>"

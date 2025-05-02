@@ -2,50 +2,65 @@ package org.jsp.jsp_19_sgnr.servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.*;
 import org.jsp.jsp_19_sgnr.dao.MemberDao;
 import org.jsp.jsp_19_sgnr.dto.Member;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.regex.Pattern;
 
 @WebServlet("/modifyOk")
 public class ModifyOk extends HttpServlet {
 
+    private static final Pattern PASSWORD_REGEX =
+            Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{5,15}$");
+
+    private static final Pattern PHONE_REGEX =
+            Pattern.compile("^010-\\d{4}-\\d{4}$");
+
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        request.setCharacterEncoding("UTF-8");
+        req.setCharacterEncoding("UTF-8");
 
-        HttpSession session = request.getSession(false);
+        HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("member") == null) {
-            response.sendRedirect("login.html");
+            resp.sendRedirect("login.html");
             return;
         }
 
-        Member oldMember = (Member) session.getAttribute("member");
+        String id = req.getParameter("id");
+        String password = req.getParameter("paswd");
+        String username = req.getParameter("username");
+        String mobile = req.getParameter("mobile");
+        String type = "관리자".equals(req.getParameter("type")) ? "20" : "10";
 
-        String id = request.getParameter("id");
-        String paswd = request.getParameter("paswd");
-        String username = request.getParameter("username");
-        String mobile = request.getParameter("mobile");
-        String type = oldMember.getUserType();
-        String status = oldMember.getStatus();
 
-        Member updatedMember = new Member(id, paswd, username, mobile, status, type);
+        boolean validPassword = PASSWORD_REGEX.matcher(password).matches();
+        boolean validPhone = PHONE_REGEX.matcher(mobile).matches();
 
-        MemberDao memberDao = new MemberDao();
-        int result = memberDao.update(updatedMember);
+        if (!validPassword || !validPhone) {
+            resp.sendRedirect("modify.jsp?error=invalid");
+            return;
+        }
 
-        if (result > 0) {
-            session.setAttribute("member", updatedMember);
-            response.sendRedirect("modifyResult.jsp?status=success");
+        Member member = new Member();
+        member.setEmail(id);
+        member.setPassword(password);
+        member.setName(username);
+        member.setStatus("ST01");
+        member.setUserType(type);
+        member.setPhone(mobile);
+
+        MemberDao dao = new MemberDao();
+        int result = dao.update(member);
+        System.out.println(result);
+        if (result == 1) {
+            session.setAttribute("member", member);
+            resp.sendRedirect("main.jsp?status=success");
         } else {
-            response.sendRedirect("modifyResult.jsp?status=fail");
+            resp.sendRedirect("modify.jsp?error=fail");
         }
     }
 }
