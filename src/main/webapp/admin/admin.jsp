@@ -54,6 +54,7 @@
       background-color: white; padding: 30px 40px;
       border-radius: 15px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      overflow: scroll;
     }
     .content-box h3 { margin-top: 0; color: #333; }
   </style>
@@ -63,7 +64,8 @@
   <div class="sidebar">
     <div class="menu">
       <h2>관리자 메뉴</h2>
-      <a class="menu-item <%= "member".equals(menu) ? "active" : "" %>" href="admin.jsp?menu=member">회원 관리</a>
+      <a class="menu-item <%= "member".equals(menu) ? "active" : "" %>" href="admin.jsp?menu=member">일반사용자 관리</a>
+      <a class="menu-item <%= "adminMember".equals(menu) ? "active" : "" %>" href="admin.jsp?menu=adminMember">관리자 관리</a>
       <a class="menu-item <%= "approval".equals(menu) ? "active" : "" %>" href="admin.jsp?menu=approval">가입 승인</a>
       <a class="menu-item <%= "withdrawal".equals(menu) ? "active" : "" %>" href="admin.jsp?menu=withdrawal">탈퇴 승인</a>
     </div>
@@ -77,6 +79,8 @@
     <div class="content-box">
       <% if ("member".equals(menu)) { %>
       <jsp:include page="member.jsp" />
+      <% } else if ("adminMember".equals(menu)) { %>
+      <jsp:include page="adminMember.jsp" />
       <% } else if ("approval".equals(menu)) { %>
       <jsp:include page="approval.jsp" />
       <% } else if ("withdrawal".equals(menu)) { %>
