@@ -25,11 +25,10 @@ public class SignOutServlet extends HttpServlet {
             Member loggedInMember = (Member) session.getAttribute("member");
 
             if (loggedInMember != null) {
-                // ST04 = 일시 정지
                 String userId = loggedInMember.getEmail();
                 String currentMobile = loggedInMember.getPhone();
                 try {
-                    memberDao.updateMemberInfo(userId, currentMobile, "ST04"); // 상태: 일시정지
+                    memberDao.updateMemberInfo(userId, currentMobile, "ST03"); // ST03 = 일시 정지
                     success = true;
                 } catch (Exception e) {
                     e.printStackTrace();
