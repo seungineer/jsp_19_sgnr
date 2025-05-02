@@ -9,10 +9,16 @@ import org.jsp.jsp_19_sgnr.dao.MemberDao;
 import org.jsp.jsp_19_sgnr.dto.Member;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.net.URLEncoder;
+import java.util.regex.Pattern;
 
 @WebServlet("/joinOk")
 public class JoinOk extends HttpServlet {
+
+    // 정규식 패턴
+    private static final Pattern EMAIL_REGEX = Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
+    private static final Pattern PASSWORD_REGEX = Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{5,15}$");
+    private static final Pattern MOBILE_REGEX = Pattern.compile("^010-\\d{4}-\\d{4}$");
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -25,15 +31,27 @@ public class JoinOk extends HttpServlet {
         String username = request.getParameter("username");
         String mobile = request.getParameter("mobile");
 
-        Member member = new Member(id, paswd, username, mobile);
-        MemberDao memberDao = new MemberDao();
+        boolean isValid = EMAIL_REGEX.matcher(id).matches()
+                && PASSWORD_REGEX.matcher(paswd).matches()
+                && MOBILE_REGEX.matcher(mobile).matches();
 
+        if (!isValid) {
+            String msg = URLEncoder.encode("입력 형식이 올바르지 않습니다.", "UTF-8");
+            response.sendRedirect("join.html?error=" + msg);
+            return;
+        }
+
+        MemberDao memberDao = new MemberDao();
         boolean isDuplicate = memberDao.existsById(id);
 
         if (isDuplicate) {
             response.sendRedirect("join.html?status=duplicate");
             return;
         }
+
+        Member member = new Member(id, paswd, username, mobile);
+        member.setStatus("ST00");
+        member.setUserType("10");
 
         int result = memberDao.insert(member);
 
