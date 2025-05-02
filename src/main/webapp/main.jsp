@@ -69,6 +69,11 @@
         <a href="admin/admin.jsp">관리자 페이지로 이동</a>
     <% } %>
     <%
+        if ("10".equals(member.getUserType())) {
+    %>
+    <a href="<%= request.getContextPath() %>/signout">회원 탈퇴</a>
+    <% } %>
+    <%
     } else {
     %>
     <h1>세션이 만료되었습니다.</h1>

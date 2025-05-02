@@ -54,7 +54,7 @@ public class MemberDao {
     }
 
     public Member findByIdAndPswd(String id, String paswd) {
-        String sql = "SELECT * FROM TB_USER WHERE ID_USER = ? AND NM_PASWD = ?";
+        String sql = "SELECT * FROM TB_USER WHERE ST_STATUS = 'ST01' AND ID_USER = ? AND NM_PASWD = ?";
 
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
