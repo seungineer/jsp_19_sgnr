@@ -83,6 +83,11 @@
             background-color: #3367d6;
         }
 
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
         a {
             text-align: end;
             margin-top: 20px;
@@ -99,31 +104,107 @@
         .link:hover {
             text-decoration: underline;
         }
+
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+            margin-top: -10px;
+            margin-bottom: 10px;
+            display: none;
+        }
     </style>
 </head>
 <body>
 <div id="outline">
     <h1>로그인</h1>
 
-    <form action="loginOk" method="POST">
+    <form id="loginForm" action="loginOk" method="POST" onsubmit="return validateForm()">
         <label for="id">아이디</label>
-        <input type="text" id="id" name="id" required>
+        <input type="text" id="id" name="id" required onblur="validateEmail()">
+        <div id="emailError" class="error-message"></div>
 
         <label for="paswd">비밀번호</label>
-        <input type="password" id="paswd" name="paswd" required>
+        <input type="password" id="paswd" name="paswd" required onblur="validatePassword()">
+        <div id="passwordError" class="error-message"></div>
 
         <div id="remember-container">
             <input type="checkbox" id="rememberId" name="rememberId">
             <label for="rememberId">아이디 기억하기</label>
         </div>
 
-        <div id = "login-container">
+        <div id="login-container">
             <button type="submit">로그인</button>
         </div>
         <a href="join.html">회원가입 하러 가기</a>
     </form>
 </div>
+
 <script>
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const pwRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{5,15}$/;
+
+    function validateEmail(showError = true) {
+        const id = document.getElementById('id').value.trim();
+        const emailError = document.getElementById('emailError');
+
+        if (!id) {
+            if (showError) {
+                emailError.textContent = "아이디를 입력해주세요.";
+                emailError.style.display = "block";
+            }
+            return false;
+        }
+
+        if (!emailRegex.test(id)) {
+            if (showError) {
+                emailError.textContent = "올바른 이메일 형식이 아닙니다.";
+                emailError.style.display = "block";
+            }
+            return false;
+        }
+
+        emailError.style.display = "none";
+        return true;
+    }
+
+    function validatePassword(showError = true) {
+        const paswd = document.getElementById('paswd').value;
+        const passwordError = document.getElementById('passwordError');
+
+        if (!paswd) {
+            if (showError) {
+                passwordError.textContent = "비밀번호를 입력해주세요.";
+                passwordError.style.display = "block";
+            }
+            return false;
+        }
+
+        if (!pwRegex.test(paswd)) {
+            if (showError) {
+                passwordError.textContent = "비밀번호는 영문 대소문자 각각 1자 이상, 숫자 1자 이상을 포함한 5~15자여야 합니다.";
+                passwordError.style.display = "block";
+            }
+            return false;
+        }
+
+        passwordError.style.display = "none";
+        return true;
+    }
+
+    function updateButtonState() {
+        const button = document.querySelector("button[type='submit']");
+        // showError = false → 경고 메시지 표시 안 함
+        const valid = validateEmail(false) && validatePassword(false);
+        button.disabled = !valid;
+    }
+    
+    function validateForm() {
+        const isEmailValid = validateEmail();
+        const isPasswordValid = validatePassword();
+        
+        return isEmailValid && isPasswordValid;
+    }
+
     function getCookie(name) {
         const value = document.cookie.split('; ').find(row => row.startsWith(name + '='));
         return value ? value.split('=')[1] : '';
@@ -134,6 +215,24 @@
         document.getElementById('id').value = decodeURIComponent(savedId);
         document.getElementById('rememberId').checked = true;
     }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    if (error) {
+        const errorBox = document.createElement("p");
+        errorBox.textContent = decodeURIComponent(error);
+        errorBox.style.color = "red";
+        errorBox.style.marginTop = "10px";
+        errorBox.style.textAlign = "center";
+        document.getElementById("outline").prepend(errorBox);
+    }
+
+    document.getElementById('id').addEventListener('blur', () => validateEmail(true));
+    document.getElementById('paswd').addEventListener('blur', () => validatePassword(true));
+
+    document.getElementById('id').addEventListener('input', updateButtonState);
+    document.getElementById('paswd').addEventListener('input', updateButtonState);
+
 </script>
 </body>
 </html>
