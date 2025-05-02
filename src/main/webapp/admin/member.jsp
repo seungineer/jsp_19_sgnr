@@ -10,6 +10,7 @@
 <p>회원 정보를 아래 테이블에서 수정할 수 있습니다.</p>
 
 <form action="<%= request.getContextPath() %>/admin/updateMember" method="post">
+    <button style="display: flex; justify-self: end" type="submit">변경사항 저장</button>
     <table border="1" cellspacing="0" cellpadding="8" style="width: 100%; margin-top: 20px; border-collapse: collapse;">
         <thead>
         <tr style="background-color: #f0f0f0;">
@@ -50,5 +51,13 @@
         </tbody>
     </table>
     <br>
-    <button type="submit">변경사항 저장</button>
 </form>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get('status');
+    if (status === 'success') {
+        alert("회원 정보가 성공적으로 수정되었습니다.");
+        history.replaceState({}, "", location.pathname + location.search.replace(/&?status=success/, ""));
+    }
+</script>
