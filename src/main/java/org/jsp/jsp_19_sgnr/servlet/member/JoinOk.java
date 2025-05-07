@@ -1,4 +1,4 @@
-package org.jsp.jsp_19_sgnr.servlet;
+package org.jsp.jsp_19_sgnr.servlet.member;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

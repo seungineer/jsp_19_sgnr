@@ -1,6 +1,5 @@
-package org.jsp.jsp_19_sgnr.servlet;
+package org.jsp.jsp_19_sgnr.servlet.member;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,7 +8,6 @@ import org.jsp.jsp_19_sgnr.dao.MemberDao;
 import org.jsp.jsp_19_sgnr.dto.Member;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 @WebServlet("/admin/processWithdrawal")
 public class ProcessWithdrawalServlet extends HttpServlet {
