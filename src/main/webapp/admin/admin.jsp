@@ -68,6 +68,12 @@
       <a class="menu-item <%= "adminMember".equals(menu) ? "active" : "" %>" href="admin.jsp?menu=adminMember">관리자 관리</a>
       <a class="menu-item <%= "approval".equals(menu) ? "active" : "" %>" href="admin.jsp?menu=approval">가입 승인</a>
       <a class="menu-item <%= "withdrawal".equals(menu) ? "active" : "" %>" href="admin.jsp?menu=withdrawal">탈퇴 승인</a>
+
+      <h2>상품</h2>
+      <a class="menu-item <%= "product".equals(menu) ? "active" : "" %>" href="admin.jsp?menu=product">상품 관리</a>
+
+      <h2 style="margin-top: 40px;">카테고리</h2>
+      <a class="menu-item <%= "category".equals(menu) ? "active" : "" %>" href="admin.jsp?menu=category">카테고리 등록</a>
     </div>
     <div class="user-info">
       <strong><%= userName %></strong> 님<br>
@@ -78,13 +84,17 @@
   <div class="content">
     <div class="content-box">
       <% if ("member".equals(menu)) { %>
-      <jsp:include page="member.jsp" />
+      <jsp:include page="member/member.jsp" />
       <% } else if ("adminMember".equals(menu)) { %>
-      <jsp:include page="adminMember.jsp" />
+      <jsp:include page="member/adminMember.jsp" />
       <% } else if ("approval".equals(menu)) { %>
-      <jsp:include page="approval.jsp" />
+      <jsp:include page="member/approval.jsp" />
       <% } else if ("withdrawal".equals(menu)) { %>
-      <jsp:include page="withdrawal.jsp" />
+      <jsp:include page="member/withdrawal.jsp" />
+      <% } else if ("product".equals(menu)) { %>
+      <jsp:include page="product/register.jsp" />
+      <% } else if ("category".equals(menu)) { %>
+      <jsp:include page="category/register.jsp" />
       <% } else { %>
       <p>좌측 메뉴를 클릭해주세요.</p>
       <% } %>
