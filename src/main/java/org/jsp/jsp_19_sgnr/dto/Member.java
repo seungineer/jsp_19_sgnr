@@ -1,64 +1,81 @@
 package org.jsp.jsp_19_sgnr.dto;
 
 public class Member {
-    private String id;
-    private String paswd;
-    private String username;
-    private String email;
-    private String mobile;
-    private String gender;
+    private String email;       // 사용자ID
+    private String password;    // 비밀번호
+    private String name;        // 사용자명
+    private String phone;       // 휴대전화
+    private String status;      // 상태 (요청 ST00, 정상 ST01, 해지 ST02, 일시정지 ST03)
+    private String userType;    // 사용자 구분 코드 (일반 10, 관리자 20)
 
     public Member() {
     }
 
-    public Member(String id, String paswd, String username, String email, String mobile, String gender) {
-        this.id = id;
-        this.paswd = paswd;
-        this.username = username;
+    // 회원 가입을 위한 생성자
+    public Member(String email, String password, String name, String phone) {
         this.email = email;
-        this.mobile = mobile;
-        this.gender = gender;
+        this.password = password;
+        this.name = name;
+        this.phone = phone;
+        this.status = "ST00";
+        this.userType = "10";
     }
 
-    public String getId() {
-        return id;
-    }
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getPaswd() {
-        return paswd;
-    }
-    public void setPaswd(String paswd) {
-        this.paswd = paswd;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-    public void setUsername(String username) {
-        this.username = username;
+    // 전체 필드 사용 생성자
+    public Member(String email, String password, String name, String phone, String status, String userType) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.phone = phone;
+        this.status = status;
+        this.userType = userType;
     }
 
     public String getEmail() {
         return email;
     }
+
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public String getMobile() {
-        return mobile;
-    }
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
+    public String getPassword() {
+        return password;
     }
 
-    public String getGender() {
-        return gender;
+    public void setPassword(String password) {
+        this.password = password;
     }
-    public void setGender(String gender) {
-        this.gender = gender;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
     }
 }

@@ -1,4 +1,4 @@
-package org.jsp.jsp_19_sgnr.servlet;
+package org.jsp.jsp_19_sgnr.servlet.member;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -7,11 +7,13 @@ import org.jsp.jsp_19_sgnr.dao.MemberDao;
 import org.jsp.jsp_19_sgnr.dto.Member;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.URLEncoder;
+import java.util.regex.Pattern;
 
 @WebServlet("/loginOk")
 public class LoginOk extends HttpServlet {
+    private final Pattern emailPattern = Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
+    private final Pattern pwPattern = Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{5,15}$");
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -23,10 +25,16 @@ public class LoginOk extends HttpServlet {
         String paswd = request.getParameter("paswd");
         String rememberId = request.getParameter("rememberId");
 
+        if (id == null || paswd == null || !emailPattern.matcher(id).matches() || !pwPattern.matcher(paswd).matches()) {
+            String errorMessage = "아이디 또는 비밀번호가 잘못되었습니다.";
+            String encodedMessage = URLEncoder.encode(errorMessage, "UTF-8");
+            response.sendRedirect("login.html?error=" + encodedMessage);
+            return;
+        }
         MemberDao memberDao = new MemberDao();
         Member member = memberDao.findByIdAndPswd(id, paswd);
 
-        if (member != null && member.getPaswd().equals(paswd)) {
+        if (member != null && member.getPassword().equals(paswd)) {
             HttpSession session = request.getSession();
             session.setAttribute("member", member);
 
@@ -42,9 +50,9 @@ public class LoginOk extends HttpServlet {
                 response.addCookie(idCookie);
             }
 
-            response.sendRedirect("loginResult.jsp?status=success");
+            response.sendRedirect("main.jsp?status=success");
         } else {
-            response.sendRedirect("loginResult.jsp?status=fail");
+            response.sendRedirect("main.jsp?status=fail");
         }
     }
 }

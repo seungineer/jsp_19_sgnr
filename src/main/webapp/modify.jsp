@@ -41,18 +41,18 @@
         }
 
         input[type="text"],
-        input[type="password"],
-        input[type="email"],
-        select {
+        input[type="password"] {
             padding: 10px;
-            margin-bottom: 16px;
+            margin-bottom: 8px;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
 
-        #button-container {
-            display: flex;
-            justify-content: center;
+        .error-message {
+            font-size: 0.85em;
+            color: red;
+            margin-bottom: 10px;
+            display: none;
         }
 
         button {
@@ -70,6 +70,11 @@
             background-color: #3367d6;
         }
 
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
         a {
             display: block;
             text-align: end;
@@ -80,6 +85,12 @@
 
         a:hover {
             text-decoration: underline;
+        }
+
+        #button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 16px;
         }
     </style>
 </head>
@@ -98,36 +109,86 @@
 <div id="outline">
     <h1>회원정보 수정</h1>
 
-    <form action="modifyOk" method="POST">
+    <form id="modifyForm" action="modifyOk" method="POST" onsubmit="return validateForm()">
         <label for="id">아이디</label>
-        <input type="text" id="id" name="id" value="<%= member.getId() %>" readonly
+        <input type="text" id="id" name="id" value="<%= member.getEmail() %>" readonly
                style="background-color: #f4f4f4; cursor: not-allowed;">
 
         <label for="paswd">비밀번호</label>
         <input type="password" id="paswd" name="paswd" required>
+        <div id="passwordError" class="error-message"></div>
 
         <label for="username">이름</label>
-        <input type="text" id="username" name="username" value="<%= member.getUsername() %>" required>
-
-        <label for="email">이메일</label>
-        <input type="email" id="email" name="email" value="<%= member.getEmail() %>" required>
+        <input type="text" id="username" name="username" value="<%= member.getName() %>" required>
 
         <label for="mobile">휴대폰 번호</label>
-        <input type="text" id="mobile" name="mobile" value="<%= member.getMobile() %>" required>
+        <input type="text" id="mobile" name="mobile" value="<%= member.getPhone() %>" required>
+        <div id="mobileError" class="error-message"></div>
 
-        <label for="gender">성별</label>
-        <select id="gender" name="gender" required>
-            <option value="M" <%= "M".equals(member.getGender()) ? "selected" : "" %>>남성</option>
-            <option value="F" <%= "F".equals(member.getGender()) ? "selected" : "" %>>여성</option>
-        </select>
+        <label for="type">사용자 구분</label>
+        <input type="text" id="type" name="type" value="<%= member.getStatus().equals("10") ? "일반사용자" : "관리자" %>" readonly
+               style="background-color: #f4f4f4; cursor: not-allowed;">
 
         <div id="button-container">
-            <button type="submit">수정하기</button>
+            <button type="submit" disabled>수정하기</button>
         </div>
     </form>
 
     <a href="logout.jsp">로그아웃</a>
 </div>
 
+<script>
+    const pwRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{5,15}$/;
+    const phoneRegex = /^010-\d{4}-\d{4}$/;
+
+    const pwInput = document.getElementById('paswd');
+    const phoneInput = document.getElementById('mobile');
+    const submitBtn = document.querySelector("button[type='submit']");
+
+    const pwError = document.getElementById('passwordError');
+    const phoneError = document.getElementById('mobileError');
+
+    function validatePassword(show = true) {
+        const value = pwInput.value;
+        if (!pwRegex.test(value)) {
+            if (show) {
+                pwError.textContent = "비밀번호는 영문 대소문자+숫자 포함, 5~15자여야 합니다.";
+                pwError.style.display = "block";
+            }
+            return false;
+        }
+        pwError.style.display = "none";
+        return true;
+    }
+
+    function validateMobile(show = true) {
+        const value = phoneInput.value.trim();
+        if (!phoneRegex.test(value)) {
+            if (show) {
+                phoneError.textContent = "휴대폰 번호는 010-0000-0000 형식이어야 합니다.";
+                phoneError.style.display = "block";
+            }
+            return false;
+        }
+        phoneError.style.display = "none";
+        return true;
+    }
+
+    function updateButtonState() {
+        const valid = validatePassword(false) && validateMobile(false);
+        submitBtn.disabled = !valid;
+    }
+
+    pwInput.addEventListener("input", updateButtonState);
+    phoneInput.addEventListener("input", updateButtonState);
+    pwInput.addEventListener("blur", () => validatePassword(true));
+    phoneInput.addEventListener("blur", () => validateMobile(true));
+
+    function validateForm() {
+        return validatePassword(true) && validateMobile(true);
+    }
+
+    window.onload = updateButtonState;
+</script>
 </body>
 </html>

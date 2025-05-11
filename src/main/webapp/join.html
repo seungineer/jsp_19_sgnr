@@ -74,6 +74,19 @@
             background-color: #3367d6;
         }
 
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+            margin-top: -10px;
+            margin-bottom: 10px;
+            display: none;
+        }
+
         a {
             display: block;
             text-align: end;
@@ -94,29 +107,21 @@
     <form action="joinOk" method="POST">
         <label for="id">아이디</label>
         <input type="text" id="id" name="id" required>
-        <div id="message"></div>
+        <div id="idError" class="error-message"></div>
 
         <label for="paswd">비밀번호</label>
         <input type="password" id="paswd" name="paswd" required>
+        <div id="passwordError" class="error-message"></div>
 
         <label for="username">이름</label>
         <input type="text" id="username" name="username" required>
 
-        <label for="email">이메일</label>
-        <input type="email" id="email" name="email" required>
-
         <label for="mobile">휴대폰 번호</label>
         <input type="text" id="mobile" name="mobile" required>
-
-        <label for="gender">성별</label>
-        <select id="gender" name="gender" required>
-            <option value="">선택하세요</option>
-            <option value="M">남성</option>
-            <option value="F">여성</option>
-        </select>
+        <div id="mobileError" class="error-message"></div>
 
         <div id="join-container">
-            <button type="submit">회원가입</button>
+            <button type="submit" disabled>회원가입</button>
         </div>
     </form>
 
@@ -124,13 +129,88 @@
 </div>
 
 <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const status = urlParams.get('status');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const pwRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{5,15}$/;
+    const mobileRegex = /^010-\d{4}-\d{4}$/;
 
-    if (status === 'duplicate') {
-        const messageDiv = document.getElementById('message');
-        messageDiv.innerHTML = '이미 사용 중인 아이디입니다. 다른 아이디를 입력하세요.';
+    function validateId(show = true) {
+        const id = document.getElementById('id').value.trim();
+        const err = document.getElementById('idError');
+
+        if (!id) {
+            if (show) {
+                err.textContent = "아이디(이메일)를 입력해주세요.";
+                err.style.display = "block";
+            }
+            return false;
+        }
+        if (!emailRegex.test(id)) {
+            if (show) {
+                err.textContent = "이메일 형식이 아닙니다.";
+                err.style.display = "block";
+            }
+            return false;
+        }
+        err.style.display = "none";
+        return true;
     }
+
+    function validatePassword(show = true) {
+        const pw = document.getElementById('paswd').value;
+        const err = document.getElementById('passwordError');
+
+        if (!pw) {
+            if (show) {
+                err.textContent = "비밀번호를 입력해주세요.";
+                err.style.display = "block";
+            }
+            return false;
+        }
+        if (!pwRegex.test(pw)) {
+            if (show) {
+                err.textContent = "비밀번호는 영문 대소문자 각 1자 이상, 숫자 1자 이상 포함, 5~15자여야 합니다.";
+                err.style.display = "block";
+            }
+            return false;
+        }
+        err.style.display = "none";
+        return true;
+    }
+
+    function validateMobile(show = true) {
+        const mobile = document.getElementById('mobile').value.trim();
+        const err = document.getElementById('mobileError');
+
+        if (!mobile) {
+            if (show) {
+                err.textContent = "휴대폰 번호를 입력해주세요.";
+                err.style.display = "block";
+            }
+            return false;
+        }
+        if (!mobileRegex.test(mobile)) {
+            if (show) {
+                err.textContent = "휴대폰 번호는 010-0000-0000 형식이어야 합니다.";
+                err.style.display = "block";
+            }
+            return false;
+        }
+        err.style.display = "none";
+        return true;
+    }
+
+    function updateJoinButton() {
+        const isValid = validateId(false) && validatePassword(false) && validateMobile(false);
+        document.querySelector("button[type='submit']").disabled = !isValid;
+    }
+
+    document.getElementById('id').addEventListener('input', updateJoinButton);
+    document.getElementById('paswd').addEventListener('input', updateJoinButton);
+    document.getElementById('mobile').addEventListener('input', updateJoinButton);
+
+    document.getElementById('id').addEventListener('blur', () => validateId(true));
+    document.getElementById('paswd').addEventListener('blur', () => validatePassword(true));
+    document.getElementById('mobile').addEventListener('blur', () => validateMobile(true));
 </script>
 </body>
 </html>

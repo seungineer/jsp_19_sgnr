@@ -57,12 +57,22 @@
 
             if (loggedInSession != null) {
                 Member member = (Member) loggedInSession.getAttribute("member");
-                String username = (member != null) ? member.getUsername() : "사용자";
+                String username = (member != null) ? member.getName() : "사용자";
     %>
     <h1>로그인 성공!</h1>
     <p><%= username %>님, 환영합니다.</p>
     <a href="modify.jsp">회원정보 수정하러 가기</a>
     <a href="logout.jsp">로그아웃</a>
+    <%
+        if ("20".equals(member.getUserType())) {
+    %>
+        <a href="admin/admin.jsp">관리자 페이지로 이동</a>
+    <% } %>
+    <%
+        if ("10".equals(member.getUserType())) {
+    %>
+    <a href="<%= request.getContextPath() %>/signout">회원 탈퇴</a>
+    <% } %>
     <%
     } else {
     %>
