@@ -70,7 +70,7 @@
       <a class="menu-item <%= "withdrawal".equals(menu) ? "active" : "" %>" href="admin.jsp?menu=withdrawal">탈퇴 승인</a>
 
       <h2>상품</h2>
-      <a class="menu-item <%= "product".equals(menu) ? "active" : "" %>" href="admin.jsp?menu=product">상품 관리</a>
+      <a class="menu-item <%= "product".equals(menu) ? "active" : "" %>" href="admin.jsp?menu=product">상품 등록</a>
 
       <h2 style="margin-top: 40px;">카테고리</h2>
       <a class="menu-item <%= "category".equals(menu) ? "active" : "" %>" href="admin.jsp?menu=category">카테고리 등록</a>

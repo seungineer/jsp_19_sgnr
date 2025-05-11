@@ -76,4 +76,24 @@ public class CategoryDao {
         }
         return 1;
     }
+
+    public List<Category> findLeafCategories() {
+        List<Category> list = new ArrayList<>();
+        String sql = "SELECT * FROM TB_CATEGORY c " +
+                "WHERE NOT EXISTS (SELECT 1 FROM TB_CATEGORY child WHERE child.nb_parent_category = c.nb_category)";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                Category c = new Category();
+                c.setId(rs.getInt("nb_category"));
+                c.setFullname(rs.getString("nm_full_category"));
+                list.add(c);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
 }
