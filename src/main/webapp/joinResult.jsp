@@ -48,7 +48,7 @@
 <body>
 <div id="outline">
     <%
-        String status = request.getParameter("status");
+        String status = (String) request.getAttribute("status");
 
         if ("success".equals(status) || "rejoined".equals(status)) {
     %>
