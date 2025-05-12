@@ -126,7 +126,7 @@
         <div id="mobileError" class="error-message"></div>
 
         <label for="type">사용자 구분</label>
-        <input type="text" id="type" name="type" value="<%= member.getStatus().equals("10") ? "일반사용자" : "관리자" %>" readonly
+        <input type="text" id="type" name="type" value="<%= member.getUserType().equals("10") ? "일반사용자" : "관리자" %>" readonly
                style="background-color: #f4f4f4; cursor: not-allowed;">
 
         <div id="button-container">
