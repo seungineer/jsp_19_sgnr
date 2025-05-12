@@ -12,7 +12,7 @@
 <h3>카테고리 등록</h3>
 <p>카테고리 레벨 2단계 이상부터는 상위 카테고리를 선택해야 합니다.</p>
 
-<form action="<%= request.getContextPath() %>/admin/insertCategory" method="post" onsubmit="return validateForm()">
+<form action="<%= request.getContextPath() %>/admin/category/register.do" method="post" onsubmit="return validateForm()">
   <label for="level">카테고리 레벨</label><br>
   <select name="level" id="level" required>
     <option value="">-- 선택 --</option>

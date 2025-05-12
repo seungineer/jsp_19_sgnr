@@ -15,7 +15,7 @@
 <%
     Member member = (Member) session.getAttribute("member");
 %>
-<form action="productRegister" method="post">
+<form action="<%= request.getContextPath() %>/admin/product/register.do" method="post">
     <label>상품명</label><br>
     <input type="text" name="nm_product" required><br><br>
 

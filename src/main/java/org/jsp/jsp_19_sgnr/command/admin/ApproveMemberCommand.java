@@ -1,22 +1,26 @@
-package org.jsp.jsp_19_sgnr.servlet.member;
+package org.jsp.jsp_19_sgnr.command.admin;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.jsp.jsp_19_sgnr.command.Command;
 import org.jsp.jsp_19_sgnr.dao.MemberDao;
 import org.jsp.jsp_19_sgnr.dto.Member;
 
 import java.io.IOException;
 
-@WebServlet("/admin/approveMember")
-public class ApproveMemberServlet extends HttpServlet {
+/**
+ * Command implementation for handling member approval.
+ */
+public class ApproveMemberCommand implements Command {
     private MemberDao memberDao = new MemberDao();
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        req.setCharacterEncoding("UTF-8");
-        String id = req.getParameter("id");
+    public void execute(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        
+        request.setCharacterEncoding("UTF-8");
+        String id = request.getParameter("id");
 
         if (id != null) {
             Member member = memberDao.findById(id);
@@ -29,6 +33,6 @@ public class ApproveMemberServlet extends HttpServlet {
             }
         }
 
-        resp.sendRedirect(req.getContextPath() + "/admin/admin.jsp?menu=approval");
+        response.sendRedirect(request.getContextPath() + "/admin/admin.jsp?menu=approval");
     }
 }

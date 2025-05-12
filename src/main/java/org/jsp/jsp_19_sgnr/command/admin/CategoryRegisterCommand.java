@@ -1,22 +1,23 @@
-package org.jsp.jsp_19_sgnr.servlet.category;
+package org.jsp.jsp_19_sgnr.command.admin;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.jsp.jsp_19_sgnr.command.Command;
 import org.jsp.jsp_19_sgnr.dao.CategoryDao;
 import org.jsp.jsp_19_sgnr.dto.Category;
 
 import java.io.IOException;
 
-@WebServlet("/admin/insertCategory")
-public class CategoryInsertServlet extends HttpServlet {
+/**
+ * Command implementation for handling category registration.
+ */
+public class CategoryRegisterCommand implements Command {
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    public void execute(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-
+        
         request.setCharacterEncoding("UTF-8");
 
         String regName = request.getParameter("regName");
@@ -46,9 +47,9 @@ public class CategoryInsertServlet extends HttpServlet {
         int result = categoryDao.insert(category);
 
         if (result > 0) {
-            response.sendRedirect("admin.jsp?menu=category&status=success");
+            response.sendRedirect(request.getContextPath() + "/admin/admin.jsp?menu=category&status=success");
         } else {
-            response.sendRedirect("admin.jsp?menu=category&status=fail");
+            response.sendRedirect(request.getContextPath() + "/admin/admin.jsp?menu=category&status=fail");
         }
     }
 }

@@ -66,7 +66,7 @@
         <td><%= m.getPhone() %></td>
         <td><%= m.getStatus() %></td>
         <td>
-            <form action="<%= request.getContextPath() %>/admin/approveMember" method="post" style="margin: 0;">
+            <form action="<%= request.getContextPath() %>/admin/member/approve.do" method="post" style="margin: 0;">
                 <input type="hidden" name="id" value="<%= m.getEmail() %>"/>
                 <button type="submit">승인</button>
             </form>

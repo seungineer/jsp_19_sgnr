@@ -1,24 +1,28 @@
-package org.jsp.jsp_19_sgnr.servlet.member;
+package org.jsp.jsp_19_sgnr.command.admin;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.jsp.jsp_19_sgnr.command.Command;
 import org.jsp.jsp_19_sgnr.dao.MemberDao;
 import org.jsp.jsp_19_sgnr.dto.Member;
 
 import java.io.IOException;
 
-@WebServlet("/admin/processWithdrawal")
-public class ProcessWithdrawalServlet extends HttpServlet {
+/**
+ * Command implementation for handling member withdrawal processing.
+ */
+public class ProcessWithdrawalCommand implements Command {
     private MemberDao memberDao = new MemberDao();
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        req.setCharacterEncoding("UTF-8");
+    public void execute(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        
+        request.setCharacterEncoding("UTF-8");
 
-        String id = req.getParameter("id");
-        String action = req.getParameter("action");
+        String id = request.getParameter("id");
+        String action = request.getParameter("action");
 
         if (id != null && action != null) {
             Member member = memberDao.findById(id);
@@ -41,6 +45,6 @@ public class ProcessWithdrawalServlet extends HttpServlet {
             }
         }
 
-        resp.sendRedirect(req.getContextPath() + "/admin/admin.jsp?menu=withdrawal");
+        response.sendRedirect(request.getContextPath() + "/admin/admin.jsp?menu=withdrawal");
     }
 }

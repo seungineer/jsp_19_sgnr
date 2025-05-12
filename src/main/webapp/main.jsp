@@ -71,7 +71,7 @@
     <%
         if ("10".equals(member.getUserType())) {
     %>
-    <a href="<%= request.getContextPath() %>/signout">회원 탈퇴</a>
+    <a href="<%= request.getContextPath() %>/member/signout.do">회원 탈퇴</a>
     <% } %>
     <%
     } else {

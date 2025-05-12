@@ -58,7 +58,7 @@
 <h3>회원 관리</h3>
 <p>회원 정보를 아래 테이블에서 수정할 수 있습니다.</p>
 
-<form action="<%= request.getContextPath() %>/admin/updateMember" method="post">
+<form action="<%= request.getContextPath() %>/admin/member/update.do" method="post">
     <button style="display: flex; justify-self: end" type="submit">변경사항 저장</button>
     <table border="1" cellspacing="0" cellpadding="8" style="width: 100%; margin-top: 20px; border-collapse: collapse;">
         <thead>

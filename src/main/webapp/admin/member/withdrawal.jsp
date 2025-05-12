@@ -76,12 +76,12 @@
         <td><%= m.getPhone() %></td>
         <td><%= m.getStatus() %></td>
         <td class="action-cell">
-            <form action="<%= request.getContextPath() %>/admin/processWithdrawal" method="post">
+            <form action="<%= request.getContextPath() %>/admin/member/withdraw.do" method="post">
                 <input type="hidden" name="id" value="<%= m.getEmail() %>"/>
                 <input type="hidden" name="action" value="approve"/>
                 <button type="submit">승인</button>
             </form>
-            <form action="<%= request.getContextPath() %>/admin/processWithdrawal" method="post">
+            <form action="<%= request.getContextPath() %>/admin/member/withdraw.do" method="post">
                 <input type="hidden" name="id" value="<%= m.getEmail() %>"/>
                 <input type="hidden" name="action" value="reject"/>
                 <button type="submit">반려</button>

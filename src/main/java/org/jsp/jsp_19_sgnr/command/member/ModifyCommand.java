@@ -1,16 +1,20 @@
-package org.jsp.jsp_19_sgnr.servlet.member;
+package org.jsp.jsp_19_sgnr.command.member;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.jsp.jsp_19_sgnr.command.Command;
 import org.jsp.jsp_19_sgnr.dao.MemberDao;
 import org.jsp.jsp_19_sgnr.dto.Member;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-@WebServlet("/modifyOk")
-public class ModifyOk extends HttpServlet {
+/**
+ * Command implementation for handling user profile modification.
+ */
+public class ModifyCommand implements Command {
 
     private static final Pattern PASSWORD_REGEX =
             Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{5,15}$");
@@ -19,29 +23,28 @@ public class ModifyOk extends HttpServlet {
             Pattern.compile("^010-\\d{4}-\\d{4}$");
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+    public void execute(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        req.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding("UTF-8");
 
-        HttpSession session = req.getSession(false);
+        HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("member") == null) {
-            resp.sendRedirect("login.html");
+            response.sendRedirect(request.getContextPath() + "/login.html");
             return;
         }
 
-        String id = req.getParameter("id");
-        String password = req.getParameter("paswd");
-        String username = req.getParameter("username");
-        String mobile = req.getParameter("mobile");
-        String type = "관리자".equals(req.getParameter("type")) ? "20" : "10";
-
+        String id = request.getParameter("id");
+        String password = request.getParameter("paswd");
+        String username = request.getParameter("username");
+        String mobile = request.getParameter("mobile");
+        String type = "관리자".equals(request.getParameter("type")) ? "20" : "10";
 
         boolean validPassword = PASSWORD_REGEX.matcher(password).matches();
         boolean validPhone = PHONE_REGEX.matcher(mobile).matches();
 
         if (!validPassword || !validPhone) {
-            resp.sendRedirect("modify.jsp?error=invalid");
+            response.sendRedirect(request.getContextPath() + "/modify.jsp?error=invalid");
             return;
         }
 
@@ -55,12 +58,12 @@ public class ModifyOk extends HttpServlet {
 
         MemberDao dao = new MemberDao();
         int result = dao.update(member);
-        System.out.println(result);
+        
         if (result == 1) {
             session.setAttribute("member", member);
-            resp.sendRedirect("main.jsp?status=success");
+            response.sendRedirect(request.getContextPath() + "/main.jsp?status=success");
         } else {
-            resp.sendRedirect("modify.jsp?error=fail");
+            response.sendRedirect(request.getContextPath() + "/modify.jsp?error=fail");
         }
     }
 }

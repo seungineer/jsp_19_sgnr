@@ -118,7 +118,7 @@
 <div id="outline">
     <h1>로그인</h1>
 
-    <form id="loginForm" action="loginOk" method="POST" onsubmit="return validateForm()">
+    <form id="loginForm" action="member/login.do" method="POST" onsubmit="return validateForm()">
         <label for="id">아이디</label>
         <input type="text" id="id" name="id" required onblur="validateEmail()">
         <div id="emailError" class="error-message"></div>
@@ -197,11 +197,11 @@
         const valid = validateEmail(false) && validatePassword(false);
         button.disabled = !valid;
     }
-    
+
     function validateForm() {
         const isEmailValid = validateEmail();
         const isPasswordValid = validatePassword();
-        
+
         return isEmailValid && isPasswordValid;
     }
 
@@ -216,6 +216,19 @@
         document.getElementById('rememberId').checked = true;
     }
 
+    // Check for error attribute in request (for forwarded requests)
+    // This will be populated by server-side code when the page loads
+    const errorElement = document.getElementById("serverError");
+    if (errorElement && errorElement.value) {
+        const errorBox = document.createElement("p");
+        errorBox.textContent = errorElement.value;
+        errorBox.style.color = "red";
+        errorBox.style.marginTop = "10px";
+        errorBox.style.textAlign = "center";
+        document.getElementById("outline").prepend(errorBox);
+    }
+
+    // Also check URL parameters for backward compatibility
     const urlParams = new URLSearchParams(window.location.search);
     const error = urlParams.get('error');
     if (error) {

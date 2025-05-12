@@ -1,29 +1,32 @@
-package org.jsp.jsp_19_sgnr.servlet.product;
+package org.jsp.jsp_19_sgnr.command.admin;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import org.jsp.jsp_19_sgnr.command.Command;
 import org.jsp.jsp_19_sgnr.dao.ProductDao;
 import org.jsp.jsp_19_sgnr.dto.Member;
 import org.jsp.jsp_19_sgnr.dto.Product;
 
 import java.io.IOException;
 
-@WebServlet("/admin/productRegister")
-public class ProductRegisterServlet extends HttpServlet {
+/**
+ * Command implementation for handling product registration.
+ */
+public class ProductRegisterCommand implements Command {
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    public void execute(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-
+        
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=UTF-8");
 
-        Member member = (Member) request.getSession().getAttribute("member");
+        HttpSession session = request.getSession();
+        Member member = (Member) session.getAttribute("member");
         if (member == null) {
-            response.sendRedirect("../login.html");
+            response.sendRedirect(request.getContextPath() + "/login.html");
             return;
         }
 
@@ -48,9 +51,9 @@ public class ProductRegisterServlet extends HttpServlet {
         boolean result = dao.insert(product, categoryIds);
 
         if (result) {
-            response.sendRedirect("admin.jsp?menu=product&status=success");
+            response.sendRedirect(request.getContextPath() + "/admin/admin.jsp?menu=product&status=success");
         } else {
-            response.sendRedirect("admin.jsp?menu=product&status=fail");
+            response.sendRedirect(request.getContextPath() + "/admin/admin.jsp?menu=product&status=fail");
         }
     }
 }
