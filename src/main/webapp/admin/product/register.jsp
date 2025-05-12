@@ -48,17 +48,6 @@
 
     <input type="hidden" name="no_register" value="<%= member.getName() %>">
 
-    <label>카테고리 선택 (복수 선택 가능)</label><br>
-    <p style="font-size: 12px; color: #777;">※ 원하는 카테고리를 여러 개 선택할 수 있습니다.</p>
-    <div>
-        <% for (Category c : categories) { %>
-        <label style="display: block;">
-            <input type="checkbox" name="nb_category[]" value="<%= c.getId() %>">
-            <%= c.getFullname() %>
-        </label>
-        <% } %>
-    </div>
-
     <br><br>
     <button type="submit">상품 등록</button>
 </form>

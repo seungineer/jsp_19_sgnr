@@ -19,7 +19,7 @@ public class ProductRegisterCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        
+
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=UTF-8");
 
@@ -45,12 +45,10 @@ public class ProductRegisterCommand implements Command {
         product.setNo_register(member.getName());
         product.setSale_status(Integer.parseInt(request.getParameter("sale_status")));
 
-        String[] categoryIds = request.getParameterValues("nb_category[]");
-
         ProductDao dao = new ProductDao();
-        boolean result = dao.insert(product, categoryIds);
+        int result = dao.insertProduct(product);
 
-        if (result) {
+        if (result > 0) {
             response.sendRedirect(request.getContextPath() + "/admin/admin.jsp?menu=product&status=success");
         } else {
             response.sendRedirect(request.getContextPath() + "/admin/admin.jsp?menu=product&status=fail");
