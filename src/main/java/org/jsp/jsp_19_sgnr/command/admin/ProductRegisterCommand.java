@@ -4,12 +4,17 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
 import org.jsp.jsp_19_sgnr.command.Command;
+import org.jsp.jsp_19_sgnr.dao.ContentDao;
 import org.jsp.jsp_19_sgnr.dao.ProductDao;
+import org.jsp.jsp_19_sgnr.db.DBConnection;
 import org.jsp.jsp_19_sgnr.dto.Member;
 import org.jsp.jsp_19_sgnr.dto.Product;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * Command implementation for handling product registration.
@@ -45,10 +50,75 @@ public class ProductRegisterCommand implements Command {
         product.setNo_register(member.getName());
         product.setSale_status(Integer.parseInt(request.getParameter("sale_status")));
 
-        ProductDao dao = new ProductDao();
-        int result = dao.insertProduct(product);
+        Connection conn = null;
+        boolean success = false;
 
-        if (result > 0) {
+        try {
+            conn = DBConnection.getConnection();
+            conn.setAutoCommit(false);  // Start transaction
+
+            // Handle file upload if present
+            Part filePart = request.getPart("productImage");
+            if (filePart != null && filePart.getSize() > 0) {
+                String originalFileName = filePart.getSubmittedFileName();
+
+                ContentDao contentDao = new ContentDao();
+                String saveFileName = contentDao.generateSaveFileName(originalFileName);
+                String fileExt = contentDao.getFileExtension(originalFileName);
+                String fileType = filePart.getContentType();
+                String filePath = "/upload/images/";  // Virtual path for DB storage
+
+                // Insert file data into TB_CONTENT
+                String fileId = contentDao.insertFile(
+                    originalFileName,
+                    saveFileName,
+                    filePath,
+                    filePart.getInputStream(),
+                    fileExt,
+                    fileType,
+                    member.getName(),
+                    conn
+                );
+
+                if (fileId != null) {
+                    product.setId_file(fileId);
+                } else {
+                    throw new SQLException("Failed to insert file data");
+                }
+            }
+
+            // Insert product data
+            ProductDao dao = new ProductDao();
+            int result = dao.insertProduct(product, conn);
+
+            if (result > 0) {
+                conn.commit();  // Commit transaction
+                success = true;
+            } else {
+                throw new SQLException("Failed to insert product data");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (conn != null) {
+                try {
+                    conn.rollback();  // Rollback on error
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (success) {
             response.sendRedirect(request.getContextPath() + "/admin/admin.jsp?menu=product&status=success");
         } else {
             response.sendRedirect(request.getContextPath() + "/admin/admin.jsp?menu=product&status=fail");

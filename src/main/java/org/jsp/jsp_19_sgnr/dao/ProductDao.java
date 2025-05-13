@@ -346,16 +346,23 @@ public class ProductDao {
             return false;
         }
     }
-    public int insertProduct(Product product) {
+
+    /**
+     * Inserts a product using the provided connection for transaction support.
+     * 
+     * @param product The product to insert
+     * @param conn The database connection to use
+     * @return The number of rows affected
+     * @throws SQLException If a database error occurs
+     */
+    public int insertProduct(Product product, Connection conn) throws SQLException {
         String sql = "INSERT INTO TB_PRODUCT (" +
                 "NO_PRODUCT, NM_PRODUCT, NM_DETAIL_EXPLAIN, " +
                 "DT_START_DATE, DT_END_DATE, QT_CUSTOMER_PRICE, QT_SALE_PRICE, " +
-                "QT_STOCK, QT_DELIVERY_FEE, NO_REGISTER, DA_FIRST_DATE, SALE_STATUS" +
-                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, SYSDATE, ?)";
+                "QT_STOCK, QT_DELIVERY_FEE, NO_REGISTER, DA_FIRST_DATE, SALE_STATUS, ID_FILE" +
+                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, SYSDATE, ?, ?)";
 
-        try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, product.getNo_product());
             pstmt.setString(2, product.getNm_product());
             pstmt.setString(3, product.getNm_detail_explain());
@@ -367,6 +374,7 @@ public class ProductDao {
             pstmt.setInt(9, product.getQt_delivery_fee());
             pstmt.setString(10, product.getNo_register());
             pstmt.setInt(11, product.getSale_status());
+            pstmt.setString(12, product.getId_file());
 
             return pstmt.executeUpdate();
 

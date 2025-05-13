@@ -12,6 +12,7 @@ public class Product {
     private int qt_delivery_fee;
     private String no_register;
     private int sale_status;
+    private String id_file;
 
     public String getNo_product() {
         return no_product;
@@ -99,5 +100,13 @@ public class Product {
 
     public void setSale_status(int sale_status) {
         this.sale_status = sale_status;
+    }
+
+    public String getId_file() {
+        return id_file;
+    }
+
+    public void setId_file(String id_file) {
+        this.id_file = id_file;
     }
 }

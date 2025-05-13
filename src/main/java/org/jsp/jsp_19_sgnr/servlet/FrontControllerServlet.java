@@ -1,6 +1,7 @@
 package org.jsp.jsp_19_sgnr.servlet;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,6 +17,11 @@ import java.util.Map;
  * This is the single entry point for all requests in the application.
  */
 @WebServlet(urlPatterns = {"*.do"})
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024, // 1MB
+    maxFileSize = 1024 * 1024 * 10,  // 10MB
+    maxRequestSize = 1024 * 1024 * 50 // 50MB
+)
 public class FrontControllerServlet extends HttpServlet {
 
     private Map<String, Command> commandMap = new HashMap<>();
@@ -54,8 +60,6 @@ public class FrontControllerServlet extends HttpServlet {
 
         // Find the appropriate command
         Command command = commandMap.get(commandPath);
-        System.out.println("commandPath: " + commandPath);
-        System.out.println("command: " + command);
 
         if (command != null) {
             // Execute the command

@@ -15,7 +15,7 @@
 <%
     Member member = (Member) session.getAttribute("member");
 %>
-<form action="<%= request.getContextPath() %>/admin/product/register.do" method="post">
+<form action="<%= request.getContextPath() %>/admin/product/register.do" method="post" enctype="multipart/form-data">
     <label>상품명</label><br>
     <input type="text" name="nm_product" required><br><br>
 
@@ -41,6 +41,9 @@
 
     <label>배송비</label><br>
     <input type="number" name="qt_delivery_fee" required> 원<br><br>
+
+    <label>상품 이미지</label><br>
+    <input type="file" name="productImage" accept="image/*"><br><br>
 
     <label>즉시 판매 시작</label><br>
     <input type="radio" name="sale_status" value="1" checked> 예
