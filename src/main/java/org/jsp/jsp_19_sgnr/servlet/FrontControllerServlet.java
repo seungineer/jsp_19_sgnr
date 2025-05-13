@@ -42,12 +42,16 @@ public class FrontControllerServlet extends HttpServlet {
         commandMap.put("/admin/product/register.do", new org.jsp.jsp_19_sgnr.command.admin.ProductRegisterCommand());
         commandMap.put("/admin/product/modify.do", new org.jsp.jsp_19_sgnr.command.admin.ProductModifyCommand());
         commandMap.put("/admin/product/category-mapping.do", new org.jsp.jsp_19_sgnr.command.admin.ProductCategoryMappingCommand());
+        commandMap.put("/admin/product/list.do", new org.jsp.jsp_19_sgnr.command.admin.ProductListCommand());
         commandMap.put("/admin/member/approve.do", new org.jsp.jsp_19_sgnr.command.admin.ApproveMemberCommand());
         commandMap.put("/admin/member/withdraw.do", new org.jsp.jsp_19_sgnr.command.admin.ProcessWithdrawalCommand());
         commandMap.put("/admin/member/update.do", new org.jsp.jsp_19_sgnr.command.admin.UpdateMemberCommand());
 
         // Basket commands
         commandMap.put("/basket/add.do", new org.jsp.jsp_19_sgnr.command.basket.BasketAddCommand());
+
+        // Product commands
+        commandMap.put("/product/list.do", new org.jsp.jsp_19_sgnr.command.admin.ProductListCommand());
     }
 
     @Override

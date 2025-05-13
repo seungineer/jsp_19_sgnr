@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -37,15 +39,15 @@ public class ContentDao {
             String fileType,
             String registerId,
             Connection conn) throws SQLException {
-        
+
         String fileId = "FILE" + UUID.randomUUID().toString().replace("-", "").substring(0, 20);
-        
+
         String sql = "INSERT INTO TB_CONTENT (" +
                 "ID_FILE, NM_ORG_FILE, NM_SAVE_FILE, NM_FILE_PATH, " +
                 "BO_SAVE_FILE, NM_FILE_EXT, CD_FILE_TYPE, " +
                 "NO_REGISTER, DA_FIRST_DATE" +
                 ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, SYSDATE)";
-        
+
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, fileId);
             pstmt.setString(2, originalFileName);
@@ -55,9 +57,9 @@ public class ContentDao {
             pstmt.setString(6, fileExt);
             pstmt.setString(7, fileType);
             pstmt.setString(8, registerId);
-            
+
             int result = pstmt.executeUpdate();
-            
+
             if (result > 0) {
                 return fileId;
             } else {
@@ -65,7 +67,7 @@ public class ContentDao {
             }
         }
     }
-    
+
     /**
      * Generates a unique file name for saving.
      * 
@@ -75,15 +77,15 @@ public class ContentDao {
     public String generateSaveFileName(String originalFileName) {
         String timestamp = String.valueOf(System.currentTimeMillis());
         String extension = "";
-        
+
         int lastDotIndex = originalFileName.lastIndexOf(".");
         if (lastDotIndex > 0) {
             extension = originalFileName.substring(lastDotIndex);
         }
-        
+
         return timestamp + extension;
     }
-    
+
     /**
      * Extracts the file extension from a file name.
      * 
@@ -96,5 +98,42 @@ public class ContentDao {
             return fileName.substring(lastDotIndex);
         }
         return "";
+    }
+
+    /**
+     * Retrieves file information by file ID.
+     * 
+     * @param fileId The file ID to look up
+     * @return A map containing file information (path, name, extension, etc.)
+     */
+    public Map<String, String> getFileInfo(String fileId) {
+        Map<String, String> fileInfo = new HashMap<>();
+
+        if (fileId == null || fileId.isEmpty()) {
+            return fileInfo;
+        }
+
+        String sql = "SELECT NM_ORG_FILE, NM_SAVE_FILE, NM_FILE_PATH, NM_FILE_EXT, CD_FILE_TYPE " +
+                     "FROM TB_CONTENT WHERE ID_FILE = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, fileId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    fileInfo.put("originalName", rs.getString("NM_ORG_FILE"));
+                    fileInfo.put("saveName", rs.getString("NM_SAVE_FILE"));
+                    fileInfo.put("filePath", rs.getString("NM_FILE_PATH"));
+                    fileInfo.put("fileExt", rs.getString("NM_FILE_EXT"));
+                    fileInfo.put("fileType", rs.getString("CD_FILE_TYPE"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return fileInfo;
     }
 }

@@ -73,6 +73,7 @@
       <a class="menu-item <%= "product".equals(menu) ? "active" : "" %>" href="admin.jsp?menu=product">상품 등록</a>
       <a class="menu-item <%= "productModify".equals(menu) ? "active" : "" %>" href="admin.jsp?menu=productModify">상품 수정</a>
       <a class="menu-item <%= "categoryMapping".equals(menu) ? "active" : "" %>" href="admin.jsp?menu=categoryMapping">카테고리 매핑 관리</a>
+      <a class="menu-item <%= "productList".equals(menu) ? "active" : "" %>" href="<%= request.getContextPath() %>/admin/product/list.do">상품 조회</a>
 
       <h2 style="margin-top: 40px;">카테고리</h2>
       <a class="menu-item <%= "category".equals(menu) ? "active" : "" %>" href="admin.jsp?menu=category">카테고리 등록</a>
@@ -104,6 +105,8 @@
       <jsp:include page="category/manage.jsp" />
       <% } else if ("productModify".equals(menu)) { %>
       <jsp:include page="product/modify.jsp" />
+      <% } else if ("productList".equals(menu)) { %>
+      <jsp:include page="../productList.jsp" />
       <% } else { %>
       <p>좌측 메뉴를 클릭해주세요.</p>
       <% } %>
