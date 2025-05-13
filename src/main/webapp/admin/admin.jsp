@@ -75,6 +75,7 @@
 
       <h2 style="margin-top: 40px;">카테고리</h2>
       <a class="menu-item <%= "category".equals(menu) ? "active" : "" %>" href="admin.jsp?menu=category">카테고리 등록</a>
+      <a class="menu-item <%= "categoryManage".equals(menu) ? "active" : "" %>" href="admin.jsp?menu=categoryManage">카테고리 관리</a>
     </div>
     <div class="user-info">
       <strong><%= userName %></strong> 님<br>
@@ -98,6 +99,8 @@
       <jsp:include page="category/register.jsp" />
       <% } else if ("categoryMapping".equals(menu)) { %>
       <jsp:include page="product/category_mapping.jsp" />
+      <% } else if ("categoryManage".equals(menu)) { %>
+      <jsp:include page="category/manage.jsp" />
       <% } else { %>
       <p>좌측 메뉴를 클릭해주세요.</p>
       <% } %>

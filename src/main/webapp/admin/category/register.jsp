@@ -16,9 +16,9 @@
   <label for="level">카테고리 레벨</label><br>
   <select name="level" id="level" required>
     <option value="">-- 선택 --</option>
-    <option value="0">1단계</option>
-    <option value="1">2단계</option>
-    <option value="2">3단계</option>
+    <option value="1">1단계</option>
+    <option value="2">2단계</option>
+    <option value="3">3단계</option>
   </select><br><br>
 
   <div id="upper1-container" style="display:none;">
@@ -26,7 +26,7 @@
     <select id="upper1">
       <option value="">-- 선택 --</option>
       <% for (Category c : allCategories) {
-        if (c.getLevel() == 0) { %>
+        if (c.getLevel() == 1) { %>
       <option value="<%= c.getId() %>"><%= c.getName() %></option>
       <% } } %>
     </select><br><br>
@@ -96,9 +96,9 @@
     document.getElementById("upper1-container").style.display = "none";
     document.getElementById("upper2-container").style.display = "none";
 
-    if (level === "1") {
+    if (level === "2") {
       document.getElementById("upper1-container").style.display = "block";
-    } else if (level === "2") {
+    } else if (level === "3") {
       document.getElementById("upper1-container").style.display = "block";
       document.getElementById("upper2-container").style.display = "block";
     }
@@ -111,7 +111,7 @@
     const selectedId = upper1.value;
 
     allCategories.forEach(cat => {
-      if (cat.level === 1 && cat.upperId === parseInt(selectedId)) {
+      if (cat.level === 2 && cat.upperId === parseInt(selectedId)) {
         const opt = document.createElement("option");
         opt.value = cat.id;
         opt.textContent = cat.name;
@@ -129,14 +129,14 @@
     let isValid = false;
     let full = "", upperId = "";
 
-    if (level === 0 && name) {
+    if (level === 1 && name) {
       full = name;
       isValid = true;
-    } else if (level === 1 && upper1.value && name) {
+    } else if (level === 2 && upper1.value && name) {
       full = upper1.options[upper1.selectedIndex].text + " > " + name;
       upperId = upper1.value;
       isValid = true;
-    } else if (level === 2 && upper1.value && upper2.value && name) {
+    } else if (level === 3 && upper1.value && upper2.value && name) {
       full = upper1.options[upper1.selectedIndex].text + " > " + upper2.options[upper2.selectedIndex].text + " > " + name;
       upperId = upper2.value;
       isValid = true;
