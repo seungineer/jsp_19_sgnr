@@ -304,6 +304,7 @@ public class ProductDao {
                     product.setQt_delivery_fee(rs.getInt("QT_DELIVERY_FEE"));
                     product.setNo_register(rs.getString("NO_REGISTER"));
                     product.setSale_status(rs.getInt("SALE_STATUS"));
+                    product.setId_file(rs.getString("ID_FILE"));
                     products.add(product);
                 }
             }
@@ -381,6 +382,50 @@ public class ProductDao {
         } catch (SQLException e) {
             e.printStackTrace();
             return 0;
+        }
+    }
+
+    /**
+     * Updates a product using the provided connection for transaction support.
+     * 
+     * @param product The product to update
+     * @param conn The database connection to use
+     * @return The number of rows affected
+     * @throws SQLException If a database error occurs
+     */
+    public int updateProduct(Product product, Connection conn) throws SQLException {
+        String sql = "UPDATE TB_PRODUCT SET " +
+                "NM_PRODUCT = ?, QT_SALE_PRICE = ?, QT_STOCK = ?, " +
+                "SALE_STATUS = ? WHERE NO_PRODUCT = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, product.getNm_product());
+            pstmt.setInt(2, product.getQt_sale_price());
+            pstmt.setInt(3, product.getQt_stock());
+            pstmt.setInt(4, product.getSale_status());
+            pstmt.setString(5, product.getNo_product());
+
+            return pstmt.executeUpdate();
+        }
+    }
+
+    /**
+     * Updates a product's image reference.
+     * 
+     * @param productId The product ID
+     * @param fileId The new file ID
+     * @param conn The database connection to use
+     * @return The number of rows affected
+     * @throws SQLException If a database error occurs
+     */
+    public int updateProductImage(String productId, String fileId, Connection conn) throws SQLException {
+        String sql = "UPDATE TB_PRODUCT SET ID_FILE = ? WHERE NO_PRODUCT = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, fileId);
+            pstmt.setString(2, productId);
+
+            return pstmt.executeUpdate();
         }
     }
 
