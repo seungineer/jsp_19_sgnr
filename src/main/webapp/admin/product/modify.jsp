@@ -152,20 +152,14 @@
                 }
             }
 
-            console.log("Field name:", fieldName);
-            console.log("Extracted product code:", productCode);
-            console.log("Looking for:", "input[name=\"modified_" + productCode + "\"]");
 
             // Set the modified flag for this product
             const modifiedFlag = document.querySelector("input[name=\"modified_" + productCode + "\"]");
             if (modifiedFlag) {
                 modifiedFlag.value = "true";
-                console.log("Modified flag found and set to true");
             } else {
-                console.error(`Could not find modified flag for product ${productCode}`);
                 // List all modified flags for debugging
                 const allFlags = document.querySelectorAll('.modified-flag');
-                console.log("All modified flags:", Array.from(allFlags).map(f => f.getAttribute('name')));
             }
         });
     });
@@ -186,20 +180,14 @@
                     }
                 }
 
-                console.log("Image field name:", fieldName);
-                console.log("Extracted product code:", productCode);
-                console.log("Looking for:", "input[name=\"modified_" + productCode + "\"]");
 
                 // Set the modified flag for this product
                 const modifiedFlag = document.querySelector("input[name=\"modified_" + productCode + "\"]");
                 if (modifiedFlag) {
                     modifiedFlag.value = "true";
-                    console.log("Modified flag found and set to true");
                 } else {
-                    console.error(`Could not find modified flag for product ${productCode}`);
                     // List all modified flags for debugging
                     const allFlags = document.querySelectorAll('.modified-flag');
-                    console.log("All modified flags:", Array.from(allFlags).map(f => f.getAttribute('name')));
                 }
 
                 // Show image preview
@@ -229,42 +217,21 @@
     // Form submission - only include modified products
     document.getElementById('modifyForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        console.log("[DEBUG_LOG] Form submission started");
 
         // Check for delete flags
         const deleteFlags = document.querySelectorAll('input[name^="delete_"][value="true"]');
-        console.log("[DEBUG_LOG] Found delete flags:", deleteFlags.length);
-        deleteFlags.forEach(flag => {
-            const productId = flag.name.substring("delete_".length);
-            console.log("[DEBUG_LOG] Product marked for deletion:", productId, "Flag value:", flag.value);
-
-            // Check if the product name is still available
-            const productNameInput = document.querySelector(`input[name="nm_product_${productId}"]:not([disabled])`);
-            const hiddenNameInput = document.querySelector(`input[type="hidden"][name="nm_product_${productId}"]`);
-
-            console.log("[DEBUG_LOG] Product name input (visible):", productNameInput);
-            console.log("[DEBUG_LOG] Product name input (hidden):", hiddenNameInput);
-
-            if (hiddenNameInput) {
-                console.log("[DEBUG_LOG] Hidden product name value:", hiddenNameInput.value);
-            }
-        });
 
         // Check if any products were modified (either by flag or by modified class)
         const modifiedFlags = document.querySelectorAll('.modified-flag[value="true"]');
         const modifiedFields = document.querySelectorAll('.editable-field.modified');
-        console.log("[DEBUG_LOG] Modified flags:", modifiedFlags.length);
-        console.log("[DEBUG_LOG] Modified fields:", modifiedFields.length);
 
         if (modifiedFlags.length === 0 && modifiedFields.length === 0 && deleteFlags.length === 0) {
-            console.log("[DEBUG_LOG] No products modified or deleted, showing alert");
             alert('변경된 상품이 없습니다.');
             return;
         }
 
         // If we have modified fields but no flags set, set the flags now
         if (modifiedFlags.length === 0 && modifiedFields.length > 0) {
-            console.log("[DEBUG_LOG] Setting modified flags for modified fields");
             modifiedFields.forEach(field => {
                 const fieldName = field.name;
                 // Extract product code by removing the known prefixes
@@ -277,32 +244,16 @@
                     }
                 }
 
-                console.log("[DEBUG_LOG] Form field name:", fieldName);
-                console.log("[DEBUG_LOG] Extracted product code:", productCode);
-                console.log("[DEBUG_LOG] Looking for:", "input[name=\"modified_" + productCode + "\"]");
-
                 const modifiedFlag = document.querySelector("input[name=\"modified_" + productCode + "\"]");
                 if (modifiedFlag) {
                     modifiedFlag.value = "true";
-                    console.log("[DEBUG_LOG] Modified flag found and set to true");
                 } else {
-                    console.error(`[DEBUG_LOG] Could not find modified flag for product ${productCode}`);
                     // List all modified flags for debugging
                     const allFlags = document.querySelectorAll('.modified-flag');
-                    console.log("[DEBUG_LOG] All modified flags:", Array.from(allFlags).map(f => f.getAttribute('name')));
                 }
             });
         }
 
-        // Log all form data before submission
-        console.log("[DEBUG_LOG] Form data before submission:");
-        const formData = new FormData(this);
-        for (let [key, value] of formData.entries()) {
-            console.log("[DEBUG_LOG] Form field:", key, "=", value);
-        }
-
-        // Submit the form
-        console.log("[DEBUG_LOG] Submitting form");
         this.submit();
     });
 
@@ -310,27 +261,20 @@
     document.querySelectorAll('.delete-button').forEach(button => {
         button.addEventListener('click', function() {
             const productId = this.getAttribute('data-product-id');
-            console.log("[DEBUG_LOG] Delete button clicked for product ID:", productId);
 
             // Find the product name input within the same row as the delete button
             const row = this.closest('tr');
             const productNameInput = row.querySelector('input[name="nm_product_'+productId+'"]');
-            console.log("[DEBUG_LOG] Product name input element:", productNameInput);
 
             const productName = productNameInput ? productNameInput.value : "선택한 상품";
-            console.log("[DEBUG_LOG] Product name:", productName);
 
             if (confirm('정말로 상품 '+productName+'을(를) 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) {
-                console.log("[DEBUG_LOG] Delete confirmed for product:", productId, productName);
 
                 // Set the delete flag for this product (find it within the same row)
                 const deleteFlag = row.querySelector(`.delete-flag`);
-                console.log("[DEBUG_LOG] Delete flag element:", deleteFlag);
 
                 if (deleteFlag) {
-                    console.log("[DEBUG_LOG] Delete flag before change:", deleteFlag.value);
                     deleteFlag.value = "true";
-                    console.log("[DEBUG_LOG] Delete flag after change:", deleteFlag.value);
 
                     // Visually indicate that the product will be deleted
                     row.style.backgroundColor = '#ffdddd';
@@ -338,23 +282,18 @@
 
                     // Create a hidden input for the product name to ensure it's submitted
                     // We already have productNameInput from earlier
-                    console.log("[DEBUG_LOG] Product name input for hidden field:", productNameInput);
 
                     if (productNameInput) {
-                        console.log("[DEBUG_LOG] Creating hidden input for product name:", productNameInput.value);
                         const hiddenNameInput = document.createElement('input');
                         hiddenNameInput.type = 'hidden';
                         hiddenNameInput.name = `nm_product_${productId}`;
                         hiddenNameInput.value = productNameInput.value;
                         row.appendChild(hiddenNameInput);
-                        console.log("[DEBUG_LOG] Hidden input created and appended:", hiddenNameInput);
                     }
 
                     // Disable inputs for this product
-                    console.log("[DEBUG_LOG] Disabling inputs for product:", productId);
                     row.querySelectorAll('input, select').forEach(input => {
                         if (!input.name.startsWith('delete_')) {
-                            console.log("[DEBUG_LOG] Disabling input:", input.name);
                             input.disabled = true;
                         }
                     });
@@ -373,34 +312,20 @@
 
                     // Handle cancel button click
                     cancelButton.addEventListener('click', function() {
-                        console.log("[DEBUG_LOG] Cancel button clicked for product:", productId);
-                        console.log("[DEBUG_LOG] Delete flag before cancel:", deleteFlag.value);
                         deleteFlag.value = "false";
-                        console.log("[DEBUG_LOG] Delete flag after cancel:", deleteFlag.value);
                         row.style.backgroundColor = '';
                         row.style.textDecoration = '';
 
                         // Re-enable inputs
-                        console.log("[DEBUG_LOG] Re-enabling inputs for product:", productId);
                         row.querySelectorAll('input, select').forEach(input => {
-                            console.log("[DEBUG_LOG] Re-enabling input:", input.name);
                             input.disabled = false;
                         });
 
-                        // Check for and remove hidden product name input
-                        const hiddenNameInput = row.querySelector(`input[type="hidden"][name="nm_product_${productId}"]`);
-                        if (hiddenNameInput) {
-                            console.log("[DEBUG_LOG] Removing hidden product name input:", hiddenNameInput);
-                            hiddenNameInput.remove();
-                        }
-
                         // Restore delete button
-                        console.log("[DEBUG_LOG] Restoring delete button");
                         button.textContent = '삭제';
                         button.disabled = false;
 
                         // Remove cancel button
-                        console.log("[DEBUG_LOG] Removing cancel button");
                         this.remove();
                     });
                 }

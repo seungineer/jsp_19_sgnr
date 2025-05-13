@@ -67,12 +67,10 @@
 
     startDateInput.addEventListener("change", () => {
         formattedStart.value = formatDate(startDateInput);
-        console.log("formatted start: ", startDateInput, formattedStart.value)
     });
 
     endDateInput.addEventListener("change", () => {
         formattedEnd.value = formatDate(endDateInput);
-        console.log("formattedend: ", endDateInput, formattedEnd.value)
     });
 
     const status = "<%= status %>";

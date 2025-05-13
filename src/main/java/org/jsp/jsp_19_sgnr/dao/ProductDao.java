@@ -440,16 +440,13 @@ public class ProductDao {
      */
     public int deleteProduct(String productId, Connection conn) throws SQLException {
         String sql = "DELETE FROM TB_PRODUCT WHERE NO_PRODUCT = ?";
-        System.out.println("[DEBUG_LOG] ProductDao.deleteProduct - Executing SQL: " + sql + " with productId: " + productId);
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, productId);
 
             int result = pstmt.executeUpdate();
-            System.out.println("[DEBUG_LOG] ProductDao.deleteProduct - Result: " + result + " rows affected");
             return result;
         } catch (SQLException e) {
-            System.out.println("[DEBUG_LOG] ProductDao.deleteProduct - SQLException: " + e.getMessage());
             throw e;
         }
     }
@@ -464,16 +461,13 @@ public class ProductDao {
      */
     public int removeAllCategoryMappings(String productId, Connection conn) throws SQLException {
         String sql = "DELETE FROM TB_CATEGORY_PRODUCT_MAPPING WHERE no_product = ?";
-        System.out.println("[DEBUG_LOG] ProductDao.removeAllCategoryMappings - Executing SQL: " + sql + " with productId: " + productId);
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, productId);
 
             int result = pstmt.executeUpdate();
-            System.out.println("[DEBUG_LOG] ProductDao.removeAllCategoryMappings - Result: " + result + " rows affected");
             return result;
         } catch (SQLException e) {
-            System.out.println("[DEBUG_LOG] ProductDao.removeAllCategoryMappings - SQLException: " + e.getMessage());
             throw e;
         }
     }
@@ -488,7 +482,6 @@ public class ProductDao {
      */
     public String getProductFileId(String productId, Connection conn) throws SQLException {
         String sql = "SELECT ID_FILE FROM TB_PRODUCT WHERE NO_PRODUCT = ?";
-        System.out.println("[DEBUG_LOG] ProductDao.getProductFileId - Executing SQL: " + sql + " with productId: " + productId);
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, productId);
@@ -496,14 +489,11 @@ public class ProductDao {
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     String fileId = rs.getString("ID_FILE");
-                    System.out.println("[DEBUG_LOG] ProductDao.getProductFileId - Found fileId: " + fileId);
                     return fileId;
                 }
-                System.out.println("[DEBUG_LOG] ProductDao.getProductFileId - No file ID found for product: " + productId);
                 return null;
             }
         } catch (SQLException e) {
-            System.out.println("[DEBUG_LOG] ProductDao.getProductFileId - SQLException: " + e.getMessage());
             throw e;
         }
     }

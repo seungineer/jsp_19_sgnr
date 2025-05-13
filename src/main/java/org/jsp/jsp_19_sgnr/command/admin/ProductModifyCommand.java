@@ -43,33 +43,26 @@ public class ProductModifyCommand implements Command {
         Set<String> modifiedProducts = new HashSet<>();
         Set<String> deletedProducts = new HashSet<>();
 
-        System.out.println("[DEBUG_LOG] Starting to process request parameters");
 
         // Find all products that have been modified or deleted
         while (paramNames.hasMoreElements()) {
             String paramName = paramNames.nextElement();
             String paramValue = request.getParameter(paramName);
-            System.out.println("[DEBUG_LOG] Parameter: " + paramName + " = " + paramValue);
 
             if (paramName.startsWith("modified_") && "true".equals(paramValue)) {
                 String productId = paramName.substring("modified_".length());
                 modifiedProducts.add(productId);
-                System.out.println("[DEBUG_LOG] Added to modified products: " + productId);
             } else if (paramName.startsWith("delete_") && "true".equals(paramValue)) {
                 String productId = paramName.substring("delete_".length());
                 deletedProducts.add(productId);
-                System.out.println("[DEBUG_LOG] Added to deleted products: " + productId);
             }
         }
 
         // Remove products that are marked for deletion from the modified list
         modifiedProducts.removeAll(deletedProducts);
 
-        System.out.println("[DEBUG_LOG] After filtering: Modified products count: " + modifiedProducts.size());
-        System.out.println("[DEBUG_LOG] After filtering: Deleted products count: " + deletedProducts.size());
 
         if (modifiedProducts.isEmpty() && deletedProducts.isEmpty()) {
-            System.out.println("[DEBUG_LOG] No products to modify or delete, redirecting to nochange status");
             response.sendRedirect(request.getContextPath() + "/admin/admin.jsp?menu=productModify&status=nochange");
             return;
         }
@@ -80,36 +73,28 @@ public class ProductModifyCommand implements Command {
         try {
             conn = DBConnection.getConnection();
             conn.setAutoCommit(false);  // Start transaction
-            System.out.println("[DEBUG_LOG] Started transaction, autoCommit set to false");
 
             ProductDao productDao = new ProductDao();
             ContentDao contentDao = new ContentDao();
 
             // Process each deleted product first
-            System.out.println("[DEBUG_LOG] Starting to process " + deletedProducts.size() + " products for deletion");
             for (String productId : deletedProducts) {
-                System.out.println("[DEBUG_LOG] Processing deletion for product ID: " + productId);
 
                 // Get the file ID associated with the product before deleting it
                 String fileId = productDao.getProductFileId(productId, conn);
-                System.out.println("[DEBUG_LOG] Retrieved file ID for product " + productId + ": " + (fileId != null ? fileId : "null"));
 
                 // Remove all category mappings for the product
                 int mappingResult = productDao.removeAllCategoryMappings(productId, conn);
-                System.out.println("[DEBUG_LOG] Removed category mappings for product " + productId + ", result: " + mappingResult);
 
                 // Delete the product
                 int deleteResult = productDao.deleteProduct(productId, conn);
-                System.out.println("[DEBUG_LOG] Deleted product " + productId + ", result: " + deleteResult);
                 if (deleteResult <= 0) {
-                    System.out.println("[DEBUG_LOG] Failed to delete product: " + productId);
                     throw new SQLException("Failed to delete product: " + productId);
                 }
 
                 // Delete the file if it's not used by other products
                 if (fileId != null && !fileId.isEmpty()) {
                     boolean fileDeleted = contentDao.deleteFileIfNotUsed(fileId, productId, conn);
-                    System.out.println("[DEBUG_LOG] Attempted to delete file " + fileId + " for product " + productId + ", result: " + fileDeleted);
                 }
             }
 
@@ -164,18 +149,14 @@ public class ProductModifyCommand implements Command {
             }
 
             conn.commit();  // Commit transaction
-            System.out.println("[DEBUG_LOG] Transaction committed successfully");
 
         } catch (Exception e) {
-            System.out.println("[DEBUG_LOG] Exception occurred: " + e.getMessage());
             e.printStackTrace();
             success = false;
             if (conn != null) {
                 try {
                     conn.rollback();  // Rollback on error
-                    System.out.println("[DEBUG_LOG] Transaction rolled back due to error");
                 } catch (SQLException ex) {
-                    System.out.println("[DEBUG_LOG] Failed to rollback transaction: " + ex.getMessage());
                     ex.printStackTrace();
                 }
             }
@@ -183,22 +164,16 @@ public class ProductModifyCommand implements Command {
             if (conn != null) {
                 try {
                     conn.setAutoCommit(true);
-                    System.out.println("[DEBUG_LOG] Reset autoCommit to true");
                     conn.close();
-                    System.out.println("[DEBUG_LOG] Connection closed");
                 } catch (SQLException e) {
-                    System.out.println("[DEBUG_LOG] Error closing connection: " + e.getMessage());
                     e.printStackTrace();
                 }
             }
         }
 
-        System.out.println("[DEBUG_LOG] Operation " + (success ? "succeeded" : "failed"));
         if (success) {
-            System.out.println("[DEBUG_LOG] Redirecting to success page");
             response.sendRedirect(request.getContextPath() + "/admin/admin.jsp?menu=productModify&status=success");
         } else {
-            System.out.println("[DEBUG_LOG] Redirecting to failure page");
             response.sendRedirect(request.getContextPath() + "/admin/admin.jsp?menu=productModify&status=fail");
         }
     }
