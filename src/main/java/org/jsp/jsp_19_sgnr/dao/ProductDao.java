@@ -5,6 +5,7 @@ import org.jsp.jsp_19_sgnr.dto.Product;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -426,6 +427,84 @@ public class ProductDao {
             pstmt.setString(2, productId);
 
             return pstmt.executeUpdate();
+        }
+    }
+
+    /**
+     * Deletes a product from TB_PRODUCT.
+     * 
+     * @param productId The product ID to delete
+     * @param conn The database connection to use
+     * @return The number of rows affected
+     * @throws SQLException If a database error occurs
+     */
+    public int deleteProduct(String productId, Connection conn) throws SQLException {
+        String sql = "DELETE FROM TB_PRODUCT WHERE NO_PRODUCT = ?";
+        System.out.println("[DEBUG_LOG] ProductDao.deleteProduct - Executing SQL: " + sql + " with productId: " + productId);
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, productId);
+
+            int result = pstmt.executeUpdate();
+            System.out.println("[DEBUG_LOG] ProductDao.deleteProduct - Result: " + result + " rows affected");
+            return result;
+        } catch (SQLException e) {
+            System.out.println("[DEBUG_LOG] ProductDao.deleteProduct - SQLException: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    /**
+     * Removes all category mappings for a product.
+     * 
+     * @param productId The product ID
+     * @param conn The database connection to use
+     * @return The number of rows affected
+     * @throws SQLException If a database error occurs
+     */
+    public int removeAllCategoryMappings(String productId, Connection conn) throws SQLException {
+        String sql = "DELETE FROM TB_CATEGORY_PRODUCT_MAPPING WHERE no_product = ?";
+        System.out.println("[DEBUG_LOG] ProductDao.removeAllCategoryMappings - Executing SQL: " + sql + " with productId: " + productId);
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, productId);
+
+            int result = pstmt.executeUpdate();
+            System.out.println("[DEBUG_LOG] ProductDao.removeAllCategoryMappings - Result: " + result + " rows affected");
+            return result;
+        } catch (SQLException e) {
+            System.out.println("[DEBUG_LOG] ProductDao.removeAllCategoryMappings - SQLException: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    /**
+     * Gets the file ID associated with a product.
+     * 
+     * @param productId The product ID
+     * @param conn The database connection to use
+     * @return The file ID or null if not found
+     * @throws SQLException If a database error occurs
+     */
+    public String getProductFileId(String productId, Connection conn) throws SQLException {
+        String sql = "SELECT ID_FILE FROM TB_PRODUCT WHERE NO_PRODUCT = ?";
+        System.out.println("[DEBUG_LOG] ProductDao.getProductFileId - Executing SQL: " + sql + " with productId: " + productId);
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, productId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    String fileId = rs.getString("ID_FILE");
+                    System.out.println("[DEBUG_LOG] ProductDao.getProductFileId - Found fileId: " + fileId);
+                    return fileId;
+                }
+                System.out.println("[DEBUG_LOG] ProductDao.getProductFileId - No file ID found for product: " + productId);
+                return null;
+            }
+        } catch (SQLException e) {
+            System.out.println("[DEBUG_LOG] ProductDao.getProductFileId - SQLException: " + e.getMessage());
+            throw e;
         }
     }
 

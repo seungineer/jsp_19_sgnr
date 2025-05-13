@@ -136,4 +136,60 @@ public class ContentDao {
 
         return fileInfo;
     }
+
+    /**
+     * Checks if a file is used by any products other than the specified one.
+     * If not, deletes the file from TB_CONTENT.
+     * 
+     * @param fileId The file ID to check
+     * @param productId The product ID being deleted (to exclude from the check)
+     * @param conn The database connection to use
+     * @return true if the file was deleted or if fileId is null, false if the file is still in use or if an error occurred
+     * @throws SQLException If a database error occurs
+     */
+    public boolean deleteFileIfNotUsed(String fileId, String productId, Connection conn) throws SQLException {
+        System.out.println("[DEBUG_LOG] ContentDao.deleteFileIfNotUsed - Called with fileId: " + fileId + ", productId: " + productId);
+
+        if (fileId == null || fileId.isEmpty()) {
+            System.out.println("[DEBUG_LOG] ContentDao.deleteFileIfNotUsed - No file ID provided, returning true");
+            return true; // No file to delete
+        }
+
+        // Check if the file is used by other products
+        String checkSql = "SELECT COUNT(*) FROM TB_PRODUCT WHERE ID_FILE = ? AND NO_PRODUCT != ?";
+        System.out.println("[DEBUG_LOG] ContentDao.deleteFileIfNotUsed - Executing check SQL: " + checkSql);
+
+        try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+            checkStmt.setString(1, fileId);
+            checkStmt.setString(2, productId);
+
+            try (ResultSet rs = checkStmt.executeQuery()) {
+                if (rs.next() && rs.getInt(1) > 0) {
+                    // File is used by other products, don't delete
+                    int count = rs.getInt(1);
+                    System.out.println("[DEBUG_LOG] ContentDao.deleteFileIfNotUsed - File is used by " + count + " other products, not deleting");
+                    return false;
+                }
+                System.out.println("[DEBUG_LOG] ContentDao.deleteFileIfNotUsed - File is not used by other products, proceeding with deletion");
+            }
+        } catch (SQLException e) {
+            System.out.println("[DEBUG_LOG] ContentDao.deleteFileIfNotUsed - SQLException during check: " + e.getMessage());
+            throw e;
+        }
+
+        // File is not used by other products, delete it
+        String deleteSql = "DELETE FROM TB_CONTENT WHERE ID_FILE = ?";
+        System.out.println("[DEBUG_LOG] ContentDao.deleteFileIfNotUsed - Executing delete SQL: " + deleteSql);
+
+        try (PreparedStatement deleteStmt = conn.prepareStatement(deleteSql)) {
+            deleteStmt.setString(1, fileId);
+
+            int result = deleteStmt.executeUpdate();
+            System.out.println("[DEBUG_LOG] ContentDao.deleteFileIfNotUsed - Delete result: " + result + " rows affected");
+            return result > 0;
+        } catch (SQLException e) {
+            System.out.println("[DEBUG_LOG] ContentDao.deleteFileIfNotUsed - SQLException during delete: " + e.getMessage());
+            throw e;
+        }
+    }
 }
