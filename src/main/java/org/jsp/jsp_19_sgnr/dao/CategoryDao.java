@@ -279,7 +279,7 @@ public class CategoryDao {
 
     public List<Category> findAll() {
         List<Category> list = new ArrayList<>();
-        String sql = "SELECT NB_CATEGORY, NM_CATEGORY, NB_PARENT_CATEGORY, CN_ORDER, TO_CHAR(DA_FIRST_DATE, 'YYYY-MM-DD'), CN_LEVEL FROM TB_CATEGORY ORDER BY CN_ORDER";
+        String sql = "SELECT NB_CATEGORY, NM_CATEGORY, NB_PARENT_CATEGORY, CN_ORDER, TO_CHAR(DA_FIRST_DATE, 'YYYY-MM-DD'), CN_LEVEL, YN_USE FROM TB_CATEGORY ORDER BY CN_ORDER";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -294,6 +294,7 @@ public class CategoryDao {
                 c.setOrder(rs.getInt(4));
                 c.setRegDate(rs.getString(5));
                 c.setLevel(rs.getInt(6));
+                c.setYnUse(rs.getString(7));
                 list.add(c);
             }
         } catch (SQLException e) {

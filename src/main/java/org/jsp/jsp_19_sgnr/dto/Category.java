@@ -8,6 +8,7 @@ public class Category {
     private String regDate;
     private int level;
     private String fullname;
+    private String ynUse;
 
     private String regName;
 
@@ -88,5 +89,13 @@ public class Category {
 
     public String getDisplayName() {
         return upperId == null ? name : "[" + upperId + "] " + name;
+    }
+
+    public String getYnUse() {
+        return ynUse;
+    }
+
+    public void setYnUse(String ynUse) {
+        this.ynUse = ynUse;
     }
 }

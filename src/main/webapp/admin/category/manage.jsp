@@ -3,6 +3,61 @@
 <%@ page import="org.jsp.jsp_19_sgnr.dto.Category" %>
 <%@ page import="org.jsp.jsp_19_sgnr.dto.Member" %>
 <%@ page import="java.util.*" %>
+
+<style>
+/* 토글 스위치 스타일 */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 28px;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 28px;
+  font-size: 10px;
+  color: white;
+  text-align: center;
+  line-height: 28px;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px; width: 20px;
+  left: 4px; bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+  z-index: 2;
+}
+.slider:after {
+  content: "비활성";
+  position: absolute;
+  left: 23px;
+  right: 0;
+  z-index: 1;
+}
+input:checked + .slider {
+  background-color: #4285f4;
+}
+input:checked + .slider:before {
+  transform: translateX(24px);
+}
+input:checked + .slider:after {
+  content: "활성";
+  left: 0;
+  right: 19px;
+}
+</style>
 <%
     // Check if user is logged in and is admin
     Member member = (Member) session.getAttribute("member");
@@ -95,10 +150,11 @@
                                         style="padding: 3px 8px; background-color: #ff6b6b; color: white; border: none; border-radius: 3px; cursor: pointer; margin-right: 5px;">
                                     삭제
                                 </button>
-                                <button onclick="toggleCategoryStatus(<%= topCategory.getId() %>)" 
-                                        style="padding: 3px 8px; background-color: #fab005; color: white; border: none; border-radius: 3px; cursor: pointer;">
-                                    활성화/비활성화
-                                </button>
+                                <label class="switch">
+                                    <input type="checkbox" onchange="toggleCategoryStatus(<%= topCategory.getId() %>)"
+                                           <%= "Y".equals(topCategory.getYnUse()) ? "checked" : "" %>>
+                                    <span class="slider"></span>
+                                </label>
                             </td>
                         </tr>
                     <%
@@ -125,10 +181,11 @@
                                         style="padding: 3px 8px; background-color: #ff6b6b; color: white; border: none; border-radius: 3px; cursor: pointer; margin-right: 5px;">
                                     삭제
                                 </button>
-                                <button onclick="toggleCategoryStatus(<%= midCategory.getId() %>)" 
-                                        style="padding: 3px 8px; background-color: #fab005; color: white; border: none; border-radius: 3px; cursor: pointer;">
-                                    활성화/비활성화
-                                </button>
+                                <label class="switch">
+                                    <input type="checkbox" onchange="toggleCategoryStatus(<%= midCategory.getId() %>)"
+                                           <%= "Y".equals(midCategory.getYnUse()) ? "checked" : "" %>>
+                                    <span class="slider"></span>
+                                </label>
                             </td>
                         </tr>
                     <%
@@ -155,10 +212,11 @@
                                         style="padding: 3px 8px; background-color: #ff6b6b; color: white; border: none; border-radius: 3px; cursor: pointer; margin-right: 5px;">
                                     삭제
                                 </button>
-                                <button onclick="toggleCategoryStatus(<%= subCategory.getId() %>)" 
-                                        style="padding: 3px 8px; background-color: #fab005; color: white; border: none; border-radius: 3px; cursor: pointer;">
-                                    활성화/비활성화
-                                </button>
+                                <label class="switch">
+                                    <input type="checkbox" onchange="toggleCategoryStatus(<%= subCategory.getId() %>)"
+                                           <%= "Y".equals(subCategory.getYnUse()) ? "checked" : "" %>>
+                                    <span class="slider"></span>
+                                </label>
                             </td>
                         </tr>
                     <%
@@ -199,10 +257,8 @@
 
     // Function to toggle category status
     function toggleCategoryStatus(categoryId) {
-        if (confirm('이 카테고리의 활성화 상태를 변경하시겠습니까?')) {
-            document.getElementById('toggleCategoryId').value = categoryId;
-            document.getElementById('toggleForm').submit();
-        }
+        document.getElementById('toggleCategoryId').value = categoryId;
+        document.getElementById('toggleForm').submit();
     }
 
     // Display alerts based on status
