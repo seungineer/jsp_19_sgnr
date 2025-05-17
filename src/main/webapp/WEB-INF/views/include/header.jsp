@@ -22,7 +22,7 @@
             <ul>
                 <% if (member != null) { %>
                     <li><span class="welcome-message"><%= member.getName() %>님 환영합니다</span></li>
-                    <li><a href="${pageContext.request.contextPath}/member/modifyForm.do">마이페이지</a></li>
+                    <li><a href="${pageContext.request.contextPath}/mypage.do">마이페이지</a></li>
                     <li>
                         <a href="${pageContext.request.contextPath}/basket/view.do" class="cart-link">
                             장바구니
@@ -46,7 +46,7 @@
         top: 0;
         z-index: 1000;
     }
-    
+
     .header-container {
         max-width: 1200px;
         margin: 0 auto;
@@ -55,20 +55,20 @@
         align-items: center;
         justify-content: space-between;
     }
-    
+
     .logo a {
         font-size: 24px;
         font-weight: bold;
         color: #4285f4;
         text-decoration: none;
     }
-    
+
     .search-container {
         flex-grow: 1;
         margin: 0 20px;
         display: flex;
     }
-    
+
     .search-input {
         width: 100%;
         padding: 10px 15px;
@@ -76,7 +76,7 @@
         border-radius: 4px 0 0 4px;
         font-size: 14px;
     }
-    
+
     .search-button {
         padding: 10px 15px;
         background-color: #4285f4;
@@ -85,37 +85,37 @@
         border-radius: 0 4px 4px 0;
         cursor: pointer;
     }
-    
+
     .main-nav ul {
         display: flex;
         list-style: none;
         margin: 0;
         padding: 0;
     }
-    
+
     .main-nav li {
         margin-left: 20px;
     }
-    
+
     .main-nav a {
         color: #333;
         text-decoration: none;
         font-size: 14px;
     }
-    
+
     .main-nav a:hover {
         color: #4285f4;
     }
-    
+
     .welcome-message {
         font-size: 14px;
         color: #666;
     }
-    
+
     .cart-link {
         position: relative;
     }
-    
+
     .cart-count {
         position: absolute;
         top: -10px;

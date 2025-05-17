@@ -33,6 +33,7 @@ public class FrontControllerServlet extends HttpServlet {
         commandMap.put("/member/joinForm.do", new org.jsp.jsp_19_sgnr.command.member.JoinFormCommand());
         commandMap.put("/member/modifyForm.do", new org.jsp.jsp_19_sgnr.command.member.ModifyFormCommand());
         commandMap.put("/member/logout.do", new org.jsp.jsp_19_sgnr.command.member.LogoutCommand());
+        commandMap.put("/mypage.do", new org.jsp.jsp_19_sgnr.command.member.MypageCommand());
 
         // Admin commands
         commandMap.put("/admin/category/register.do", new org.jsp.jsp_19_sgnr.command.admin.CategoryRegisterCommand());
@@ -55,6 +56,13 @@ public class FrontControllerServlet extends HttpServlet {
         // Product commands
         commandMap.put("/product/list.do", new org.jsp.jsp_19_sgnr.command.product.ProductListCommand());
         commandMap.put("/product/detail.do", new org.jsp.jsp_19_sgnr.command.product.ProductDetailCommand());
+
+        // Order commands
+        commandMap.put("/order/create.do", new org.jsp.jsp_19_sgnr.command.order.OrderCreateCommand());
+        commandMap.put("/order/list.do", new org.jsp.jsp_19_sgnr.command.order.OrderListCommand());
+        commandMap.put("/order/detail.do", new org.jsp.jsp_19_sgnr.command.order.OrderDetailCommand());
+        commandMap.put("/order/cancel.do", new org.jsp.jsp_19_sgnr.command.order.OrderCancelCommand());
+        commandMap.put("/order/checkout.do", new org.jsp.jsp_19_sgnr.command.order.OrderCreateCommand());
     }
 
     @Override

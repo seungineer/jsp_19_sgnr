@@ -180,9 +180,10 @@
     </style>
 </head>
 <body>
+    <!-- Include header -->
+    <jsp:include page="/WEB-INF/views/include/header.jsp" />
     <div class="container">
-        <h1>상품 상세 정보</h1>
-
+        <a href="<%= request.getContextPath() %>/product/list.do" class="back-button">← 상품 목록으로 돌아가기</a>
         <%
             Product product = (Product) request.getAttribute("product");
             String imagePath = (String) request.getAttribute("imagePath");
@@ -256,8 +257,6 @@
                 <% } %>
             </div>
         </div>
-
-        <a href="<%= request.getContextPath() %>/product/list.do" class="back-button">← 상품 목록으로 돌아가기</a>
 
         <% } else { %>
         <div>

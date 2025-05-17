@@ -18,12 +18,13 @@ public class ModifyFormCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
-        
+
         if (session == null || session.getAttribute("member") == null) {
             response.sendRedirect(request.getContextPath() + "/member/loginForm.do");
             return;
         }
-        
-        request.getRequestDispatcher("/WEB-INF/views/member/modify.jsp").forward(request, response);
+
+        // Redirect to mypage with modify menu
+        response.sendRedirect(request.getContextPath() + "/mypage.do?menu=modify");
     }
 }

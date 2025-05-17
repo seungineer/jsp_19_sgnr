@@ -6,32 +6,30 @@
     <title>회원정보 수정</title>
     <style>
         body {
+            font-family: 'Noto Sans KR', sans-serif;
             background-color: #f5f5f5;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             margin: 0;
+            padding: 0;
         }
 
-        #outline {
-            padding: 30px 40px;
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            width: 360px;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
 
         h1 {
-            text-align: center;
             color: #333;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         form {
             display: flex;
             flex-direction: column;
+            background-color: white;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         label {
@@ -43,43 +41,42 @@
         input[type="text"],
         input[type="password"] {
             padding: 10px;
-            margin-bottom: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
 
         .error-message {
             font-size: 0.85em;
-            color: red;
+            color: #F44336;
             margin-bottom: 10px;
             display: none;
         }
 
         button {
-            width: 80%;
-            padding: 12px;
-            background-color: #4285f4;
+            padding: 10px 15px;
+            background-color: #2196F3;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             font-weight: bold;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
 
         button:hover {
-            background-color: #3367d6;
+            background-color: #1976D2;
         }
 
         button:disabled {
-            background-color: #ccc;
+            background-color: #9E9E9E;
             cursor: not-allowed;
         }
 
         a {
-            display: block;
-            text-align: end;
-            margin-top: 16px;
-            color: #555;
+            display: inline-block;
+            margin-top: 15px;
+            color: #2196F3;
             text-decoration: none;
         }
 
@@ -89,26 +86,18 @@
 
         #button-container {
             display: flex;
-            justify-content: center;
-            margin-top: 16px;
+            justify-content: flex-start;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 <%
-    HttpSession loggedInSession = request.getSession(false);
-
-    if (loggedInSession == null || loggedInSession.getAttribute("member") == null) {
-        response.sendRedirect(request.getContextPath() + "/member/loginForm.do");
-        return;
-    }
-
-    Member member = (Member) loggedInSession.getAttribute("member");
+    // Login check is already done in mypage.jsp or ModifyFormCommand
+    Member member = (Member) session.getAttribute("member");
 %>
 
-<div id="outline">
-    <h1>회원정보 수정</h1>
-
+<div class="container">
     <form id="modifyForm" action="${pageContext.request.contextPath}/member/modify.do" method="POST" onsubmit="return validateForm()">
         <label for="id">아이디</label>
         <input type="text" id="id" name="id" value="<%= member.getEmail() %>" readonly
@@ -132,10 +121,11 @@
         <div id="button-container">
             <button type="submit" disabled>수정하기</button>
         </div>
-    </form>
 
-    <a href="${pageContext.request.contextPath}/member/logout.do">로그아웃</a>
+        <a href="${pageContext.request.contextPath}/member/logout.do">로그아웃</a>
+    </form>
 </div>
+
 
 <script>
     const pwRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{5,15}$/;
