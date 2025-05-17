@@ -142,7 +142,7 @@
 
         .button-container {
             display: flex;
-            justify-content: space-between;
+            justify-content: end;
             margin-top: 20px;
         }
 
@@ -243,7 +243,6 @@
 
     <div class="container">
         <h1>장바구니</h1>
-
         <%
             // Get basket items from request attributes
             List<BasketItem> basketItems = (List<BasketItem>) request.getAttribute("basketItems");
@@ -266,21 +265,20 @@
                     NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.KOREA);
                     int totalPrice = 0;
         %>
+            <div style="display: flex; justify-content: end">
+                <button type="submit" class="button update-btn">장바구니 업데이트</button>
+                <a href="${pageContext.request.contextPath}/basket/clear.do?basketId=<%= userBasket.getBasketId() %>" class="button clear-basket">장바구니 비우기</a>
+            </div>
             <form action="${pageContext.request.contextPath}/basket/update.do" method="post" id="basketForm">
                 <input type="hidden" name="basketId" value="<%= userBasket.getBasketId() %>">
-
-                <div class="select-all-container">
-                    <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)" checked>
-                    <label for="selectAll">전체 선택</label>
-                </div>
 
                 <table class="basket-table">
                     <thead>
                         <tr>
-                            <th class="checkbox-column"></th>
                             <th>상품 이미지</th>
                             <th>상품명</th>
                             <th>가격</th>
+                            <th>배송비</th>
                             <th>수량</th>
                             <th>합계</th>
                             <th>관리</th>
@@ -288,17 +286,31 @@
                     </thead>
                     <tbody>
                     <%
+                        int totalDeliveryFee = 0;
+                        ProductDao productDao = new ProductDao();
+
                         for (BasketItem item : basketItems) {
                             String productName = item.getProductName();
+                            Product product = null;
+
                             if (productName == null || productName.isEmpty()) {
                                 // If product name is not set in BasketItem, get it from ProductDao
-                                ProductDao productDao = new ProductDao();
-                                Product product = productDao.getProductById(item.getProductId());
+                                product = productDao.getProductById(item.getProductId());
                                 if (product != null) {
                                     productName = product.getNm_product();
                                 } else {
                                     productName = "Unknown Product";
                                 }
+                            }
+
+                            // If product is null, we need to fetch it to get the delivery fee
+                            if (product == null) {
+                                product = productDao.getProductById(item.getProductId());
+                            }
+
+                            // Add delivery fee for this product
+                            if (product != null) {
+                                totalDeliveryFee += product.getQt_delivery_fee();
                             }
 
                             String imagePath = "";
@@ -310,9 +322,6 @@
                             totalPrice += itemTotal;
                     %>
                         <tr>
-                            <td class="checkbox-column">
-                                <input type="checkbox" name="selectedItems" value="<%= item.getItemId() %>" <%= item.isSelected() ? "checked" : "" %>>
-                            </td>
                             <td>
                                 <% if (imagePath != null && !imagePath.isEmpty()) { %>
                                     <img src="<%= imagePath %>" alt="<%= productName %>" class="product-image">
@@ -324,6 +333,7 @@
                             </td>
                             <td class="product-name"><%= productName %></td>
                             <td class="product-price"><%= currencyFormatter.format(item.getPrice()) %></td>
+                            <td class="product-price"><%= product.getQt_delivery_fee() != 0 ? currencyFormatter.format(product.getQt_delivery_fee()) : "무료" %></td>
                             <td>
                                 <div class="quantity-control">
                                     <button type="button" class="quantity-btn" onclick="updateQuantity(<%= item.getItemId() %>, -1)">-</button>
@@ -349,18 +359,15 @@
                     </div>
                     <div class="summary-row">
                         <span>배송비</span>
-                        <span>무료</span>
+                        <span><%= currencyFormatter.format(totalDeliveryFee) %></span>
                     </div>
                     <div class="summary-row">
                         <span>결제 예정 금액</span>
-                        <span><%= currencyFormatter.format(totalPrice) %></span>
+                        <span><%= currencyFormatter.format(totalPrice + totalDeliveryFee) %></span>
                     </div>
                 </div>
 
                 <div class="button-container">
-                    <a href="${pageContext.request.contextPath}/product/list.do" class="button continue-shopping">계속 쇼핑하기</a>
-                    <button type="submit" class="button update-btn">장바구니 업데이트</button>
-                    <a href="${pageContext.request.contextPath}/basket/clear.do?basketId=<%= userBasket.getBasketId() %>" class="button clear-basket">장바구니 비우기</a>
                     <a href="${pageContext.request.contextPath}/order/checkout.do" class="button checkout">주문하기</a>
                 </div>
             </form>
