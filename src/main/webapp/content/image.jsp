@@ -4,7 +4,7 @@
 <%@ page import="org.jsp.jsp_19_sgnr.db.DBConnection" %>
 <%@ page trimDirectiveWhitespaces="true" %>
 <%
-    String idFile = request.getParameter("id");
+    String idFile = request.getParameter("fileId");
     if (idFile == null || idFile.trim().isEmpty()) {
         response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Image ID is required");
         return;
