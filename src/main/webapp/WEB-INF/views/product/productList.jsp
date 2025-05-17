@@ -234,6 +234,9 @@
     <!-- Category sidebar -->
     <div class="sidebar">
         <div class="category-title">카테고리</div>
+        <div class="category-item level-1 <%= (selectedCategoryId == null) ? "active" : "" %>">
+            <a href="${pageContext.request.contextPath}/product/list.do">전체 상품</a>
+        </div>
         <%
             List<Category> categories = (List<Category>) request.getAttribute("categories");
             if (categories != null && !categories.isEmpty()) {
