@@ -149,7 +149,6 @@
         .product-info {
             padding: 15px;
             display: block;
-            width: 100%;
         }
 
         .product-name {
@@ -334,16 +333,13 @@
                         <img src="<%= imagePath %>" alt="<%= product.getNm_product() %>" class="product-image">
                     <% } else { %>
                         <div class="product-image" style="background-color: #eee; display: flex; align-items: center; justify-content: center;">
-                            No Image
+                            이미지 준비중
                         </div>
                     <% } %>
                 </a>
-                <div class="product-info" style="display: block; width: 100%;">
+                <div class="product-info" style="display: block;">
                     <a href="<%= productDetailUrl %>" class="product-name"><%= product.getNm_product() %></a>
                     <div class="product-price"><%= product.getQt_sale_price() %>원</div>
-                    <button class="detail-button" onclick="location.href='<%= productDetailUrl %>'">
-                        상세 보기
-                    </button>
                 </div>
             </div>
         <%

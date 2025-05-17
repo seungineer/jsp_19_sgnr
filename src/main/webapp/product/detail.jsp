@@ -48,6 +48,7 @@
         }
 
         .product-info {
+            width: 90%;
             flex: 0 0 50%;
             padding: 30px;
             border-left: 1px solid #eee;
