@@ -89,6 +89,7 @@ public class BasketAddCommand implements Command {
 
         // Add item to basket
         boolean success = basketDao.addOrUpdateBasketItem(userBasket.getBasketId(), productId, quantity, price);
+        System.out.println("장바구니 담기 성공여부 : " + success);
         if (!success) {
             // Failed to add item to basket, show error
             request.setAttribute("errorMessage", "장바구니에 상품을 추가할 수 없습니다.");
@@ -96,7 +97,7 @@ public class BasketAddCommand implements Command {
             return;
         }
 
-        // Redirect to a page showing the basket contents
-        response.sendRedirect(request.getContextPath() + "/basket/view.jsp");
+        // Dispatch to a page showing the basket contents
+        response.sendRedirect(request.getContextPath() + "/basket/view.do");
     }
 }

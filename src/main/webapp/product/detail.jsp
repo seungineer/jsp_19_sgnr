@@ -190,8 +190,8 @@
 
             if (product != null) {
                 NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.KOREA);
-                int discountAmount = product.getQt_customer() - product.getQt_sale_price();
-                double discountRate = (double) discountAmount / product.getQt_customer() * 100;
+                int discountAmount = product.getQt_customer_price() - product.getQt_sale_price();
+                double discountRate = (double) discountAmount / product.getQt_customer_price() * 100;
         %>
 
         <div class="product-detail">
@@ -216,7 +216,7 @@
                     } %>
                 </div>
 
-                <div class="product-original-price"><%= currencyFormatter.format(product.getQt_customer()) %></div>
+                <div class="product-original-price"><%= currencyFormatter.format(product.getQt_customer_price()) %></div>
                 <div class="product-price"><%= currencyFormatter.format(product.getQt_sale_price()) %></div>
                 <div class="product-discount">(<%= String.format("%.1f", discountRate) %>% 할인)</div>
 

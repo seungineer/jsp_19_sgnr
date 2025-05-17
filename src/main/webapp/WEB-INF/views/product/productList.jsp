@@ -222,7 +222,6 @@
     <jsp:include page="/WEB-INF/views/include/header.jsp" />
 
     <div class="container">
-        <h2>상품 목록</h2>
 
 <%
     // Get search keyword if any
@@ -250,7 +249,7 @@
                             </a>
                         </div>
                         <%
-                            // Display child categories
+                            // Display child categories (level 2)
                             for (Category childCategory : categories) {
                                 if (childCategory.getUpperId() != null && childCategory.getUpperId() == category.getId()) {
                                     activeClass = (selectedCategoryId != null && selectedCategoryId == childCategory.getId()) ? "active" : "";
@@ -261,6 +260,19 @@
                                         </a>
                                     </div>
                         <%
+                                    // Display grandchild categories (level 3)
+                                    for (Category grandchildCategory : categories) {
+                                        if (grandchildCategory.getUpperId() != null && grandchildCategory.getUpperId() == childCategory.getId()) {
+                                            activeClass = (selectedCategoryId != null && selectedCategoryId == grandchildCategory.getId()) ? "active" : "";
+                        %>
+                                            <div class="category-item level-3 <%= activeClass %>">
+                                                <a href="${pageContext.request.contextPath}/product/list.do?categoryId=<%= grandchildCategory.getId() %>">
+                                                    <%= grandchildCategory.getName() %>
+                                                </a>
+                                            </div>
+                        <%
+                                        }
+                                    }
                                 }
                             }
                         %>

@@ -6,17 +6,6 @@
 <%
     // Check if user is logged in
     Member member = (Member) session.getAttribute("member");
-    
-    // Get basket item count
-    int basketItemCount = 0;
-    if (member != null) {
-        Map<String, Integer> sessionBasket = (Map<String, Integer>) session.getAttribute("basket");
-        if (sessionBasket != null) {
-            for (int quantity : sessionBasket.values()) {
-                basketItemCount += quantity;
-            }
-        }
-    }
 %>
 <header class="site-header">
     <div class="header-container">
@@ -37,9 +26,6 @@
                     <li>
                         <a href="${pageContext.request.contextPath}/basket/view.do" class="cart-link">
                             장바구니
-                            <% if (basketItemCount > 0) { %>
-                                <span class="cart-count"><%= basketItemCount %></span>
-                            <% } %>
                         </a>
                     </li>
                     <li><a href="${pageContext.request.contextPath}/member/logout.do">로그아웃</a></li>
@@ -132,8 +118,8 @@
     
     .cart-count {
         position: absolute;
-        top: -8px;
-        right: -8px;
+        top: -10px;
+        right: -10px;
         background-color: #e53935;
         color: white;
         font-size: 12px;
