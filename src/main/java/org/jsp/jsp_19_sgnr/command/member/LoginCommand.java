@@ -22,7 +22,7 @@ public class LoginCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        
+
         request.setCharacterEncoding("UTF-8");
 
         String id = request.getParameter("id");
@@ -33,10 +33,10 @@ public class LoginCommand implements Command {
         if (id == null || paswd == null || !emailPattern.matcher(id).matches() || !pwPattern.matcher(paswd).matches()) {
             String errorMessage = "아이디 또는 비밀번호가 잘못되었습니다.";
             String encodedMessage = URLEncoder.encode(errorMessage, "UTF-8");
-            response.sendRedirect(request.getContextPath() + "/login.html?error=" + encodedMessage);
+            response.sendRedirect(request.getContextPath() + "/member/loginForm.do?error=" + encodedMessage);
             return;
         }
-        
+
         MemberDao memberDao = new MemberDao();
         Member member = memberDao.findByIdAndPswd(id, paswd);
 
@@ -56,9 +56,9 @@ public class LoginCommand implements Command {
                 response.addCookie(idCookie);
             }
 
-            response.sendRedirect(request.getContextPath() + "/main.jsp?status=success");
+            response.sendRedirect(request.getContextPath() + "/product/list.do");
         } else {
-            response.sendRedirect(request.getContextPath() + "/main.jsp?status=fail");
+            response.sendRedirect(request.getContextPath() + "/member/loginForm.do?error=" + URLEncoder.encode("로그인에 실패했습니다.", "UTF-8"));
         }
     }
 }

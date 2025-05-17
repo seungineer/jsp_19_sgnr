@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpSession;
 import org.jsp.jsp_19_sgnr.command.Command;
 import org.jsp.jsp_19_sgnr.dao.MemberDao;
 import org.jsp.jsp_19_sgnr.dto.Member;
+import java.net.URLEncoder;
 
 import java.io.IOException;
 
@@ -19,7 +20,7 @@ public class SignOutCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        
+
         HttpSession session = request.getSession(false);
         boolean success = false;
 
@@ -42,6 +43,6 @@ public class SignOutCommand implements Command {
             session.invalidate();
         }
 
-        response.sendRedirect(request.getContextPath() + "/signout.jsp?result=" + (success ? "success" : "fail"));
+        response.sendRedirect(request.getContextPath() + "/member/loginForm.do?message=" + URLEncoder.encode((success ? "회원 탈퇴가 완료되었습니다." : "회원 탈퇴에 실패했습니다."), "UTF-8"));
     }
 }

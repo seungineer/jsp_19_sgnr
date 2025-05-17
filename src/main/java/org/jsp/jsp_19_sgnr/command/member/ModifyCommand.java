@@ -30,7 +30,7 @@ public class ModifyCommand implements Command {
 
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("member") == null) {
-            response.sendRedirect(request.getContextPath() + "/login.html");
+            response.sendRedirect(request.getContextPath() + "/member/loginForm.do");
             return;
         }
 
@@ -44,7 +44,7 @@ public class ModifyCommand implements Command {
         boolean validPhone = PHONE_REGEX.matcher(mobile).matches();
 
         if (!validPassword || !validPhone) {
-            response.sendRedirect(request.getContextPath() + "/modify.jsp?error=invalid");
+            response.sendRedirect(request.getContextPath() + "/member/modifyForm.do?error=invalid");
             return;
         }
 
@@ -58,12 +58,12 @@ public class ModifyCommand implements Command {
 
         MemberDao dao = new MemberDao();
         int result = dao.update(member);
-        
+
         if (result == 1) {
             session.setAttribute("member", member);
-            response.sendRedirect(request.getContextPath() + "/main.jsp?status=success");
+            response.sendRedirect(request.getContextPath() + "/product/list.do");
         } else {
-            response.sendRedirect(request.getContextPath() + "/modify.jsp?error=fail");
+            response.sendRedirect(request.getContextPath() + "/member/modifyForm.do?error=fail");
         }
     }
 }

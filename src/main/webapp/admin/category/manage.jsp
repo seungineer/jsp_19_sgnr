@@ -62,7 +62,7 @@ input:checked + .slider:after {
     // Check if user is logged in and is admin
     Member member = (Member) session.getAttribute("member");
     if (member == null || !"20".equals(member.getUserType())) {
-        response.sendRedirect(request.getContextPath() + "/login.html");
+        response.sendRedirect(request.getContextPath() + "/member/loginForm.do");
         return;
     }
 

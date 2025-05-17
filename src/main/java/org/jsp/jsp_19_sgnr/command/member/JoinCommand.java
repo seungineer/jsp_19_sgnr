@@ -37,8 +37,7 @@ public class JoinCommand implements Command {
                 && MOBILE_REGEX.matcher(mobile).matches();
 
         if (!isValid) {
-            request.setAttribute("error", "입력 형식이 올바르지 않습니다.");
-            request.getRequestDispatcher("/join.html").forward(request, response);
+            response.sendRedirect(request.getContextPath() + "/member/joinForm.do?error=" + URLEncoder.encode("입력 형식이 올바르지 않습니다.", "UTF-8"));
             return;
         }
 
@@ -52,19 +51,16 @@ public class JoinCommand implements Command {
             existing.setStatus("ST00");
 
             memberDao.updateForRejoin(existing);
-            request.setAttribute("status", "rejoined");
-            request.getRequestDispatcher("/joinResult.jsp").forward(request, response);
+            response.sendRedirect(request.getContextPath() + "/member/loginForm.do?message=" + URLEncoder.encode("회원가입이 완료되었습니다. 로그인해주세요.", "UTF-8"));
 
         } else if (existing != null) {
-            request.setAttribute("status", "duplicate");
-            request.getRequestDispatcher("/join.html").forward(request, response);
+            response.sendRedirect(request.getContextPath() + "/member/joinForm.do?error=" + URLEncoder.encode("이미 존재하는 아이디입니다.", "UTF-8"));
         } else {
             Member newMember = new Member(id, paswd, username, mobile);
             newMember.setStatus("ST00");
             newMember.setUserType("10");
             memberDao.insert(newMember);
-            request.setAttribute("status", "success");
-            request.getRequestDispatcher("/joinResult.jsp").forward(request, response);
+            response.sendRedirect(request.getContextPath() + "/member/loginForm.do?message=" + URLEncoder.encode("회원가입이 완료되었습니다. 로그인해주세요.", "UTF-8"));
         }
     }
 }

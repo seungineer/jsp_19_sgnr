@@ -13,6 +13,7 @@ import org.jsp.jsp_19_sgnr.dto.Product;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Command for handling product listing with filtering and sorting options in the admin panel.
@@ -26,7 +27,7 @@ public class ProductListCommand implements Command {
         Member member = (Member) session.getAttribute("member");
 
         if (member == null || !"20".equals(member.getUserType())) {
-            response.sendRedirect(request.getContextPath() + "/login.html");
+            response.sendRedirect(request.getContextPath() + "/member/loginForm.do");
             return;
         }
 
@@ -44,16 +45,13 @@ public class ProductListCommand implements Command {
             sortOrder = "asc";
         }
 
-        // Get all categories for the tree view
         CategoryDao categoryDao = new CategoryDao();
         List<Category> categories = categoryDao.findAll();
         request.setAttribute("categories", categories);
 
-        // Get products
         ProductDao productDao = new ProductDao();
         List<Product> products;
 
-        // Filter by category if specified
         if (categoryIdStr != null && !categoryIdStr.isEmpty()) {
             try {
                 int categoryId = Integer.parseInt(categoryIdStr);
@@ -71,9 +69,12 @@ public class ProductListCommand implements Command {
 
         if ("category".equals(sortBy)) {
             // For category sorting, we need to get the category names for each product
+            // Get all category mappings in a single query to avoid N+1 problem
+            Map<String, List<Integer>> allCategoryMappings = productDao.getAllCategoryMappings();
+
             products.sort((p1, p2) -> {
-                List<Integer> cats1 = productDao.getCategoryMappings(p1.getNo_product());
-                List<Integer> cats2 = productDao.getCategoryMappings(p2.getNo_product());
+                List<Integer> cats1 = allCategoryMappings.getOrDefault(p1.getNo_product(), List.of());
+                List<Integer> cats2 = allCategoryMappings.getOrDefault(p2.getNo_product(), List.of());
 
                 String cat1Name = getCategoryName(cats1, categories);
                 String cat2Name = getCategoryName(cats2, categories);

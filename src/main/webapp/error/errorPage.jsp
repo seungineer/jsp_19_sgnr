@@ -70,7 +70,7 @@
     <pre><%= exception.getStackTrace()[0] %></pre>
     <% } %>
 
-    <a href="<%= request.getContextPath() %>/main.jsp">메인 페이지로 이동</a>
+    <a href="<%= request.getContextPath() %>/product/list.do">메인 페이지로 이동</a>
 </div>
 </body>
 </html>

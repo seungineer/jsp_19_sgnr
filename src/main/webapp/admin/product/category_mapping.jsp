@@ -9,7 +9,7 @@
     // Check if user is logged in
     Member member = (Member) session.getAttribute("member");
     if (member == null) {
-        response.sendRedirect(request.getContextPath() + "/login.html");
+        response.sendRedirect(request.getContextPath() + "/member/loginForm.do");
         return;
     }
 

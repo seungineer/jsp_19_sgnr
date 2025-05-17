@@ -8,11 +8,92 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.jsp.jsp_19_sgnr.db.DBConnection.getConnection;
 
 public class ProductDao {
+
+    /**
+     * Searches products by keyword in product name.
+     * 
+     * @param keyword The search keyword
+     * @return List of products matching the keyword
+     */
+    public List<Product> searchProductsByKeyword(String keyword) {
+        String sql = "SELECT * FROM TB_PRODUCT WHERE NM_PRODUCT LIKE ? ORDER BY DA_FIRST_DATE DESC";
+        List<Product> products = new ArrayList<>();
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, "%" + keyword + "%");
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Product product = new Product();
+                    product.setNo_product(rs.getString("NO_PRODUCT"));
+                    product.setNm_product(rs.getString("NM_PRODUCT"));
+                    product.setNm_detail_explain(rs.getString("NM_DETAIL_EXPLAIN"));
+                    product.setDt_start_date(rs.getString("DT_START_DATE"));
+                    product.setDt_end_date(rs.getString("DT_END_DATE"));
+                    product.setQt_customer_price(rs.getInt("QT_CUSTOMER_PRICE"));
+                    product.setQt_sale_price(rs.getInt("QT_SALE_PRICE"));
+                    product.setQt_stock(rs.getInt("QT_STOCK"));
+                    product.setQt_delivery_fee(rs.getInt("QT_DELIVERY_FEE"));
+                    product.setNo_register(rs.getString("NO_REGISTER"));
+                    product.setSale_status(rs.getInt("SALE_STATUS"));
+                    product.setId_file(rs.getString("ID_FILE"));
+                    products.add(product);
+                }
+            }
+
+            return products;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return products;
+        }
+    }
+
+    /**
+     * Gets a product by its ID.
+     * 
+     * @param productId The product ID
+     * @return The product, or null if not found
+     */
+    public Product getProductById(String productId) {
+        String sql = "SELECT * FROM TB_PRODUCT WHERE NO_PRODUCT = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, productId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Product product = new Product();
+                    product.setNo_product(rs.getString("NO_PRODUCT"));
+                    product.setNm_product(rs.getString("NM_PRODUCT"));
+                    product.setNm_detail_explain(rs.getString("NM_DETAIL_EXPLAIN"));
+                    product.setDt_start_date(rs.getString("DT_START_DATE"));
+                    product.setDt_end_date(rs.getString("DT_END_DATE"));
+                    product.setQt_sale_price(rs.getInt("QT_SALE_PRICE"));
+                    product.setQt_stock(rs.getInt("QT_STOCK"));
+                    product.setQt_delivery_fee(rs.getInt("QT_DELIVERY_FEE"));
+                    product.setNo_register(rs.getString("NO_REGISTER"));
+                    product.setSale_status(rs.getInt("SALE_STATUS"));
+                    product.setId_file(rs.getString("ID_FILE"));
+                    return product;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
     /**
      * Finds all products mapped to a specific category.
@@ -50,6 +131,7 @@ public class ProductDao {
                     products.add(product);
                 }
             }
+            System.out.println("findProductsByCategory products size: " + products.size());
 
             return products;
         } catch (Exception e) {
@@ -276,6 +358,37 @@ public class ProductDao {
         } catch (Exception e) {
             e.printStackTrace();
             return categoryIds;
+        }
+    }
+
+    /**
+     * Gets all category mappings for all products in a single query.
+     * This method is optimized to avoid N+1 query problem when sorting products by category.
+     * 
+     * @return Map with product ID as key and list of category IDs as value
+     */
+    public Map<String, List<Integer>> getAllCategoryMappings() {
+        String sql = "SELECT NO_PRODUCT, NB_CATEGORY FROM TB_CATEGORY_PRODUCT_MAPPING ORDER BY cn_order";
+
+        Map<String, List<Integer>> mappings = new HashMap<>();
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                String productId = rs.getString("NO_PRODUCT");
+                int categoryId = rs.getInt("NB_CATEGORY");
+
+                // Get or create the list of category IDs for this product
+                List<Integer> categoryIds = mappings.computeIfAbsent(productId, k -> new ArrayList<>());
+                categoryIds.add(categoryId);
+            }
+
+            return mappings;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return mappings;
         }
     }
 

@@ -10,6 +10,58 @@ import java.util.List;
 public class CategoryDao {
 
     /**
+     * Finds categories by their IDs.
+     * 
+     * @param categoryIds List of category IDs
+     * @return List of categories matching the provided IDs
+     */
+    public List<Category> findByIds(List<Integer> categoryIds) {
+        if (categoryIds == null || categoryIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // Build the IN clause for the SQL query
+        StringBuilder placeholders = new StringBuilder();
+        for (int i = 0; i < categoryIds.size(); i++) {
+            if (i > 0) {
+                placeholders.append(", ");
+            }
+            placeholders.append("?");
+        }
+
+        String sql = "SELECT * FROM TB_CATEGORY WHERE ID IN (" + placeholders.toString() + ")";
+
+        List<Category> categories = new ArrayList<>();
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            // Set the parameters for the IN clause
+            for (int i = 0; i < categoryIds.size(); i++) {
+                ps.setInt(i + 1, categoryIds.get(i));
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Category category = new Category();
+                    category.setId(rs.getInt("ID"));
+                    category.setName(rs.getString("NAME"));
+                    category.setUpperId(rs.getInt("UPPER_ID"));
+                    category.setOrder(rs.getInt("ORDER_NO"));
+                    category.setRegDate(rs.getString("REG_DATE"));
+                    category.setLevel(rs.getInt("LEVEL"));
+                    category.setYnUse(rs.getString("YN_USE"));
+                    categories.add(category);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return categories;
+    }
+
+    /**
      * 카테고리 이름 업데이트 및 하위 카테고리의 전체 경로 업데이트
      * @param categoryId 업데이트할 카테고리 ID
      * @param newName 새 카테고리 이름

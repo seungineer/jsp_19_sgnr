@@ -3,7 +3,7 @@
 <%
   Member loggedInMember = (Member) session.getAttribute("member");
   if (loggedInMember == null || !"20".equals(loggedInMember.getUserType())) {
-    out.println("<script>alert('관리자만 접근 가능합니다.'); location.href='login.html';</script>");
+    response.sendRedirect(request.getContextPath() + "/member/loginForm.do");
     return;
   }
 
@@ -81,7 +81,7 @@
     </div>
     <div class="user-info">
       <strong><%= userName %></strong> 님<br>
-      <a class="logout-link" href="../logout.jsp">로그아웃</a>
+      <a class="logout-link" href="${pageContext.request.contextPath}/member/logout.do">로그아웃</a>
     </div>
   </div>
 
@@ -106,7 +106,7 @@
       <% } else if ("productModify".equals(menu)) { %>
       <jsp:include page="product/modify.jsp" />
       <% } else if ("productList".equals(menu)) { %>
-      <jsp:include page="../productList.jsp" />
+      <jsp:include page="/WEB-INF/views/product/productList.jsp" />
       <% } else { %>
       <p>좌측 메뉴를 클릭해주세요.</p>
       <% } %>

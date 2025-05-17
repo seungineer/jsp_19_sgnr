@@ -34,7 +34,7 @@ public class ProductModifyCommand implements Command {
         HttpSession session = request.getSession();
         Member member = (Member) session.getAttribute("member");
         if (member == null) {
-            response.sendRedirect(request.getContextPath() + "/login.html");
+            response.sendRedirect(request.getContextPath() + "/member/loginForm.do");
             return;
         }
 
