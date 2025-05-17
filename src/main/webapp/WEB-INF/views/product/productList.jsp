@@ -99,35 +99,88 @@
             border-radius: 4px;
         }
 
-        .product-table {
+        .product-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
             width: 100%;
-            border-collapse: collapse;
+        }
+
+        .product-card {
+            height: 100%;
             background-color: white;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            width: calc(33.333% - 20px);
+            transition: transform 0.3s ease;
+            position: relative;
         }
 
-        .product-table th, .product-table td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
+        @media (max-width: 992px) {
+            .product-card {
+                width: calc(50% - 20px);
+            }
         }
 
-        .product-table th {
-            background-color: #f8f9fa;
-            font-weight: bold;
+        @media (max-width: 576px) {
+            .product-card {
+                width: 100%;
+            }
         }
 
-        .product-table tr:hover {
-            background-color: #f5f5f5;
+        .product-image-container {
+            position: relative;
+            overflow: hidden;
+            height: 200px;
         }
 
         .product-image {
-            width: 80px;
-            height: 80px;
+            width: 100%;
+            height: 100%;
             object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-image-container:hover .product-image {
+            transform: scale(1.05);
+        }
+
+        .product-info {
+            padding: 15px;
+            display: block;
+            width: 100%;
+        }
+
+        .product-name {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #333;
+            text-decoration: none;
+            display: block;
+        }
+
+        .product-name:hover {
+            color: #4285f4;
+        }
+
+        .product-price {
+            font-size: 18px;
+            color: #4285f4;
+            margin-bottom: 10px;
+        }
+
+        .sold-out-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
             border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
         }
 
         .detail-button {
@@ -251,21 +304,12 @@
 <%
     } else {
 %>
-    <table class="product-table">
-        <thead>
-            <tr>
-                <th>이미지</th>
-                <th>상품명</th>
-                <th>가격</th>
-                <th>재고</th>
-                <th>상세보기</th>
-            </tr>
-        </thead>
-        <tbody>
+    <div class="product-grid">
         <%
             for (Product product : products) {
                 String fileId = product.getId_file();
                 String imagePath = "";
+                String productDetailUrl = request.getContextPath() + "/product/detail.do?productId=" + product.getNo_product();
 
                 if (fileId != null && !fileId.isEmpty()) {
                     ContentDao contentDao = new ContentDao();
@@ -281,30 +325,31 @@
                     }
                 }
         %>
-            <tr>
-                <td>
-                <% if (!imagePath.isEmpty()) { %>
-                    <img src="<%= imagePath %>" alt="<%= product.getNm_product() %>" class="product-image">
-                <% } else { %>
-                    <div class="product-image" style="background-color: #eee; display: flex; align-items: center; justify-content: center;">
-                        No Image
-                    </div>
+            <div class="product-card">
+                <% if (product.getQt_stock() <= 0) { %>
+                    <div class="sold-out-badge">품절</div>
                 <% } %>
-                </td>
-                <td><%= product.getNm_product() %></td>
-                <td><%= product.getQt_sale_price() %>원</td>
-                <td><%= product.getQt_stock() %></td>
-                <td>
-                    <button class="detail-button" onclick="location.href='${pageContext.request.contextPath}/product/detail.do?productId=<%= product.getNo_product() %>'">
+                <a href="<%= productDetailUrl %>" class="product-image-container">
+                    <% if (!imagePath.isEmpty()) { %>
+                        <img src="<%= imagePath %>" alt="<%= product.getNm_product() %>" class="product-image">
+                    <% } else { %>
+                        <div class="product-image" style="background-color: #eee; display: flex; align-items: center; justify-content: center;">
+                            No Image
+                        </div>
+                    <% } %>
+                </a>
+                <div class="product-info" style="display: block; width: 100%;">
+                    <a href="<%= productDetailUrl %>" class="product-name"><%= product.getNm_product() %></a>
+                    <div class="product-price"><%= product.getQt_sale_price() %>원</div>
+                    <button class="detail-button" onclick="location.href='<%= productDetailUrl %>'">
                         상세 보기
                     </button>
-                </td>
-            </tr>
+                </div>
+            </div>
         <%
             }
         %>
-        </tbody>
-    </table>
+    </div>
 <%
     }
 %>
