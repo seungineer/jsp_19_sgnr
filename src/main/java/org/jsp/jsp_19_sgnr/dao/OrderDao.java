@@ -3,6 +3,7 @@ package org.jsp.jsp_19_sgnr.dao;
 import org.jsp.jsp_19_sgnr.db.DBConnection;
 import org.jsp.jsp_19_sgnr.dto.Order;
 import org.jsp.jsp_19_sgnr.dto.OrderItem;
+import org.jsp.jsp_19_sgnr.dto.OrderWithUser;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -403,5 +404,83 @@ public class OrderDao {
         }
 
         return null;
+    }
+
+    /**
+     * Gets all orders with user information, with optional filtering by order ID or user name.
+     * 
+     * @param orderId The order ID to filter by (optional)
+     * @param userName The user name to filter by (optional)
+     * @return A list of orders with user information
+     */
+    public List<OrderWithUser> getAllOrders(String orderId, String userName) {
+        StringBuilder sqlBuilder = new StringBuilder();
+        sqlBuilder.append("SELECT o.*, m.NM_USER as nm_user FROM TB_ORDER o ");
+        sqlBuilder.append("JOIN TB_USER m ON o.no_user = m.ID_USER ");
+
+        List<String> conditions = new ArrayList<>();
+        List<Object> parameters = new ArrayList<>();
+
+        if (orderId != null && !orderId.trim().isEmpty()) {
+            conditions.add("o.id_order LIKE ?");
+            parameters.add("%" + orderId + "%");
+        }
+
+        if (userName != null && !userName.trim().isEmpty()) {
+            conditions.add("m.NM_USER LIKE ?");
+            parameters.add("%" + userName + "%");
+        }
+
+        if (!conditions.isEmpty()) {
+            sqlBuilder.append("WHERE ");
+            for (int i = 0; i < conditions.size(); i++) {
+                if (i > 0) {
+                    sqlBuilder.append(" AND ");
+                }
+                sqlBuilder.append(conditions.get(i));
+            }
+        }
+
+        sqlBuilder.append(" ORDER BY o.da_order DESC");
+
+        List<OrderWithUser> orders = new ArrayList<>();
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sqlBuilder.toString())) {
+
+            for (int i = 0; i < parameters.size(); i++) {
+                ps.setObject(i + 1, parameters.get(i));
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    OrderWithUser order = new OrderWithUser();
+                    order.setId_order(rs.getString("id_order"));
+                    order.setNo_user(rs.getString("no_user"));
+                    order.setQt_order_amount(rs.getInt("qt_order_amount"));
+                    order.setQt_deli_money(rs.getInt("qt_deli_money"));
+                    order.setQt_deli_period(rs.getInt("qt_deli_period"));
+                    order.setNm_order_person(rs.getString("nm_order_person"));
+                    order.setNm_receiver(rs.getString("nm_receiver"));
+                    order.setNo_delivery_zipno(rs.getString("no_delivery_zipno"));
+                    order.setNm_delivery_address(rs.getString("nm_delivery_address"));
+                    order.setNm_receiver_telno(rs.getString("nm_receiver_telno"));
+                    order.setNm_delivery_space(rs.getString("nm_delivery_space"));
+                    order.setCd_order_type(rs.getString("cd_order_type"));
+                    order.setDa_order(rs.getString("da_order"));
+                    order.setSt_order(rs.getString("st_order"));
+                    order.setSt_payment(rs.getString("st_payment"));
+                    order.setNo_register(rs.getString("no_register"));
+                    order.setDa_first_date(rs.getString("da_first_date"));
+                    order.setNm_user(rs.getString("nm_user"));
+
+                    orders.add(order);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return orders;
     }
 }

@@ -78,6 +78,9 @@
       <h2 style="margin-top: 40px;">카테고리</h2>
       <a class="menu-item <%= "category".equals(menu) ? "active" : "" %>" href="admin.jsp?menu=category">카테고리 등록</a>
       <a class="menu-item <%= "categoryManage".equals(menu) ? "active" : "" %>" href="admin.jsp?menu=categoryManage">카테고리 관리</a>
+
+      <h2 style="margin-top: 40px;">주문</h2>
+      <a class="menu-item <%= "orderList".equals(menu) ? "active" : "" %>" href="admin.jsp?menu=orderList">주문 조회</a>
     </div>
     <div class="user-info">
       <strong><%= userName %></strong> 님<br>
@@ -107,6 +110,8 @@
       <jsp:include page="product/modify.jsp" />
       <% } else if ("productList".equals(menu)) { %>
       <jsp:include page="/WEB-INF/views/admin/productList.jsp" />
+      <% } else if ("orderList".equals(menu)) { %>
+      <jsp:include page="order/list.jsp" />
       <% } else { %>
       <p>좌측 메뉴를 클릭해주세요.</p>
       <% } %>
