@@ -17,10 +17,18 @@ public class UpdateMemberCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        
+
         request.setCharacterEncoding("UTF-8");
 
         String[] idList = request.getParameterValues("idList");
+        String menu = request.getParameter("menu");
+        String page = request.getParameter("page");
+
+        // Default to "member" if menu is not provided
+        if (menu == null || menu.isEmpty()) {
+            menu = "member";
+        }
+
         if (idList != null) {
             for (String id : idList) {
                 String name = request.getParameter("name_" + id);
@@ -33,6 +41,11 @@ public class UpdateMemberCommand implements Command {
             }
         }
 
-        response.sendRedirect(request.getContextPath() + "/admin/admin.jsp?menu=member&status=success");
+        // Redirect back to the same page with pagination parameter
+        String redirectUrl = request.getContextPath() + "/admin/admin.jsp?menu=" + menu + "&status=success";
+        if (page != null && !page.isEmpty()) {
+            redirectUrl += "&page=" + page;
+        }
+        response.sendRedirect(redirectUrl);
     }
 }

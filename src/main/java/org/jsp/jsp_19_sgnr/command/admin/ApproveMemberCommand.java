@@ -18,9 +18,10 @@ public class ApproveMemberCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        
+
         request.setCharacterEncoding("UTF-8");
         String id = request.getParameter("id");
+        String page = request.getParameter("page");
 
         if (id != null) {
             Member member = memberDao.findById(id);
@@ -33,6 +34,11 @@ public class ApproveMemberCommand implements Command {
             }
         }
 
-        response.sendRedirect(request.getContextPath() + "/admin/admin.jsp?menu=approval");
+        // Redirect back to the same page with pagination parameter
+        String redirectUrl = request.getContextPath() + "/admin/admin.jsp?menu=approval";
+        if (page != null && !page.isEmpty()) {
+            redirectUrl += "&page=" + page;
+        }
+        response.sendRedirect(redirectUrl);
     }
 }

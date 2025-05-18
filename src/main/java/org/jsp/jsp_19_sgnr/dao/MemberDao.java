@@ -13,6 +13,8 @@ import java.util.List;
 import static org.jsp.jsp_19_sgnr.db.DBConnection.getConnection;
 
 public class MemberDao {
+    // Default page size
+    private static final int DEFAULT_PAGE_SIZE = 10;
     public int insert(Member member) {
         String sql = "INSERT INTO TB_USER (ID_USER, NM_USER, NM_PASWD, NO_MOBILE, NM_EMAIL, ST_STATUS, CD_USER_TYPE) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -229,5 +231,178 @@ public class MemberDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Count total number of regular users (non-admin)
+     * 
+     * @return Total count of regular users
+     */
+    public int countAllExceptAdmin() {
+        String sql = "SELECT COUNT(*) FROM TB_USER WHERE CD_USER_TYPE != '20'";
+        return countWithQuery(sql);
+    }
+
+    /**
+     * Count total number of admin users
+     * 
+     * @return Total count of admin users
+     */
+    public int countOnlyAdmin() {
+        String sql = "SELECT COUNT(*) FROM TB_USER WHERE CD_USER_TYPE = '20'";
+        return countWithQuery(sql);
+    }
+
+    /**
+     * Count users by status and user type
+     * 
+     * @param status User status
+     * @param userType User type
+     * @return Total count of users with the specified status and type
+     */
+    public int countByStatusAndUserType(String status, String userType) {
+        String sql = "SELECT COUNT(*) FROM TB_USER WHERE ST_STATUS = ? AND CD_USER_TYPE = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, status);
+            pstmt.setString(2, userType);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    /**
+     * Helper method to count records with a simple query
+     */
+    private int countWithQuery(String sql) {
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    /**
+     * Get paginated list of regular users (non-admin)
+     * 
+     * @param page The page number (1-based)
+     * @param pageSize The number of items per page
+     * @return List of regular users for the specified page
+     */
+    public List<Member> getPaginatedMembersExceptAdmin(int page, int pageSize) {
+        int startRow = (page - 1) * pageSize + 1;
+        int endRow = page * pageSize;
+
+        String sql = "SELECT * FROM (" +
+                "SELECT m.*, ROWNUM AS rnum FROM (" +
+                "SELECT * FROM TB_USER WHERE CD_USER_TYPE != '20' ORDER BY ID_USER" +
+                ") m WHERE ROWNUM <= ?" +
+                ") WHERE rnum >= ?";
+
+        return getPaginatedMembers(sql, startRow, endRow);
+    }
+
+    /**
+     * Get paginated list of admin users
+     * 
+     * @param page The page number (1-based)
+     * @param pageSize The number of items per page
+     * @return List of admin users for the specified page
+     */
+    public List<Member> getPaginatedAdminMembers(int page, int pageSize) {
+        int startRow = (page - 1) * pageSize + 1;
+        int endRow = page * pageSize;
+
+        String sql = "SELECT * FROM (" +
+                "SELECT m.*, ROWNUM AS rnum FROM (" +
+                "SELECT * FROM TB_USER WHERE CD_USER_TYPE = '20' ORDER BY ID_USER" +
+                ") m WHERE ROWNUM <= ?" +
+                ") WHERE rnum >= ?";
+
+        return getPaginatedMembers(sql, startRow, endRow);
+    }
+
+    /**
+     * Get paginated list of users by status and user type
+     * 
+     * @param status User status
+     * @param userType User type
+     * @param page The page number (1-based)
+     * @param pageSize The number of items per page
+     * @return List of users with the specified status and type for the specified page
+     */
+    public List<Member> getPaginatedMembersByStatusAndUserType(String status, String userType, int page, int pageSize) {
+        int startRow = (page - 1) * pageSize + 1;
+        int endRow = page * pageSize;
+
+        String sql = "SELECT * FROM (" +
+                "SELECT m.*, ROWNUM AS rnum FROM (" +
+                "SELECT * FROM TB_USER WHERE ST_STATUS = ? AND CD_USER_TYPE = ? ORDER BY ID_USER" +
+                ") m WHERE ROWNUM <= ?" +
+                ") WHERE rnum >= ?";
+
+        List<Member> list = new ArrayList<>();
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, status);
+            pstmt.setString(2, userType);
+            pstmt.setInt(3, endRow);
+            pstmt.setInt(4, startRow);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Member m = new Member();
+                    m.setEmail(rs.getString("ID_USER"));
+                    m.setName(rs.getString("NM_USER"));
+                    m.setEmail(rs.getString("NM_EMAIL"));
+                    m.setPhone(rs.getString("NO_MOBILE"));
+                    m.setStatus(rs.getString("ST_STATUS"));
+                    m.setUserType(rs.getString("CD_USER_TYPE"));
+                    list.add(m);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    /**
+     * Helper method to get paginated members with a prepared SQL query
+     */
+    private List<Member> getPaginatedMembers(String sql, int startRow, int endRow) {
+        List<Member> list = new ArrayList<>();
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, endRow);
+            pstmt.setInt(2, startRow);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Member m = new Member();
+                    m.setEmail(rs.getString("ID_USER"));
+                    m.setName(rs.getString("NM_USER"));
+                    m.setEmail(rs.getString("NM_EMAIL"));
+                    m.setPhone(rs.getString("NO_MOBILE"));
+                    m.setStatus(rs.getString("ST_STATUS"));
+                    m.setUserType(rs.getString("CD_USER_TYPE"));
+                    list.add(m);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 }

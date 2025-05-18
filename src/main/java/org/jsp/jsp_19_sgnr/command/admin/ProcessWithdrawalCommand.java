@@ -18,11 +18,12 @@ public class ProcessWithdrawalCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        
+
         request.setCharacterEncoding("UTF-8");
 
         String id = request.getParameter("id");
         String action = request.getParameter("action");
+        String page = request.getParameter("page");
 
         if (id != null && action != null) {
             Member member = memberDao.findById(id);
@@ -45,6 +46,11 @@ public class ProcessWithdrawalCommand implements Command {
             }
         }
 
-        response.sendRedirect(request.getContextPath() + "/admin/admin.jsp?menu=withdrawal");
+        // Redirect back to the same page with pagination parameter
+        String redirectUrl = request.getContextPath() + "/admin/admin.jsp?menu=withdrawal";
+        if (page != null && !page.isEmpty()) {
+            redirectUrl += "&page=" + page;
+        }
+        response.sendRedirect(redirectUrl);
     }
 }
