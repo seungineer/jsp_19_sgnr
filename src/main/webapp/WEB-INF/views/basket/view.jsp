@@ -219,6 +219,7 @@
         }
     </style>
     <script>
+        // Function to update quantity and recalculate prices
         function updateQuantity(itemId, increment) {
             var inputElement = document.getElementById('quantity-' + itemId);
             var currentValue = parseInt(inputElement.value);
@@ -226,15 +227,139 @@
 
             if (newValue > 0) {
                 inputElement.value = newValue;
+                // Trigger price recalculation
+                updateItemPrice(itemId);
             }
         }
 
+        // Function to update item price when quantity changes
+        function updateItemPrice(itemId) {
+            var quantityInput = document.getElementById('quantity-' + itemId);
+            var quantity = parseInt(quantityInput.value);
+            var priceElement = document.getElementById('price-' + itemId);
+            var unitPrice = parseInt(priceElement.getAttribute('data-price'));
+            var totalElement = document.getElementById('total-' + itemId);
+
+            // Calculate new total for this item
+            var newTotal = quantity * unitPrice;
+            totalElement.textContent = formatCurrency(newTotal);
+            totalElement.setAttribute('data-total', newTotal);
+
+            // Update the hidden input for form submission
+            var hiddenQuantity = document.getElementById('hidden-quantity-' + itemId);
+            if (hiddenQuantity) {
+                hiddenQuantity.value = quantity;
+            }
+
+            // Recalculate totals
+            updateTotalPrice();
+        }
+
+        // Function to update total price based on selected items
+        function updateTotalPrice() {
+            var checkboxes = document.getElementsByName('selectedItems');
+            var totalProductPrice = 0;
+            var totalDeliveryFee = 0;
+
+            for (var i = 0; i < checkboxes.length; i++) {
+                var itemId = checkboxes[i].value;
+                var totalElement = document.getElementById('total-' + itemId);
+                var deliveryElement = document.getElementById('delivery-' + itemId);
+
+                if (checkboxes[i].checked) {
+                    // Add to total if checkbox is checked
+                    totalProductPrice += parseInt(totalElement.getAttribute('data-total'));
+                    totalDeliveryFee += parseInt(deliveryElement.getAttribute('data-fee'));
+                }
+            }
+
+            // Update summary display
+            document.getElementById('summary-product-price').textContent = formatCurrency(totalProductPrice);
+            document.getElementById('summary-delivery-fee').textContent = formatCurrency(totalDeliveryFee);
+            document.getElementById('summary-total-price').textContent = formatCurrency(totalProductPrice + totalDeliveryFee);
+        }
+
+        // Format number as Korean currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(amount);
+        }
+
+        // Toggle all checkboxes
         function toggleSelectAll(source) {
             var checkboxes = document.getElementsByName('selectedItems');
             for (var i = 0; i < checkboxes.length; i++) {
                 checkboxes[i].checked = source.checked;
             }
+            // Update totals after toggling checkboxes
+            updateTotalPrice();
         }
+
+        // Handle form submission for selected items
+        function submitSelectedItems(action) {
+            var form = document.getElementById('basketForm');
+            var checkboxes = document.getElementsByName('selectedItems');
+            var hasSelected = false;
+
+            // Remove any previously added hidden fields
+            var oldHiddenFields = document.querySelectorAll('.dynamic-hidden-field');
+            for (var i = 0; i < oldHiddenFields.length; i++) {
+                oldHiddenFields[i].remove();
+            }
+
+            // Add hidden fields for selected items
+            for (var i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    hasSelected = true;
+                    var itemId = checkboxes[i].value;
+                    var quantity = document.getElementById('quantity-' + itemId).value;
+
+                    var hiddenItem = document.createElement('input');
+                    hiddenItem.type = 'hidden';
+                    hiddenItem.name = 'selectedItemId';
+                    hiddenItem.value = itemId;
+                    hiddenItem.className = 'dynamic-hidden-field';
+                    form.appendChild(hiddenItem);
+
+                    var hiddenQuantity = document.createElement('input');
+                    hiddenQuantity.type = 'hidden';
+                    hiddenQuantity.name = 'selectedQuantity-' + itemId;
+                    hiddenQuantity.value = quantity;
+                    hiddenQuantity.className = 'dynamic-hidden-field';
+                    form.appendChild(hiddenQuantity);
+                }
+            }
+
+            if (!hasSelected) {
+                alert('선택된 상품이 없습니다.');
+                return false;
+            }
+
+            // Set the form action and submit
+            form.action = action;
+            form.submit();
+            return true;
+        }
+
+        // Initialize page
+        window.onload = function() {
+            // Set initial checked state for all items
+            var checkboxes = document.getElementsByName('selectedItems');
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = true;
+            }
+
+            // Initialize price calculations
+            updateTotalPrice();
+
+            // Add event listeners to quantity inputs
+            var quantityInputs = document.getElementsByClassName('quantity-input');
+            for (var i = 0; i < quantityInputs.length; i++) {
+                quantityInputs[i].addEventListener('change', function() {
+                    var itemId = this.id.split('-')[1];
+                    updateItemPrice(itemId);
+                });
+            }
+        };
     </script>
 </head>
 <body>
@@ -266,15 +391,25 @@
                     int totalPrice = 0;
         %>
             <div style="display: flex; justify-content: end">
-                <button type="submit" class="button update-btn">장바구니 업데이트</button>
                 <a href="${pageContext.request.contextPath}/basket/clear.do?basketId=<%= userBasket.getBasketId() %>" class="button clear-basket">장바구니 비우기</a>
             </div>
             <form action="${pageContext.request.contextPath}/basket/update.do" method="post" id="basketForm">
                 <input type="hidden" name="basketId" value="<%= userBasket.getBasketId() %>">
 
+                <div class="select-all-container">
+                    <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)">
+                    <label for="selectAll">전체 선택</label>
+                </div>
+
+                <div style="margin-bottom: 10px;">
+                    <button type="button" class="button update-btn" onclick="submitSelectedItems('${pageContext.request.contextPath}/basket/removeSelected.do')">선택 삭제</button>
+                    <button type="button" class="button checkout" onclick="submitSelectedItems('${pageContext.request.contextPath}/order/checkout.do')">선택 주문</button>
+                </div>
+
                 <table class="basket-table">
                     <thead>
                         <tr>
+                            <th class="checkbox-column">선택</th>
                             <th>상품 이미지</th>
                             <th>상품명</th>
                             <th>가격</th>
@@ -322,6 +457,9 @@
                             totalPrice += itemTotal;
                     %>
                         <tr>
+                            <td class="checkbox-column">
+                                <input type="checkbox" name="selectedItems" value="<%= item.getItemId() %>" onchange="updateTotalPrice()">
+                            </td>
                             <td>
                                 <% if (imagePath != null && !imagePath.isEmpty()) { %>
                                     <img src="<%= imagePath %>" alt="<%= productName %>" class="product-image">
@@ -332,16 +470,25 @@
                                 <% } %>
                             </td>
                             <td class="product-name"><%= productName %></td>
-                            <td class="product-price"><%= currencyFormatter.format(item.getPrice()) %></td>
-                            <td class="product-price"><%= product.getQt_delivery_fee() != 0 ? currencyFormatter.format(product.getQt_delivery_fee()) : "무료" %></td>
+                            <td class="product-price">
+                                <span id="price-<%= item.getItemId() %>" data-price="<%= item.getPrice() %>"><%= currencyFormatter.format(item.getPrice()) %></span>
+                            </td>
+                            <td class="product-price">
+                                <span id="delivery-<%= item.getItemId() %>" data-fee="<%= product.getQt_delivery_fee() %>">
+                                    <%= product.getQt_delivery_fee() != 0 ? currencyFormatter.format(product.getQt_delivery_fee()) : "무료" %>
+                                </span>
+                            </td>
                             <td>
                                 <div class="quantity-control">
                                     <button type="button" class="quantity-btn" onclick="updateQuantity(<%= item.getItemId() %>, -1)">-</button>
                                     <input type="number" id="quantity-<%= item.getItemId() %>" name="quantity-<%= item.getItemId() %>" value="<%= item.getQuantity() %>" min="1" class="quantity-input">
                                     <button type="button" class="quantity-btn" onclick="updateQuantity(<%= item.getItemId() %>, 1)">+</button>
+                                    <input type="hidden" id="hidden-quantity-<%= item.getItemId() %>" name="quantity-<%= item.getItemId() %>" value="<%= item.getQuantity() %>">
                                 </div>
                             </td>
-                            <td class="product-price"><%= currencyFormatter.format(itemTotal) %></td>
+                            <td class="product-price">
+                                <span id="total-<%= item.getItemId() %>" data-total="<%= itemTotal %>"><%= currencyFormatter.format(itemTotal) %></span>
+                            </td>
                             <td>
                                 <a href="${pageContext.request.contextPath}/basket/remove.do?itemId=<%= item.getItemId() %>" class="action-btn remove-btn">삭제</a>
                             </td>
@@ -355,20 +502,21 @@
                 <div class="basket-summary">
                     <div class="summary-row">
                         <span>상품 금액</span>
-                        <span><%= currencyFormatter.format(totalPrice) %></span>
+                        <span id="summary-product-price"><%= currencyFormatter.format(totalPrice) %></span>
                     </div>
                     <div class="summary-row">
                         <span>배송비</span>
-                        <span><%= currencyFormatter.format(totalDeliveryFee) %></span>
+                        <span id="summary-delivery-fee"><%= currencyFormatter.format(totalDeliveryFee) %></span>
                     </div>
                     <div class="summary-row">
                         <span>결제 예정 금액</span>
-                        <span><%= currencyFormatter.format(totalPrice + totalDeliveryFee) %></span>
+                        <span id="summary-total-price"><%= currencyFormatter.format(totalPrice + totalDeliveryFee) %></span>
                     </div>
                 </div>
 
                 <div class="button-container">
-                    <a href="${pageContext.request.contextPath}/order/checkout.do" class="button checkout">주문하기</a>
+                    <button type="submit" class="button update-btn">장바구니 업데이트</button>
+                    <a href="${pageContext.request.contextPath}/order/checkout.do" class="button checkout">전체 주문하기</a>
                 </div>
             </form>
         <%
