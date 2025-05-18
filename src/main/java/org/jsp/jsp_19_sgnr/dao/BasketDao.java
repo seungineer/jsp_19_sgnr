@@ -419,4 +419,48 @@ public class BasketDao {
 
         return items;
     }
+
+    /**
+     * Gets a basket item by its ID.
+     * 
+     * @param itemId The item ID
+     * @return The basket item, or null if not found
+     */
+    public BasketItem getBasketItemById(int itemId) {
+        String sql = "SELECT bi.*, p.NM_PRODUCT, p.ID_FILE " +
+                "FROM TB_BASKET_ITEM bi " +
+                "JOIN TB_PRODUCT p ON bi.no_product = p.NO_PRODUCT " +
+                "WHERE bi.nb_basket_item = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, itemId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    BasketItem item = new BasketItem();
+                    item.setItemId(rs.getInt("nb_basket_item"));
+                    item.setBasketId(rs.getInt("nb_basket"));
+                    item.setProductId(rs.getString("no_product"));
+                    item.setQuantity(rs.getInt("qt_basket_item"));
+                    item.setPrice(rs.getInt("qt_basket_item_price"));
+                    item.setCreateDate(rs.getString("da_first_date"));
+                    // These fields are no longer in the table, but we'll keep them in the DTO for now
+                    item.setUpdateDate(null);
+                    item.setSelected(true); // All items are considered selected
+
+                    // Product details
+                    item.setProductName(rs.getString("NM_PRODUCT"));
+                    item.setProductImage(rs.getString("ID_FILE"));
+
+                    return item;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

@@ -49,10 +49,36 @@ public class OrderCreateCommand implements Command {
             return;
         }
 
-        // Get selected basket items
-        List<BasketItem> basketItems = basketDao.getSelectedBasketItems(userBasket.getBasketId());
+        // Get selected basket items from request parameters
+        String[] selectedItemIds = request.getParameterValues("selectedItemId");
+        List<BasketItem> basketItems = new ArrayList<>();
 
-        if (basketItems == null || basketItems.isEmpty()) {
+        if (selectedItemIds != null && selectedItemIds.length > 0) {
+            // Get only the selected basket items
+            for (String itemIdStr : selectedItemIds) {
+                try {
+                    int itemId = Integer.parseInt(itemIdStr);
+                    BasketItem item = basketDao.getBasketItemById(itemId);
+                    if (item != null) {
+                        // Update quantity if provided in request
+                        String quantityParam = request.getParameter("selectedQuantity-" + itemId);
+                        if (quantityParam != null && !quantityParam.isEmpty()) {
+                            try {
+                                int quantity = Integer.parseInt(quantityParam);
+                                if (quantity > 0) {
+                                    item.setQuantity(quantity);
+                                }
+                            } catch (NumberFormatException e) {
+                                // Ignore invalid quantity
+                            }
+                        }
+                        basketItems.add(item);
+                    }
+                } catch (NumberFormatException e) {
+                    // Ignore invalid item ID
+                }
+            }
+        } else {
             // If no items are explicitly selected, get all basket items
             basketItems = basketDao.getBasketItems(userBasket.getBasketId());
         }
