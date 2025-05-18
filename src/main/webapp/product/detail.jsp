@@ -106,7 +106,6 @@
         }
 
         .add-to-cart-form {
-            margin-top: 20px;
         }
 
         .quantity-input {

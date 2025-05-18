@@ -174,12 +174,13 @@
         }
 
         .checkout {
-            background-color: #FF9800;
+            background-color: #2196F3;
             color: white;
+            margin-right: 20px;
         }
 
         .checkout:hover {
-            background-color: #F57C00;
+            background-color: #1976D2;
         }
 
         .basket-summary {
@@ -401,11 +402,6 @@
                     <label for="selectAll">전체 선택</label>
                 </div>
 
-                <div style="margin-bottom: 10px;">
-                    <button type="button" class="button update-btn" onclick="submitSelectedItems('${pageContext.request.contextPath}/basket/removeSelected.do')">선택 삭제</button>
-                    <button type="button" class="button checkout" onclick="submitSelectedItems('${pageContext.request.contextPath}/order/checkout.do')">선택 주문</button>
-                </div>
-
                 <table class="basket-table">
                     <thead>
                         <tr>
@@ -515,8 +511,8 @@
                 </div>
 
                 <div class="button-container">
-                    <button type="submit" class="button update-btn">장바구니 업데이트</button>
                     <a href="${pageContext.request.contextPath}/order/checkout.do" class="button checkout">전체 주문하기</a>
+                    <a href="javascript:void(0);" class="button checkout" onclick="submitSelectedItems('${pageContext.request.contextPath}/order/checkout.do')">선택 상품 주문하기</a>
                 </div>
             </form>
         <%
