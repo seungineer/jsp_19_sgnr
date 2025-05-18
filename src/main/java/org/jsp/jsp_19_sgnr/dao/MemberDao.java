@@ -12,7 +12,6 @@ import java.util.List;
 import static org.jsp.jsp_19_sgnr.db.DBConnection.getConnection;
 
 public class MemberDao {
-    private static final int DEFAULT_PAGE_SIZE = 10;
     public int insert(Member member) {
         String sql = "INSERT INTO TB_USER (ID_USER, NM_USER, NM_PASWD, NO_MOBILE, NM_EMAIL, ST_STATUS, CD_USER_TYPE) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";

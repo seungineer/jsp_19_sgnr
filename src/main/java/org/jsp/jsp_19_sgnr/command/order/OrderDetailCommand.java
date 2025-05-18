@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpSession;
 import org.jsp.jsp_19_sgnr.command.Command;
 import org.jsp.jsp_19_sgnr.dao.OrderDao;
 import org.jsp.jsp_19_sgnr.dao.ProductDao;
-import org.jsp.jsp_19_sgnr.dto.Member;
 import org.jsp.jsp_19_sgnr.dto.Order;
 import org.jsp.jsp_19_sgnr.dto.OrderItem;
 import org.jsp.jsp_19_sgnr.dto.Product;

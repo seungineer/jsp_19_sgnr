@@ -182,20 +182,6 @@
             font-size: 12px;
         }
 
-        .detail-button {
-            padding: 8px 16px;
-            background-color: #4285f4;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .detail-button:hover {
-            background-color: #3367d6;
-        }
-
         .no-products {
             text-align: center;
             padding: 30px;

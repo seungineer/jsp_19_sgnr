@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.jsp.jsp_19_sgnr.command.Command;
-import org.jsp.jsp_19_sgnr.dto.Member;
 
 import java.io.IOException;
 

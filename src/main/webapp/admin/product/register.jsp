@@ -1,9 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page import="org.jsp.jsp_19_sgnr.dao.CategoryDao" %>
-<%@ page import="org.jsp.jsp_19_sgnr.dto.Category" %>
-<%@ page import="java.util.List" %>
 <%
-    CategoryDao categoryDao = new CategoryDao();
     String status = request.getParameter("status");
 %>
 
