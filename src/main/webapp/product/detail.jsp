@@ -236,20 +236,37 @@
                     Member member = (Member) session.getAttribute("member");
                     if (member != null) {
                 %>
-                <form class="add-to-cart-form" action="<%= request.getContextPath() %>/basket/add.do" method="post">
-                    <input type="hidden" name="productId" value="<%= product.getNo_product() %>">
-                    <input type="hidden" name="price" value="<%= product.getQt_sale_price() %>">
+                <div class="quantity-input">
+                    <label for="quantity">수량:</label>
+                    <input type="number" id="quantity" name="quantity" value="1" min="1" max="<%= product.getQt_stock() %>">
+                </div>
 
-                    <div class="quantity-input">
-                        <label for="quantity">수량:</label>
-                        <input type="number" id="quantity" name="quantity" value="1" min="1" max="<%= product.getQt_stock() %>">
-                    </div>
+                <div class="button-container" style="display: flex; gap: 10px;">
+                    <form class="add-to-cart-form" action="<%= request.getContextPath() %>/basket/add.do" method="post" style="flex: 1;">
+                        <input type="hidden" name="productId" value="<%= product.getNo_product() %>">
+                        <input type="hidden" name="price" value="<%= product.getQt_sale_price() %>">
+                        <input type="hidden" name="quantity" id="cart-quantity" value="1">
+                        <button type="submit" class="add-to-cart-button">장바구니에 담기</button>
+                    </form>
 
-                    <button type="submit" class="add-to-cart-button">장바구니에 담기</button>
-                </form>
+                    <form class="buy-now-form" action="<%= request.getContextPath() %>/order/direct.do" method="post" style="flex: 1;">
+                        <input type="hidden" name="productId" value="<%= product.getNo_product() %>">
+                        <input type="hidden" name="price" value="<%= product.getQt_sale_price() %>">
+                        <input type="hidden" name="quantity" id="buy-quantity" value="1">
+                        <button type="submit" class="buy-now-button" style="background-color: #ff9800; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 4px; cursor: pointer; width: 100%; transition: background-color 0.3s;">즉시 구매</button>
+                    </form>
+                </div>
+
+                <script>
+                    // Sync quantity between forms
+                    document.getElementById('quantity').addEventListener('change', function() {
+                        document.getElementById('cart-quantity').value = this.value;
+                        document.getElementById('buy-quantity').value = this.value;
+                    });
+                </script>
                 <% } else { %>
                 <div class="login-message">
-                    장바구니에 담으려면 <a href="<%= request.getContextPath() %>/member/loginForm.do">로그인</a>이 필요합니다.
+                    상품을 구매하려면 <a href="<%= request.getContextPath() %>/member/loginForm.do">로그인</a>이 필요합니다.
                 </div>
                 <% } %>
             </div>
