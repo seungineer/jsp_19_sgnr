@@ -36,6 +36,7 @@ public class FrontControllerServlet extends HttpServlet {
         commandMap.put("/mypage.do", new org.jsp.jsp_19_sgnr.command.member.MypageCommand());
 
         // Admin commands
+        commandMap.put("/admin/main.do", new org.jsp.jsp_19_sgnr.command.admin.AdminMainCommand());
         commandMap.put("/admin/category/register.do", new org.jsp.jsp_19_sgnr.command.admin.CategoryRegisterCommand());
         commandMap.put("/admin/category/manage.do", new org.jsp.jsp_19_sgnr.command.admin.CategoryManageCommand());
         commandMap.put("/admin/product/register.do", new org.jsp.jsp_19_sgnr.command.admin.ProductRegisterCommand());

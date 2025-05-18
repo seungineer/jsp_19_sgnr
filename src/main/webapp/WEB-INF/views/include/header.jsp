@@ -22,6 +22,9 @@
             <ul>
                 <% if (member != null) { %>
                     <li><span class="welcome-message"><%= member.getName() %>님 환영합니다</span></li>
+                    <% if ("20".equals(member.getUserType())) { %>
+                    <li><a href="${pageContext.request.contextPath}/admin/main.do">관리 페이지</a></li>
+                    <% } %>
                     <li><a href="${pageContext.request.contextPath}/mypage.do">마이페이지</a></li>
                     <li>
                         <a href="${pageContext.request.contextPath}/basket/view.do" class="cart-link">
