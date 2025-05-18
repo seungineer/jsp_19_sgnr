@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="org.jsp.jsp_19_sgnr.dto.Member" %>
-<%@ page import="jakarta.servlet.http.HttpSession" %>
 <html>
 <head>
     <title>회원정보 수정</title>

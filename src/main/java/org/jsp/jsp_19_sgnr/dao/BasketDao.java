@@ -3,7 +3,6 @@ package org.jsp.jsp_19_sgnr.dao;
 import org.jsp.jsp_19_sgnr.db.DBConnection;
 import org.jsp.jsp_19_sgnr.dto.Basket;
 import org.jsp.jsp_19_sgnr.dto.BasketItem;
-import org.jsp.jsp_19_sgnr.dto.Product;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

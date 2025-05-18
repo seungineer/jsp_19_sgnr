@@ -30,8 +30,6 @@ public class OrderDetailCommand implements Command {
             return;
         }
 
-        Member member = (Member) session.getAttribute("member");
-
         String orderId = request.getParameter("orderId");
 
         if (orderId == null || orderId.isEmpty()) {

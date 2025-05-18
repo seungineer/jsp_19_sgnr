@@ -1,10 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.util.Map" %>
-<%@ page import="java.util.HashMap" %>
-<%@ page import="org.jsp.jsp_19_sgnr.dto.Member" %>
 <%@ page import="org.jsp.jsp_19_sgnr.dto.Basket" %>
 <%@ page import="org.jsp.jsp_19_sgnr.dto.BasketItem" %>
-<%@ page import="org.jsp.jsp_19_sgnr.dao.BasketDao" %>
 <%@ page import="org.jsp.jsp_19_sgnr.dao.ProductDao" %>
 <%@ page import="org.jsp.jsp_19_sgnr.dto.Product" %>
 <%@ page import="java.util.List" %>

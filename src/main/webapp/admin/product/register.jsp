@@ -4,7 +4,6 @@
 <%@ page import="java.util.List" %>
 <%
     CategoryDao categoryDao = new CategoryDao();
-    List<Category> categories = categoryDao.findLeafCategories();
     String status = request.getParameter("status");
 %>
 

@@ -4,10 +4,8 @@
 <%@ page import="org.jsp.jsp_19_sgnr.dto.Order" %>
 <%@ page import="org.jsp.jsp_19_sgnr.dto.OrderItem" %>
 <%@ page import="org.jsp.jsp_19_sgnr.dto.Product" %>
-<%@ page import="org.jsp.jsp_19_sgnr.dto.Member" %>
 <%@ page import="java.text.NumberFormat" %>
 <%@ page import="java.util.Locale" %>
-<%@ page import="java.text.SimpleDateFormat" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -96,31 +94,6 @@
             font-weight: bold;
         }
 
-        .status-wait {
-            background-color: #FFC107;
-            color: #333;
-        }
-
-        .status-paid {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        .status-shipping {
-            background-color: #2196F3;
-            color: white;
-        }
-
-        .status-completed {
-            background-color: #9E9E9E;
-            color: white;
-        }
-
-        .status-canceled {
-            background-color: #F44336;
-            color: white;
-        }
-
         .button-container {
             display: flex;
             justify-content: space-between;
@@ -134,15 +107,6 @@
             border-radius: 4px;
             font-weight: bold;
             transition: background-color 0.3s;
-        }
-
-        .back-btn {
-            background-color: #2196F3;
-            color: white;
-        }
-
-        .back-btn:hover {
-            background-color: #1976D2;
         }
 
         .cancel-btn {

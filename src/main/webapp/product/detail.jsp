@@ -81,19 +81,6 @@
             margin-bottom: 15px;
         }
 
-        .product-original-price {
-            text-decoration: line-through;
-            color: #999;
-            font-size: 18px;
-            margin-bottom: 5px;
-        }
-
-        .product-discount {
-            color: #e53935;
-            font-size: 16px;
-            margin-bottom: 20px;
-        }
-
         .product-stock {
             margin-bottom: 20px;
             color: #333;
@@ -212,7 +199,6 @@
             if (product != null) {
                 NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.KOREA);
                 int discountAmount = product.getQt_customer_price() - product.getQt_sale_price();
-                double discountRate = (double) discountAmount / product.getQt_customer_price() * 100;
         %>
 
         <div class="product-detail-wrapper">

@@ -1,8 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="org.jsp.jsp_19_sgnr.dto.Member" %>
-<%@ page import="org.jsp.jsp_19_sgnr.dto.Basket" %>
-<%@ page import="org.jsp.jsp_19_sgnr.dao.BasketDao" %>
-<%@ page import="java.util.Map" %>
 <%
     Member member = (Member) session.getAttribute("member");
 %>

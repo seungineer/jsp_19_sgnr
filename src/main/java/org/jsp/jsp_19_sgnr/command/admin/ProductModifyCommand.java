@@ -78,19 +78,11 @@ public class ProductModifyCommand implements Command {
             ContentDao contentDao = new ContentDao();
 
             for (String productId : deletedProducts) {
-
-                String fileId = productDao.getProductFileId(productId, conn);
-
-                int mappingResult = productDao.removeAllCategoryMappings(productId, conn);
-
                 int deleteResult = productDao.deleteProduct(productId, conn);
                 if (deleteResult <= 0) {
                     throw new SQLException("Failed to delete product: " + productId);
                 }
 
-                if (fileId != null && !fileId.isEmpty()) {
-                    boolean fileDeleted = contentDao.deleteFileIfNotUsed(fileId, productId, conn);
-                }
             }
 
             for (String productId : modifiedProducts) {

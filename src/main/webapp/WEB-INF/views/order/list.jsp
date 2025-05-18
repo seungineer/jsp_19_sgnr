@@ -1,10 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
 <%@ page import="org.jsp.jsp_19_sgnr.dto.Order" %>
-<%@ page import="org.jsp.jsp_19_sgnr.dto.Member" %>
 <%@ page import="java.text.NumberFormat" %>
 <%@ page import="java.util.Locale" %>
-<%@ page import="java.text.SimpleDateFormat" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -77,15 +75,6 @@
             background-color: #1976D2;
         }
 
-        .cancel-btn {
-            background-color: #F44336;
-            color: white;
-        }
-
-        .cancel-btn:hover {
-            background-color: #D32F2F;
-        }
-
         .empty-orders {
             margin-top: 20px;
             padding: 30px;
@@ -94,30 +83,6 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             text-align: center;
             color: #666;
-        }
-
-        .button-container {
-            display: flex;
-            justify-content: end;
-            margin-top: 20px;
-        }
-
-        .button {
-            display: inline-block;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 4px;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-
-        .continue-shopping {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        .continue-shopping:hover {
-            background-color: #45a049;
         }
 
         /* Modal styles */
@@ -251,7 +216,6 @@
             font-weight: bold;
         }
 
-        /* Pagination styles */
         .pagination-container {
             display: flex;
             justify-content: center;
@@ -285,11 +249,6 @@
             color: #ccc;
         }
 
-        .pagination-info {
-            text-align: center;
-            margin-top: 10px;
-            color: #666;
-        }
     </style>
 </head>
 <body>

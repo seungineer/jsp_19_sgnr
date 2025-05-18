@@ -2,10 +2,8 @@
 <%@ page import="org.jsp.jsp_19_sgnr.dto.Category" %>
 <%@ page import="org.jsp.jsp_19_sgnr.dto.Product" %>
 <%@ page import="org.jsp.jsp_19_sgnr.dao.ContentDao" %>
-<%@ page import="org.jsp.jsp_19_sgnr.dto.Member" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
-<%@ page import="java.util.HashMap" %>
 <%@ page import="java.text.NumberFormat" %>
 <%@ page import="java.util.Locale" %>
 <!DOCTYPE html>

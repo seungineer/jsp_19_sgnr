@@ -116,7 +116,6 @@ public class ContentDao {
 
             try (ResultSet rs = checkStmt.executeQuery()) {
                 if (rs.next() && rs.getInt(1) > 0) {
-                    int count = rs.getInt(1);
                     return false;
                 }
             }

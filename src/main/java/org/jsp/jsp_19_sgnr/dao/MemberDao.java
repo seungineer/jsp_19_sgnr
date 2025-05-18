@@ -1,6 +1,5 @@
 package org.jsp.jsp_19_sgnr.dao;
 
-import org.jsp.jsp_19_sgnr.db.DBConnection;
 import org.jsp.jsp_19_sgnr.dto.Member;
 
 import java.sql.Connection;

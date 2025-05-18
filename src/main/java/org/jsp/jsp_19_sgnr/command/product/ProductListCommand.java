@@ -3,12 +3,10 @@ package org.jsp.jsp_19_sgnr.command.product;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.jsp.jsp_19_sgnr.command.Command;
 import org.jsp.jsp_19_sgnr.dao.CategoryDao;
 import org.jsp.jsp_19_sgnr.dao.ProductDao;
 import org.jsp.jsp_19_sgnr.dto.Category;
-import org.jsp.jsp_19_sgnr.dto.Member;
 import org.jsp.jsp_19_sgnr.dto.Product;
 
 import java.io.IOException;

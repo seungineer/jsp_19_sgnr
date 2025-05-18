@@ -3,7 +3,6 @@
 <%@ page import="org.jsp.jsp_19_sgnr.dto.Product" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
-<%@ page import="java.util.HashMap" %>
 <%@ page import="java.text.NumberFormat" %>
 <%@ page import="java.util.Locale" %>
 <style>
@@ -139,9 +138,6 @@
 </form>
 
 <%
-    String searchType = request.getParameter("searchType");
-    String keyword = request.getParameter("keyword");
-
     List<Product> products = (List<Product>) request.getAttribute("products");
     Integer currentPage = (Integer) request.getAttribute("currentPage");
     Integer totalPages = (Integer) request.getAttribute("totalPages");
