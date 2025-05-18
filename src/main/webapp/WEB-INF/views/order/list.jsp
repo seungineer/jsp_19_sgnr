@@ -57,39 +57,6 @@
             color: #2196F3;
         }
 
-        .order-status {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .status-wait {
-            background-color: #FFC107;
-            color: #333;
-        }
-
-        .status-paid {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        .status-shipping {
-            background-color: #2196F3;
-            color: white;
-        }
-
-        .status-completed {
-            background-color: #9E9E9E;
-            color: white;
-        }
-
-        .status-canceled {
-            background-color: #F44336;
-            color: white;
-        }
-
         .action-btn {
             display: inline-block;
             padding: 6px 12px;
@@ -98,6 +65,7 @@
             font-size: 14px;
             transition: background-color 0.3s;
             margin-right: 5px;
+            cursor: pointer;
         }
 
         .detail-btn {
@@ -151,6 +119,137 @@
         .continue-shopping:hover {
             background-color: #45a049;
         }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1050;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: white;
+            margin: 50px auto;
+            padding: 0;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 1000px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            animation: modalopen 0.4s;
+        }
+
+        @keyframes modalopen {
+            from {opacity: 0; transform: translateY(-60px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            color: #555;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover,
+        .close-modal:focus {
+            color: #2196F3;
+            text-decoration: none;
+        }
+
+        .modal-body {
+            padding: 20px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-loading {
+            text-align: center;
+            padding: 40px;
+            color: #333;
+        }
+
+        /* Override styles for detail.jsp content when in modal */
+        .modal-body h1 {
+            font-size: 24px;
+            margin-top: 0;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .modal-body .container {
+            padding: 0;
+            margin: 0;
+            max-width: none;
+        }
+
+        .modal-body .order-info {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .modal-body .order-info-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .modal-body .order-info-label {
+            width: 150px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .modal-body .order-info-value {
+            flex: 1;
+        }
+
+        .modal-body .order-items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-body .order-items-table th, 
+        .modal-body .order-items-table td {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .modal-body .order-items-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .modal-body .order-items-table tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .modal-body .product-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .modal-body .product-price {
+            color: #e53935;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -158,7 +257,7 @@
 
         <%
             List<Order> orders = (List<Order>) request.getAttribute("orders");
-            
+
             if (orders == null || orders.isEmpty()) {
         %>
             <div class="empty-orders">
@@ -167,7 +266,6 @@
         <%
             } else {
                 NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.KOREA);
-                SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         %>
             <table class="orders-table">
                 <thead>
@@ -187,33 +285,33 @@
                     for (Order order : orders) {
                         String orderStatusClass = "";
                         String orderStatusText = "";
-                        
-                        if ("WAIT".equals(order.getSt_order())) {
+
+                        if ("10".equals(order.getSt_order())) {
                             orderStatusClass = "status-wait";
                             orderStatusText = "배송 대기";
-                        } else if ("PAID".equals(order.getSt_order())) {
+                        } else if ("20".equals(order.getSt_order())) {
                             orderStatusClass = "status-paid";
                             orderStatusText = "결제 완료";
-                        } else if ("SHIP".equals(order.getSt_order())) {
+                        } else if ("30".equals(order.getSt_order())) {
                             orderStatusClass = "status-shipping";
-                            orderStatusText = "배송 중";
-                        } else if ("COMP".equals(order.getSt_order())) {
-                            orderStatusClass = "status-completed";
-                            orderStatusText = "배송 완료";
-                        } else if ("CNCL".equals(order.getSt_order())) {
-                            orderStatusClass = "status-canceled";
                             orderStatusText = "주문 취소";
+                        } else if ("40".equals(order.getSt_order())) {
+                            orderStatusClass = "status-completed";
+                            orderStatusText = "배송 중";
+                        } else if ("50".equals(order.getSt_order())) {
+                            orderStatusClass = "status-canceled";
+                            orderStatusText = "배송 완료";
                         } else {
                             orderStatusClass = "status-wait";
                             orderStatusText = order.getSt_order();
                         }
-                        
+
                         String paymentStatusText = "";
-                        if ("WAIT".equals(order.getSt_payment())) {
+                        if ("10".equals(order.getSt_payment())) {
                             paymentStatusText = "결제 대기";
-                        } else if ("PAID".equals(order.getSt_payment())) {
+                        } else if ("20".equals(order.getSt_payment())) {
                             paymentStatusText = "결제 완료";
-                        } else if ("CNCL".equals(order.getSt_payment())) {
+                        } else if ("30".equals(order.getSt_payment())) {
                             paymentStatusText = "결제 취소";
                         } else {
                             paymentStatusText = order.getSt_payment();
@@ -229,9 +327,6 @@
                         <td><%= paymentStatusText %></td>
                         <td>
                             <a href="${pageContext.request.contextPath}/order/detail.do?orderId=<%= order.getId_order() %>" class="action-btn detail-btn">상세보기</a>
-                            <% if ("WAIT".equals(order.getSt_order()) || "PAID".equals(order.getSt_order())) { %>
-                                <a href="${pageContext.request.contextPath}/order/cancel.do?orderId=<%= order.getId_order() %>" class="action-btn cancel-btn" onclick="return confirm('주문을 취소하시겠습니까?');">취소</a>
-                            <% } %>
                         </td>
                     </tr>
                 <%
@@ -244,5 +339,82 @@
         %>
 
     </div>
+
+    <!-- Order Detail Modal -->
+    <div id="orderDetailModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-body">
+                <div class="modal-loading">
+                    <p>주문 정보를 불러오는 중입니다...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get the modal
+        const modal = document.getElementById("orderDetailModal");
+        const modalBody = modal.querySelector(".modal-body");
+        const closeBtn = modal.querySelector(".close-modal");
+
+        // Close the modal when clicking the close button
+        closeBtn.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // Close the modal when clicking outside of it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Function to load order details
+        function loadOrderDetails(orderId) {
+            // Show loading message
+            modalBody.innerHTML = '<div class="modal-loading"><p>주문 정보를 불러오는 중입니다...</p></div>';
+            modal.style.display = "block";
+
+            // Fetch order details
+            fetch('${pageContext.request.contextPath}/order/detail.do?orderId=' + orderId)
+                .then(response => response.text())
+                .then(html => {
+                    // Extract the content from the response
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const container = doc.querySelector('.container');
+
+                    if (container) {
+                        // Create a title element
+                        const title = document.createElement('h1');
+                        title.textContent = '주문 상세 정보';
+
+                        // Clear the modal body and add the title
+                        modalBody.innerHTML = '';
+                        modalBody.appendChild(title);
+
+                        // Add the container content
+                        modalBody.appendChild(container);
+                    } else {
+                        modalBody.innerHTML = '<p>주문 정보를 불러오는데 실패했습니다.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading order details:', error);
+                    modalBody.innerHTML = '<p>주문 정보를 불러오는데 실패했습니다.</p>';
+                });
+        }
+
+        // Update all detail buttons to use the modal
+        document.querySelectorAll('.detail-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = this.getAttribute('href');
+                const orderId = url.split('orderId=')[1];
+                loadOrderDetails(orderId);
+            });
+        });
+    </script>
 </body>
 </html>

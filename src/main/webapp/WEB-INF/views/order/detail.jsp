@@ -156,16 +156,13 @@
     </style>
 </head>
 <body>
-    <!-- Include header -->
-    <jsp:include page="/WEB-INF/views/include/header.jsp" />
 
     <div class="container">
-        <h1>주문 상세 정보</h1>
-        
+
         <%
             List<OrderItem> orderItems = (List<OrderItem>) request.getAttribute("orderItems");
             Map<String, Product> productMap = (Map<String, Product>) request.getAttribute("productMap");
-            
+
             if (orderItems == null || orderItems.isEmpty()) {
         %>
             <div class="order-info">
@@ -176,13 +173,13 @@
                 OrderItem firstItem = orderItems.get(0);
                 String orderId = firstItem.getId_order();
                 String userId = firstItem.getNo_user();
-                
+
                 NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.KOREA);
-                
+
                 // Calculate totals
                 int totalAmount = 0;
                 int totalDeliveryFee = 0;
-                
+
                 for (OrderItem item : orderItems) {
                     totalAmount += item.getQt_order_item_amount();
                     totalDeliveryFee += item.getQt_order_item_delivery_fee();
@@ -201,27 +198,28 @@
                     <div class="order-info-label">주문 상태</div>
                     <div class="order-info-value">
                         <%
-                            String orderStatus = request.getParameter("orderStatus");
+                            Order order = (Order) request.getAttribute("order");
+                            String orderStatus = order.getSt_order();
                             String orderStatusClass = "";
                             String orderStatusText = "";
-                            
-                            if (orderStatus == null) orderStatus = "WAIT";
-                            
-                            if ("WAIT".equals(orderStatus)) {
+
+                            if (orderStatus == null) orderStatus = "10";
+
+                            if ("10".equals(orderStatus)) {
                                 orderStatusClass = "status-wait";
                                 orderStatusText = "배송 대기";
-                            } else if ("PAID".equals(orderStatus)) {
+                            } else if ("20".equals(orderStatus)) {
                                 orderStatusClass = "status-paid";
                                 orderStatusText = "결제 완료";
-                            } else if ("SHIP".equals(orderStatus)) {
-                                orderStatusClass = "status-shipping";
-                                orderStatusText = "배송 중";
-                            } else if ("COMP".equals(orderStatus)) {
-                                orderStatusClass = "status-completed";
-                                orderStatusText = "배송 완료";
-                            } else if ("CNCL".equals(orderStatus)) {
+                            } else if ("30".equals(orderStatus)) {
                                 orderStatusClass = "status-canceled";
                                 orderStatusText = "주문 취소";
+                            } else if ("40".equals(orderStatus)) {
+                                orderStatusClass = "status-shipping";
+                                orderStatusText = "배송 중";
+                            } else if ("50".equals(orderStatus)) {
+                                orderStatusClass = "status-completed";
+                                orderStatusText = "배송 완료";
                             } else {
                                 orderStatusClass = "status-wait";
                                 orderStatusText = orderStatus;
@@ -236,12 +234,12 @@
                         <%
                             String paymentStatus = firstItem.getSt_payment();
                             String paymentStatusText = "";
-                            
-                            if ("WAIT".equals(paymentStatus)) {
+
+                            if ("10".equals(paymentStatus)) {
                                 paymentStatusText = "결제 대기";
-                            } else if ("PAID".equals(paymentStatus)) {
+                            } else if ("20".equals(paymentStatus)) {
                                 paymentStatusText = "결제 완료";
-                            } else if ("CNCL".equals(paymentStatus)) {
+                            } else if ("30".equals(paymentStatus)) {
                                 paymentStatusText = "결제 취소";
                             } else {
                                 paymentStatusText = paymentStatus;
@@ -263,9 +261,9 @@
                     <div class="order-info-value product-price"><%= currencyFormatter.format(totalAmount + totalDeliveryFee) %></div>
                 </div>
             </div>
-            
+
             <h2>주문 상품 목록</h2>
-            
+
             <table class="order-items-table">
                 <thead>
                     <tr>
@@ -294,10 +292,9 @@
                 %>
                 </tbody>
             </table>
-            
+
             <div class="button-container">
-                <a href="${pageContext.request.contextPath}/order/list.do" class="button back-btn">주문 목록으로</a>
-                <% if (!"CNCL".equals(orderStatus) && ("WAIT".equals(orderStatus) || "PAID".equals(orderStatus))) { %>
+                <% if (!"50".equals(order.getSt_order()) && ("10".equals(order.getSt_order()) || "20".equals(order.getSt_order()))) { %>
                     <a href="${pageContext.request.contextPath}/order/cancel.do?orderId=<%= orderId %>" class="button cancel-btn" onclick="return confirm('주문을 취소하시겠습니까?');">주문 취소</a>
                 <% } %>
             </div>

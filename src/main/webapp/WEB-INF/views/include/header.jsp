@@ -13,7 +13,7 @@
             <a href="${pageContext.request.contextPath}/product/list.do">쇼핑몰</a>
         </div>
         <div class="search-container">
-            <form action="${pageContext.request.contextPath}/product/list.do" method="get">
+            <form action="${pageContext.request.contextPath}/product/list.do" method="get" style="display: flex; width: 210px; height: 36px;">
                 <input type="text" name="keyword" placeholder="상품명 검색..." class="search-input">
                 <button type="submit" class="search-button">검색</button>
             </form>
@@ -84,6 +84,7 @@
         border: none;
         border-radius: 0 4px 4px 0;
         cursor: pointer;
+        width: 80px;
     }
 
     .main-nav ul {

@@ -34,7 +34,6 @@
         }
 
         .product-image {
-            flex: 0 0 50%;
             padding: 20px;
             display: flex;
             align-items: center;
@@ -49,7 +48,6 @@
 
         .product-info {
             width: 90%;
-            flex: 0 0 50%;
             padding: 30px;
             border-left: 1px solid #eee;
         }
@@ -231,7 +229,6 @@
 
                 <div class="delivery-info">
                     <p>배송비: <%= product.getQt_delivery_fee() > 0 ? currencyFormatter.format(product.getQt_delivery_fee()) : "무료" %></p>
-                    <p>판매 기간: <%= product.getDt_start_date() %> ~ <%= product.getDt_end_date() %></p>
                 </div>
 
                 <%

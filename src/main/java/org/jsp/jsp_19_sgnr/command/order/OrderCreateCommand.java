@@ -145,7 +145,7 @@ public class OrderCreateCommand implements Command {
                 orderItem.setQt_order_item_delivery_fee(0);
             }
 
-            orderItem.setSt_payment("WAIT"); // Waiting for payment
+            orderItem.setSt_payment("20"); // Payment completed
             orderItem.setNo_register(member.getEmail());
 
             orderItems.add(orderItem);
