@@ -4,6 +4,8 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.HashMap" %>
+<%@ page import="java.text.NumberFormat" %>
+<%@ page import="java.util.Locale" %>
 <style>
     .admin-product-table {
         width: 100%;
@@ -156,6 +158,7 @@
 
     // Use the products directly since filtering is now done on the server side
     List<Product> filteredProducts = products;
+    NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.KOREA);
 %>
 
 <div class="admin-product-count">
@@ -209,7 +212,7 @@
                         %>
                         <%= categoryDisplay.toString() %>
                     </td>
-                    <td><%= product.getQt_sale_price() %>원</td>
+                    <td><%= currencyFormatter.format(product.getQt_sale_price()) %></td>
                     <td><%= product.getQt_stock() %></td>
                     <td><%= product.getQt_stock() > 0 ? "판매중" : "품절" %></td>
                 </tr>

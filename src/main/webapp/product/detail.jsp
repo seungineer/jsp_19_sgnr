@@ -238,11 +238,7 @@
                             <% } 
                         } %>
                     </div>
-
-                    <div class="product-original-price"><%= currencyFormatter.format(product.getQt_customer_price()) %></div>
                     <div class="product-price"><%= currencyFormatter.format(product.getQt_sale_price()) %></div>
-                    <div class="product-discount">(<%= String.format("%.1f", discountRate) %>% 할인)</div>
-
                     <div class="product-stock">
                         재고: <%= product.getQt_stock() %> 개
                     </div>

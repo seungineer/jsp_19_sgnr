@@ -6,6 +6,8 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.HashMap" %>
+<%@ page import="java.text.NumberFormat" %>
+<%@ page import="java.util.Locale" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -270,6 +272,7 @@
     // Get search keyword if any
     String keyword = (String) request.getAttribute("keyword");
     Integer selectedCategoryId = (Integer) request.getAttribute("selectedCategoryId");
+    NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.KOREA);
 %>
 
 <div class="main-content">
@@ -397,7 +400,7 @@
                 </a>
                 <div class="product-info" style="display: block;">
                     <a href="<%= productDetailUrl %>" class="product-name"><%= product.getNm_product() %></a>
-                    <div class="product-price"><%= product.getQt_sale_price() %>원</div>
+                    <div class="product-price"><%= currencyFormatter.format(product.getQt_sale_price()) %>원</div>
                 </div>
             </div>
         <%

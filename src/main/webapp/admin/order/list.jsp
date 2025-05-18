@@ -1,6 +1,8 @@
 <%@ page import="org.jsp.jsp_19_sgnr.dao.OrderDao" %>
 <%@ page import="org.jsp.jsp_19_sgnr.dto.OrderWithUser" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.Locale" %>
+<%@ page import="java.text.NumberFormat" %>
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%
     // 검색 파라미터 가져오기
@@ -12,6 +14,7 @@
 
     // 주문 목록 가져오기
     List<OrderWithUser> orderList = orderDao.getAllOrders(orderId, userName);
+    NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.KOREA);
 %>
 <!DOCTYPE html>
 <html>
@@ -190,10 +193,10 @@
                     <tr>
                         <td><%= order.getId_order() %></td>
                         <td><%= order.getNm_user() != null ? order.getNm_user() : "알 수 없음" %></td>
-                        <td><%= order.getQt_order_amount() %>원</td>
+                        <td><%= currencyFormatter.format(order.getQt_order_amount()) %></td>
                         <td><%= order.getDa_order() %></td>
-                        <td><%= order.getSt_order() %></td>
-                        <td><%= order.getSt_payment() %></td>
+                        <td><%= order.getSt_order().equals("30") ? "주문 취소" : "주문 완료" %></td>
+                        <td><%= order.getSt_payment().equals("20") ? "결제 완료" : "결제 대기" %></td>
                         <td>
                             <button class="detail-btn" onclick="showOrderDetail('<%= order.getId_order() %>')">상세 보기</button>
                         </td>
