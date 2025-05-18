@@ -73,7 +73,6 @@ public class BasketAddCommand implements Command {
         }
 
         boolean success = basketDao.addOrUpdateBasketItem(userBasket.getBasketId(), productId, quantity, price);
-        System.out.println("장바구니 담기 성공여부 : " + success);
         if (!success) {
             request.setAttribute("errorMessage", "장바구니에 상품을 추가할 수 없습니다.");
             request.getRequestDispatcher("/error/errorPage.jsp").forward(request, response);

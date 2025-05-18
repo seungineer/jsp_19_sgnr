@@ -25,7 +25,6 @@ public class LoginCommand implements Command {
         String id = request.getParameter("id");
         String paswd = request.getParameter("paswd");
         String rememberId = request.getParameter("rememberId");
-        System.out.println("id: " + id);
 
         if (id == null || paswd == null || !emailPattern.matcher(id).matches() || !pwPattern.matcher(paswd).matches()) {
             String errorMessage = "아이디 또는 비밀번호가 잘못되었습니다.";

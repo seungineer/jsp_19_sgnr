@@ -180,7 +180,6 @@ public class ProductDao {
                     products.add(product);
                 }
             }
-            System.out.println("findProductsByCategory products size: " + products.size());
 
             return products;
         } catch (Exception e) {
