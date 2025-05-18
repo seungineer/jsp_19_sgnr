@@ -33,6 +33,21 @@
       overflow-y: auto; /* Allow scrolling if content is too tall */
     }
     .sidebar h2 { font-size: 18px; margin-bottom: 20px; color: #333; }
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .go-home {
+      font-size: 14px;
+      color: #4285f4;
+      text-decoration: none;
+      margin-left: 10px;
+    }
+    .go-home:hover {
+      text-decoration: underline;
+    }
     .menu { flex-grow: 1; }
     .menu-item {
       margin-bottom: 12px; padding: 10px;
@@ -71,7 +86,10 @@
 <div class="mypage-container">
   <div class="sidebar">
     <div class="menu">
-      <h2>마이페이지</h2>
+      <div class="header-row">
+        <h2>마이페이지</h2>
+        <a href="${pageContext.request.contextPath}/index.jsp" class="go-home">메인 페이지로 이동</a>
+      </div>
       <a class="menu-item <%= "modify".equals(menu) ? "active" : "" %>" href="${pageContext.request.contextPath}/mypage.do?menu=modify">회원정보 수정</a>
       <a class="menu-item <%= "orderList".equals(menu) ? "active" : "" %>" href="${pageContext.request.contextPath}/mypage.do?menu=orderList">주문 내역 조회</a>
     </div>

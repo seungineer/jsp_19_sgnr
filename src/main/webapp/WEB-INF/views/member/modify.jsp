@@ -75,7 +75,6 @@
 
         a {
             display: inline-block;
-            margin-top: 15px;
             color: #2196F3;
             text-decoration: none;
         }
@@ -121,8 +120,6 @@
         <div id="button-container">
             <button type="submit" disabled>수정하기</button>
         </div>
-
-        <a href="${pageContext.request.contextPath}/member/logout.do">로그아웃</a>
     </form>
 </div>
 
