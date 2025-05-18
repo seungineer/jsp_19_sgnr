@@ -58,6 +58,86 @@ public class ProductDao {
     }
 
     /**
+     * Searches paginated products by keyword in product name.
+     * 
+     * @param keyword The search keyword
+     * @param page The page number (1-based)
+     * @param pageSize The number of items per page
+     * @return List of products matching the keyword for the specified page
+     */
+    public List<Product> searchPaginatedProductsByKeyword(String keyword, int page, int pageSize) {
+        int startRow = (page - 1) * pageSize + 1;
+        int endRow = page * pageSize;
+
+        String sql = "SELECT * FROM (" +
+                "SELECT p.*, ROWNUM AS rnum FROM (" +
+                "SELECT * FROM TB_PRODUCT WHERE NM_PRODUCT LIKE ? ORDER BY DA_FIRST_DATE DESC" +
+                ") p WHERE ROWNUM <= ?" +
+                ") WHERE rnum >= ?";
+
+        List<Product> products = new ArrayList<>();
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, "%" + keyword + "%");
+            ps.setInt(2, endRow);
+            ps.setInt(3, startRow);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Product product = new Product();
+                    product.setNo_product(rs.getString("NO_PRODUCT"));
+                    product.setNm_product(rs.getString("NM_PRODUCT"));
+                    product.setNm_detail_explain(rs.getString("NM_DETAIL_EXPLAIN"));
+                    product.setDt_start_date(rs.getString("DT_START_DATE"));
+                    product.setDt_end_date(rs.getString("DT_END_DATE"));
+                    product.setQt_customer_price(rs.getInt("QT_CUSTOMER_PRICE"));
+                    product.setQt_sale_price(rs.getInt("QT_SALE_PRICE"));
+                    product.setQt_stock(rs.getInt("QT_STOCK"));
+                    product.setQt_delivery_fee(rs.getInt("QT_DELIVERY_FEE"));
+                    product.setNo_register(rs.getString("NO_REGISTER"));
+                    product.setSale_status(rs.getInt("SALE_STATUS"));
+                    product.setId_file(rs.getString("ID_FILE"));
+                    products.add(product);
+                }
+            }
+
+            return products;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return products;
+        }
+    }
+
+    /**
+     * Gets the total count of products matching a keyword.
+     * 
+     * @param keyword The search keyword
+     * @return Total number of products matching the keyword
+     */
+    public int getTotalProductCountByKeyword(String keyword) {
+        String sql = "SELECT COUNT(*) FROM TB_PRODUCT WHERE NM_PRODUCT LIKE ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, "%" + keyword + "%");
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+
+            return 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    /**
      * Gets a product by its ID.
      * 
      * @param productId The product ID
@@ -128,6 +208,7 @@ public class ProductDao {
                     product.setQt_delivery_fee(rs.getInt("QT_DELIVERY_FEE"));
                     product.setNo_register(rs.getString("NO_REGISTER"));
                     product.setSale_status(rs.getInt("SALE_STATUS"));
+                    product.setId_file(rs.getString("ID_FILE"));
                     products.add(product);
                 }
             }
@@ -137,6 +218,91 @@ public class ProductDao {
         } catch (Exception e) {
             e.printStackTrace();
             return products;
+        }
+    }
+
+    /**
+     * Finds paginated products mapped to a specific category.
+     * 
+     * @param categoryId The category ID
+     * @param page The page number (1-based)
+     * @param pageSize The number of items per page
+     * @return List of products mapped to the category for the specified page
+     */
+    public List<Product> findPaginatedProductsByCategory(int categoryId, int page, int pageSize) {
+        int startRow = (page - 1) * pageSize + 1;
+        int endRow = page * pageSize;
+
+        String sql = "SELECT * FROM (" +
+                "SELECT p.*, ROWNUM AS rnum FROM (" +
+                "SELECT p.* FROM TB_PRODUCT p " +
+                "JOIN TB_CATEGORY_PRODUCT_MAPPING m ON p.NO_PRODUCT = m.no_product " +
+                "WHERE m.nb_category = ? " +
+                "ORDER BY m.cn_order" +
+                ") p WHERE ROWNUM <= ?" +
+                ") WHERE rnum >= ?";
+
+        List<Product> products = new ArrayList<>();
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, categoryId);
+            ps.setInt(2, endRow);
+            ps.setInt(3, startRow);
+
+            try (var rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Product product = new Product();
+                    product.setNo_product(rs.getString("NO_PRODUCT"));
+                    product.setNm_product(rs.getString("NM_PRODUCT"));
+                    product.setNm_detail_explain(rs.getString("NM_DETAIL_EXPLAIN"));
+                    product.setDt_start_date(rs.getString("DT_START_DATE"));
+                    product.setDt_end_date(rs.getString("DT_END_DATE"));
+                    product.setQt_customer_price(rs.getInt("QT_CUSTOMER_PRICE"));
+                    product.setQt_sale_price(rs.getInt("QT_SALE_PRICE"));
+                    product.setQt_stock(rs.getInt("QT_STOCK"));
+                    product.setQt_delivery_fee(rs.getInt("QT_DELIVERY_FEE"));
+                    product.setNo_register(rs.getString("NO_REGISTER"));
+                    product.setSale_status(rs.getInt("SALE_STATUS"));
+                    product.setId_file(rs.getString("ID_FILE"));
+                    products.add(product);
+                }
+            }
+
+            return products;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return products;
+        }
+    }
+
+    /**
+     * Gets the total count of products in a specific category.
+     * 
+     * @param categoryId The category ID
+     * @return Total number of products in the category
+     */
+    public int getTotalProductCountByCategory(int categoryId) {
+        String sql = "SELECT COUNT(*) FROM TB_PRODUCT p " +
+                "JOIN TB_CATEGORY_PRODUCT_MAPPING m ON p.NO_PRODUCT = m.no_product " +
+                "WHERE m.nb_category = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, categoryId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+
+            return 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
         }
     }
 
@@ -427,6 +593,80 @@ public class ProductDao {
         } catch (Exception e) {
             e.printStackTrace();
             return products;
+        }
+    }
+
+    /**
+     * Gets paginated products.
+     * 
+     * @param page The page number (1-based)
+     * @param pageSize The number of items per page
+     * @return List of products for the specified page
+     */
+    public List<Product> getPaginatedProducts(int page, int pageSize) {
+        int startRow = (page - 1) * pageSize + 1;
+        int endRow = page * pageSize;
+
+        String sql = "SELECT * FROM (" +
+                "SELECT p.*, ROWNUM AS rnum FROM (" +
+                "SELECT * FROM TB_PRODUCT ORDER BY DA_FIRST_DATE DESC" +
+                ") p WHERE ROWNUM <= ?" +
+                ") WHERE rnum >= ?";
+
+        List<Product> products = new ArrayList<>();
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, endRow);
+            ps.setInt(2, startRow);
+
+            try (var rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Product product = new Product();
+                    product.setNo_product(rs.getString("NO_PRODUCT"));
+                    product.setNm_product(rs.getString("NM_PRODUCT"));
+                    product.setNm_detail_explain(rs.getString("NM_DETAIL_EXPLAIN"));
+                    product.setDt_start_date(rs.getString("DT_START_DATE"));
+                    product.setDt_end_date(rs.getString("DT_END_DATE"));
+                    product.setQt_customer_price(rs.getInt("QT_CUSTOMER_PRICE"));
+                    product.setQt_sale_price(rs.getInt("QT_SALE_PRICE"));
+                    product.setQt_stock(rs.getInt("QT_STOCK"));
+                    product.setQt_delivery_fee(rs.getInt("QT_DELIVERY_FEE"));
+                    product.setNo_register(rs.getString("NO_REGISTER"));
+                    product.setSale_status(rs.getInt("SALE_STATUS"));
+                    product.setId_file(rs.getString("ID_FILE"));
+                    products.add(product);
+                }
+            }
+
+            return products;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return products;
+        }
+    }
+
+    /**
+     * Gets the total count of all products.
+     * 
+     * @return Total number of products
+     */
+    public int getTotalProductCount() {
+        String sql = "SELECT COUNT(*) FROM TB_PRODUCT";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+
+            return 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
         }
     }
 

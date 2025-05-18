@@ -27,6 +27,7 @@ public class ProductListCommand implements Command {
         String sortBy = request.getParameter("sortBy");
         String sortOrder = request.getParameter("sortOrder");
         String keyword = request.getParameter("keyword");
+        String pageStr = request.getParameter("page");
 
         // Default sort is by category name ascending
         if (sortBy == null || sortBy.isEmpty()) {
@@ -37,30 +38,74 @@ public class ProductListCommand implements Command {
             sortOrder = "asc";
         }
 
+        // Default page is 1
+        int currentPage = 1;
+        if (pageStr != null && !pageStr.isEmpty()) {
+            try {
+                currentPage = Integer.parseInt(pageStr);
+                if (currentPage < 1) {
+                    currentPage = 1;
+                }
+            } catch (NumberFormatException e) {
+                // If invalid, use default
+                currentPage = 1;
+            }
+        }
+
+        // Default page size is 9
+        int pageSize = 9;
+
         CategoryDao categoryDao = new CategoryDao();
         List<Category> categories = categoryDao.findAll();
         request.setAttribute("categories", categories);
 
         ProductDao productDao = new ProductDao();
         List<Product> products;
+        int totalProducts = 0;
 
         if (keyword != null && !keyword.isEmpty()) {
-            products = productDao.searchProductsByKeyword(keyword);
+            products = productDao.searchPaginatedProductsByKeyword(keyword, currentPage, pageSize);
+            totalProducts = productDao.getTotalProductCountByKeyword(keyword);
             request.setAttribute("keyword", keyword);
         }
         else if (categoryIdStr != null && !categoryIdStr.isEmpty()) {
             try {
                 int categoryId = Integer.parseInt(categoryIdStr);
-                products = productDao.findProductsByCategory(categoryId);
+                products = productDao.findPaginatedProductsByCategory(categoryId, currentPage, pageSize);
+                totalProducts = productDao.getTotalProductCountByCategory(categoryId);
                 request.setAttribute("selectedCategoryId", categoryId);
             } catch (NumberFormatException e) {
-                products = productDao.getAllProducts();
+                products = productDao.getPaginatedProducts(currentPage, pageSize);
+                totalProducts = productDao.getTotalProductCount();
             }
         } else {
-            products = productDao.getAllProducts();
+            products = productDao.getPaginatedProducts(currentPage, pageSize);
+            totalProducts = productDao.getTotalProductCount();
         }
 
-        // Sort products
+        // Calculate total pages
+        int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
+
+        // If current page is greater than total pages, set to last page
+        if (totalPages > 0 && currentPage > totalPages) {
+            currentPage = totalPages;
+            // Re-fetch products with corrected page
+            if (keyword != null && !keyword.isEmpty()) {
+                products = productDao.searchPaginatedProductsByKeyword(keyword, currentPage, pageSize);
+            }
+            else if (categoryIdStr != null && !categoryIdStr.isEmpty()) {
+                try {
+                    int categoryId = Integer.parseInt(categoryIdStr);
+                    products = productDao.findPaginatedProductsByCategory(categoryId, currentPage, pageSize);
+                } catch (NumberFormatException e) {
+                    products = productDao.getPaginatedProducts(currentPage, pageSize);
+                }
+            } else {
+                products = productDao.getPaginatedProducts(currentPage, pageSize);
+            }
+        }
+
+        // Sort products if needed (for category sorting which is done in memory)
         final String finalSortOrder = sortOrder; // Make effectively final for lambda
 
         if ("category".equals(sortBy)) {
@@ -79,14 +124,20 @@ public class ProductListCommand implements Command {
                     ? cat1Name.compareTo(cat2Name) 
                     : cat2Name.compareTo(cat1Name);
             });
-        } else if ("price".equals(sortBy)) {
+        } else if ("price".equals(sortBy) && products.size() > 1) {
+            // Only sort in memory if we have more than one product
             products.sort((p1, p2) -> {
                 int result = Integer.compare(p1.getQt_sale_price(), p2.getQt_sale_price());
                 return "asc".equals(finalSortOrder) ? result : -result;
             });
         }
 
+        // Set pagination attributes
         request.setAttribute("products", products);
+        request.setAttribute("currentPage", currentPage);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("pageSize", pageSize);
+        request.setAttribute("totalProducts", totalProducts);
         request.setAttribute("sortBy", sortBy);
         request.setAttribute("sortOrder", sortOrder);
 

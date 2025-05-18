@@ -215,6 +215,49 @@
             font-weight: bold;
             color: #4285f4;
         }
+
+        /* Pagination styles */
+        .pagination-container {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .pagination-info {
+            margin-bottom: 15px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .page-link {
+            display: inline-block;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .page-link:hover {
+            background-color: #f5f5f5;
+            border-color: #ccc;
+        }
+
+        .page-link.current {
+            background-color: #4285f4;
+            color: white;
+            border-color: #4285f4;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -361,6 +404,74 @@
             }
         %>
     </div>
+
+    <%
+        // Pagination
+        Integer currentPage = (Integer) request.getAttribute("currentPage");
+        Integer totalPages = (Integer) request.getAttribute("totalPages");
+        Integer totalProducts = (Integer) request.getAttribute("totalProducts");
+
+        if (currentPage != null && totalPages != null && totalPages > 0) {
+    %>
+    <div class="pagination-container">
+        <div class="pagination-info">
+            전체 <%= totalProducts %>개 상품 중 <%= (currentPage - 1) * 9 + 1 %>-<%= Math.min(currentPage * 9, totalProducts) %>개 표시
+        </div>
+        <div class="pagination">
+            <% 
+                // Build the base URL for pagination links
+                String baseUrl = request.getContextPath() + "/product/list.do?";
+
+                // Add existing parameters
+                if (request.getAttribute("keyword") != null) {
+                    baseUrl += "keyword=" + request.getAttribute("keyword") + "&";
+                }
+
+                if (request.getAttribute("selectedCategoryId") != null) {
+                    baseUrl += "categoryId=" + request.getAttribute("selectedCategoryId") + "&";
+                }
+
+                if (request.getAttribute("sortBy") != null) {
+                    baseUrl += "sortBy=" + request.getAttribute("sortBy") + "&";
+                }
+
+                if (request.getAttribute("sortOrder") != null) {
+                    baseUrl += "sortOrder=" + request.getAttribute("sortOrder") + "&";
+                }
+
+                // Previous page link
+                if (currentPage > 1) {
+            %>
+                <a href="<%= baseUrl %>page=<%= currentPage - 1 %>" class="page-link">&laquo; 이전</a>
+            <% 
+                }
+
+                // Page number links
+                int startPage = Math.max(1, currentPage - 2);
+                int endPage = Math.min(totalPages, currentPage + 2);
+
+                for (int i = startPage; i <= endPage; i++) {
+                    if (i == currentPage) {
+            %>
+                <span class="page-link current"><%= i %></span>
+            <% 
+                    } else {
+            %>
+                <a href="<%= baseUrl %>page=<%= i %>" class="page-link"><%= i %></a>
+            <% 
+                    }
+                }
+
+                // Next page link
+                if (currentPage < totalPages) {
+            %>
+                <a href="<%= baseUrl %>page=<%= currentPage + 1 %>" class="page-link">다음 &raquo;</a>
+            <% 
+                }
+            %>
+        </div>
+    </div>
+    <% } %>
 <%
     }
 %>
