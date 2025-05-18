@@ -138,9 +138,30 @@
                     <td><%= product.getNo_product() %></td>
                     <td><%= product.getNm_product() %></td>
                     <td>
-                        <%-- Since categories are in a mapping table, we can't directly access them here --%>
-                        <%-- In a real implementation, we would need to fetch the categories for each product --%>
-                        카테고리 정보
+                        <%
+                            // Get categories for this product from the pre-loaded map
+                            Map<String, List<Category>> productCategoryMap = (Map<String, List<Category>>) request.getAttribute("productCategoryMap");
+                            List<Category> productCategories = productCategoryMap != null ? productCategoryMap.get(product.getNo_product()) : null;
+
+                            StringBuilder categoryDisplay = new StringBuilder();
+
+                            if (productCategories != null && !productCategories.isEmpty()) {
+                                for (int i = 0; i < productCategories.size(); i++) {
+                                    Category cat = productCategories.get(i);
+                                    // Display the fullname if available, otherwise display the name
+                                    String displayName = cat.getNmFullCategory() != null ? cat.getNmFullCategory() : cat.getNmCategory();
+                                    categoryDisplay.append(displayName);
+
+                                    // Add comma if not the last category
+                                    if (i < productCategories.size() - 1) {
+                                        categoryDisplay.append(", ");
+                                    }
+                                }
+                            } else {
+                                categoryDisplay.append("카테고리 없음");
+                            }
+                        %>
+                        <%= categoryDisplay.toString() %>
                     </td>
                     <td><%= product.getQt_sale_price() %>원</td>
                     <td><%= product.getQt_stock() %></td>

@@ -12,6 +12,8 @@ import org.jsp.jsp_19_sgnr.dto.Member;
 import org.jsp.jsp_19_sgnr.dto.Product;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -90,9 +92,38 @@ public class ProductListCommand implements Command {
             });
         }
 
+        // Create a map of product ID to list of categories
+        Map<String, List<Category>> productCategoryMap = new HashMap<>();
+
+        // Get all category mappings in a single query
+        Map<String, List<Integer>> allCategoryMappings = productDao.getAllCategoryMappings();
+
+        // Create a map of category ID to Category object for quick lookup
+        Map<Integer, Category> categoryMap = new HashMap<>();
+        for (Category category : categories) {
+            categoryMap.put(category.getId(), category);
+        }
+
+        // For each product, get its categories and add them to the map
+        for (Product product : products) {
+            String productId = product.getNo_product();
+            List<Integer> categoryIds = allCategoryMappings.getOrDefault(productId, new ArrayList<>());
+            List<Category> productCategories = new ArrayList<>();
+
+            for (Integer categoryId : categoryIds) {
+                Category category = categoryMap.get(categoryId);
+                if (category != null) {
+                    productCategories.add(category);
+                }
+            }
+
+            productCategoryMap.put(productId, productCategories);
+        }
+
         request.setAttribute("products", products);
         request.setAttribute("sortBy", sortBy);
         request.setAttribute("sortOrder", sortOrder);
+        request.setAttribute("productCategoryMap", productCategoryMap);
 
         // Forward to admin.jsp with productList menu
         request.getRequestDispatcher("/admin/admin.jsp?menu=productList").forward(request, response);
