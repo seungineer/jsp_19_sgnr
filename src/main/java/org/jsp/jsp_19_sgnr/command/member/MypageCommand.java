@@ -39,11 +39,44 @@ public class MypageCommand implements Command {
 
         Member member = (Member) session.getAttribute("member");
 
-        // If menu is orderList, get the user's orders
+        // If menu is orderList, get the user's orders with pagination
         if ("orderList".equals(menu)) {
             OrderDao orderDao = new OrderDao();
-            List<Order> orders = orderDao.getOrdersByUser(member.getEmail());
+
+            // Pagination parameters
+            int currentPage = 1;
+            int pageSize = 10;
+
+            // Get page from request parameter
+            String pageParam = request.getParameter("page");
+            if (pageParam != null && !pageParam.isEmpty()) {
+                try {
+                    currentPage = Integer.parseInt(pageParam);
+                    if (currentPage < 1) currentPage = 1;
+                } catch (NumberFormatException e) {
+                    // If invalid, default to page 1
+                    currentPage = 1;
+                }
+            }
+
+            // Get total count and calculate total pages
+            int totalOrders = orderDao.countOrdersByUser(member.getEmail());
+            int totalPages = (int) Math.ceil((double) totalOrders / pageSize);
+
+            // Ensure current page is not greater than total pages
+            if (totalPages > 0 && currentPage > totalPages) {
+                currentPage = totalPages;
+            }
+
+            // Get paginated list of orders
+            List<Order> orders = orderDao.getPaginatedOrdersByUser(member.getEmail(), currentPage, pageSize);
+
+            // Set pagination attributes
             request.setAttribute("orders", orders);
+            request.setAttribute("currentPage", currentPage);
+            request.setAttribute("pageSize", pageSize);
+            request.setAttribute("totalOrders", totalOrders);
+            request.setAttribute("totalPages", totalPages);
         }
 
         // Forward to mypage.jsp

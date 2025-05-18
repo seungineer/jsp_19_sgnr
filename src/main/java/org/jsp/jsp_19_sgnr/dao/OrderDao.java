@@ -281,6 +281,90 @@ public class OrderDao {
     }
 
     /**
+     * Counts the total number of orders for a user.
+     * 
+     * @param userId The user ID
+     * @return The total number of orders
+     */
+    public int countOrdersByUser(String userId) {
+        String sql = "SELECT COUNT(*) FROM TB_ORDER WHERE no_user = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, userId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    /**
+     * Gets paginated orders for a user.
+     * 
+     * @param userId The user ID
+     * @param page The page number (1-based)
+     * @param pageSize The number of items per page
+     * @return A list of orders for the specified page
+     */
+    public List<Order> getPaginatedOrdersByUser(String userId, int page, int pageSize) {
+        int startRow = (page - 1) * pageSize + 1;
+        int endRow = page * pageSize;
+
+        String sql = "SELECT * FROM (" +
+                "SELECT o.*, ROWNUM AS rnum FROM (" +
+                "SELECT * FROM TB_ORDER WHERE no_user = ? ORDER BY da_order DESC" +
+                ") o WHERE ROWNUM <= ?" +
+                ") WHERE rnum >= ?";
+
+        List<Order> orders = new ArrayList<>();
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, userId);
+            ps.setInt(2, endRow);
+            ps.setInt(3, startRow);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Order order = new Order();
+                    order.setId_order(rs.getString("id_order"));
+                    order.setNo_user(rs.getString("no_user"));
+                    order.setQt_order_amount(rs.getInt("qt_order_amount"));
+                    order.setQt_deli_money(rs.getInt("qt_deli_money"));
+                    order.setQt_deli_period(rs.getInt("qt_deli_period"));
+                    order.setNm_order_person(rs.getString("nm_order_person"));
+                    order.setNm_receiver(rs.getString("nm_receiver"));
+                    order.setNo_delivery_zipno(rs.getString("no_delivery_zipno"));
+                    order.setNm_delivery_address(rs.getString("nm_delivery_address"));
+                    order.setNm_receiver_telno(rs.getString("nm_receiver_telno"));
+                    order.setNm_delivery_space(rs.getString("nm_delivery_space"));
+                    order.setCd_order_type(rs.getString("cd_order_type"));
+                    order.setDa_order(rs.getString("da_order"));
+                    order.setSt_order(rs.getString("st_order"));
+                    order.setSt_payment(rs.getString("st_payment"));
+                    order.setNo_register(rs.getString("no_register"));
+                    order.setDa_first_date(rs.getString("da_first_date"));
+
+                    orders.add(order);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return orders;
+    }
+
+    /**
      * Gets all order items for an order.
      * 
      * @param orderId The order ID

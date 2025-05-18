@@ -250,6 +250,46 @@
             color: #e53935;
             font-weight: bold;
         }
+
+        /* Pagination styles */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+        }
+
+        .pagination-controls a, .pagination-controls span {
+            margin: 0 5px;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            text-decoration: none;
+            border-radius: 3px;
+        }
+
+        .pagination-controls a:hover {
+            background-color: #f0f0f0;
+        }
+
+        .pagination-controls span.current-page {
+            background-color: #2196F3;
+            color: white;
+            border-color: #2196F3;
+        }
+
+        .pagination-controls span.disabled {
+            color: #ccc;
+        }
+
+        .pagination-info {
+            text-align: center;
+            margin-top: 10px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -334,6 +374,50 @@
                 %>
                 </tbody>
             </table>
+
+            <!-- Pagination Controls -->
+            <%
+                Integer currentPage = (Integer) request.getAttribute("currentPage");
+                Integer totalPages = (Integer) request.getAttribute("totalPages");
+                Integer totalOrders = (Integer) request.getAttribute("totalOrders");
+
+                if (currentPage != null && totalPages != null && totalPages > 0) {
+            %>
+            <div class="pagination-container">
+                <div class="pagination-controls">
+                    <% if (currentPage > 1) { %>
+                        <a href="${pageContext.request.contextPath}/mypage.do?menu=orderList&page=<%= currentPage - 1 %>" style="margin: 0 5px; padding: 5px 10px; border: 1px solid #ccc; text-decoration: none; border-radius: 3px;">이전</a>
+                    <% } else { %>
+                        <span style="margin: 0 5px; padding: 5px 10px; border: 1px solid #ccc; color: #ccc; border-radius: 3px;">이전</span>
+                    <% } %>
+
+                    <% 
+                    // Display page numbers
+                    int startPage = Math.max(1, currentPage - 2);
+                    int endPage = Math.min(totalPages, currentPage + 2);
+
+                    for (int i = startPage; i <= endPage; i++) { 
+                    %>
+                        <% if (i == currentPage) { %>
+                            <span style="margin: 0 5px; padding: 5px 10px; background-color: #2196F3; color: white; border-radius: 3px;"><%= i %></span>
+                        <% } else { %>
+                            <a href="${pageContext.request.contextPath}/mypage.do?menu=orderList&page=<%= i %>" style="margin: 0 5px; padding: 5px 10px; border: 1px solid #ccc; text-decoration: none; border-radius: 3px;"><%= i %></a>
+                        <% } %>
+                    <% } %>
+
+                    <% if (currentPage < totalPages) { %>
+                        <a href="${pageContext.request.contextPath}/mypage.do?menu=orderList&page=<%= currentPage + 1 %>" style="margin: 0 5px; padding: 5px 10px; border: 1px solid #ccc; text-decoration: none; border-radius: 3px;">다음</a>
+                    <% } else { %>
+                        <span style="margin: 0 5px; padding: 5px 10px; border: 1px solid #ccc; color: #ccc; border-radius: 3px;">다음</span>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Pagination Info -->
+            <div style="text-align: center; margin-top: 10px; color: #666;">
+                총 <%= totalOrders %>개의 주문 (페이지 <%= currentPage %> / <%= totalPages %>)
+            </div>
+            <% } %>
         <%
             }
         %>
