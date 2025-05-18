@@ -9,6 +9,77 @@
   Member loggedInMember = (Member) session.getAttribute("member");
 %>
 
+<style>
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 20px;
+  }
+
+  h3 {
+    margin-bottom: 20px;
+  }
+
+  p {
+    color: #555;
+    margin-bottom: 30px;
+  }
+
+  form {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    max-width: 700px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+  }
+
+  input[type="text"],
+  select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+  }
+
+  button[type="submit"] {
+    padding: 10px 20px;
+    background-color: #4285f4;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  button[type="submit"]:hover:enabled {
+    background-color: #3367d6;
+  }
+
+  button[disabled] {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+
+  #upper1-container,
+  #upper2-container {
+    margin-bottom: 20px;
+  }
+
+  small {
+    color: #888;
+  }
+</style>
+
 <h3>카테고리 등록</h3>
 <p>카테고리 레벨 2단계 이상부터는 상위 카테고리를 선택해야 합니다.</p>
 

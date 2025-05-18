@@ -7,6 +7,121 @@
     List<Product> products = productDao.getAllProducts();
     String status = request.getParameter("status");
 %>
+<style>
+    body {
+        font-family: 'Noto Sans KR', sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h3 {
+        margin-bottom: 20px;
+    }
+
+    p {
+        color: #555;
+        margin-bottom: 30px;
+    }
+
+    form {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        max-width: 100%;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+    }
+
+    tr:hover {
+        background-color: #f9f9f9;
+    }
+
+    .editable-field {
+        width: 95%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .image-upload {
+        padding: 6px;
+    }
+
+    .modified {
+        background-color: #e6ffe6;
+    }
+
+    .save-button {
+        padding: 10px 18px;
+        background-color: #4285f4;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .save-button:hover {
+        background-color: #3367d6;
+    }
+
+    .delete-button {
+        padding: 6px 12px;
+        background-color: #f44336;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 13px;
+    }
+
+    .delete-button:hover {
+        background-color: #d32f2f;
+    }
+
+    .delete-button:disabled {
+        background-color: #ffcccc;
+        color: #666666;
+        cursor: not-allowed;
+    }
+
+    .cancel-delete-button {
+        padding: 6px 12px;
+        background-color: #9e9e9e;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 13px;
+    }
+
+    .cancel-delete-button:hover {
+        background-color: #757575;
+    }
+
+    small {
+        color: #888;
+    }
+</style>
+
 
 <h3>상품 수정</h3>
 <p>아래 표에서 상품 정보를 수정할 수 있습니다. 변경된 항목은 연두색으로 표시됩니다.</p>

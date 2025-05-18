@@ -8,6 +8,71 @@
     String status = request.getParameter("status");
 %>
 
+<style>
+    body {
+        font-family: 'Noto Sans KR', sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h3 {
+        margin-bottom: 20px;
+    }
+
+    p {
+        color: #555;
+        margin-bottom: 30px;
+    }
+
+    form {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        max-width: 700px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    textarea,
+    input[type="file"] {
+        width: 70%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+
+    input[type="radio"] {
+        margin-right: 6px;
+    }
+
+    button[type="submit"] {
+        padding: 10px 20px;
+        background-color: #4285f4;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        font-size: 15px;
+        cursor: pointer;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #3367d6;
+    }
+</style>
+
+
 <h3>상품 등록</h3>
 <p>아래 양식을 통해 새로운 상품을 등록할 수 있습니다.</p>
 
