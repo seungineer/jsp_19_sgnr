@@ -29,7 +29,7 @@ public class CategoryDao {
             placeholders.append("?");
         }
 
-        String sql = "SELECT * FROM TB_CATEGORY WHERE ID IN (" + placeholders.toString() + ")";
+        String sql = "SELECT * FROM TB_CATEGORY WHERE NB_CATEGORY IN (" + placeholders.toString() + ")";
 
         List<Category> categories = new ArrayList<>();
 
@@ -44,12 +44,12 @@ public class CategoryDao {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Category category = new Category();
-                    category.setId(rs.getInt("ID"));
-                    category.setName(rs.getString("NAME"));
-                    category.setUpperId(rs.getInt("UPPER_ID"));
-                    category.setOrder(rs.getInt("ORDER_NO"));
-                    category.setRegDate(rs.getString("REG_DATE"));
-                    category.setLevel(rs.getInt("LEVEL"));
+                    category.setId(rs.getInt("NB_CATEGORY"));
+                    category.setName(rs.getString("NM_CATEGORY"));
+                    category.setUpperId(rs.getInt("NB_PARENT_CATEGORY"));
+                    category.setOrder(rs.getInt("CN_ORDER"));
+                    category.setRegDate(rs.getString("DA_FIRST_DATE"));
+                    category.setLevel(rs.getInt("CN_LEVEL"));
                     category.setYnUse(rs.getString("YN_USE"));
                     categories.add(category);
                 }
