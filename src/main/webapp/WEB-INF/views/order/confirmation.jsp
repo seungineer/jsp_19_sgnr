@@ -87,7 +87,6 @@
     </style>
 </head>
 <body>
-    <!-- Include header -->
     <jsp:include page="/WEB-INF/views/include/header.jsp" />
 
     <div class="container">

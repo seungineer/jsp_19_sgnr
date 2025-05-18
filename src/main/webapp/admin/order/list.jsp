@@ -5,14 +5,11 @@
 <%@ page import="java.text.NumberFormat" %>
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%
-    // 검색 파라미터 가져오기
     String orderId = request.getParameter("orderId");
     String userName = request.getParameter("userName");
 
-    // OrderDao 인스턴스 생성
     OrderDao orderDao = new OrderDao();
 
-    // 주문 목록 가져오기
     List<OrderWithUser> orderList = orderDao.getAllOrders(orderId, userName);
     NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.KOREA);
 %>
@@ -206,7 +203,6 @@
         </tbody>
     </table>
 
-    <!-- Order Detail Modal -->
     <div id="orderDetailModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
@@ -253,7 +249,6 @@
                         </tr>
                     </thead>
                     <tbody id="modal-order-items">
-                        <!-- Order items will be dynamically added here -->
                     </tbody>
                 </table>
             </div>
@@ -261,12 +256,9 @@
     </div>
 
     <script>
-        // Get the modal
         var modal = document.getElementById("orderDetailModal");
 
-        // Function to show order detail
         function showOrderDetail(orderId) {
-            // Make AJAX request to get order details
             fetch('${pageContext.request.contextPath}/order/detail-json.do?orderId=' + orderId)
                 .then(response => response.json())
                 .then(data => {
@@ -275,7 +267,6 @@
                         return;
                     }
 
-                    // Populate order information
                     document.getElementById('modal-order-id').textContent = data.order.id_order;
                     document.getElementById('modal-user-name').textContent = data.order.nm_user;
                     document.getElementById('modal-receiver-name').textContent = data.order.nm_receiver;
@@ -283,7 +274,6 @@
                     document.getElementById('modal-payment-status').textContent = data.order.st_payment;
                     document.getElementById('modal-order-date').textContent = data.order.da_order;
 
-                    // Populate order items
                     var orderItemsHtml = '';
                     data.orderItems.forEach(item => {
                         orderItemsHtml += '<tr>';
@@ -297,7 +287,6 @@
 
                     document.getElementById('modal-order-items').innerHTML = orderItemsHtml;
 
-                    // Show the modal
                     modal.style.display = "block";
                 })
                 .catch(error => {
@@ -306,12 +295,10 @@
                 });
         }
 
-        // Function to close the modal
         function closeModal() {
             modal.style.display = "none";
         }
 
-        // Close the modal when clicking outside of it
         window.onclick = function(event) {
             if (event.target == modal) {
                 closeModal();

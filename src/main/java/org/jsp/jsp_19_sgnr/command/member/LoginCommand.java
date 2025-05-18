@@ -12,9 +12,6 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.regex.Pattern;
 
-/**
- * Command implementation for handling user login.
- */
 public class LoginCommand implements Command {
     private final Pattern emailPattern = Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
     private final Pattern pwPattern = Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{5,15}$");

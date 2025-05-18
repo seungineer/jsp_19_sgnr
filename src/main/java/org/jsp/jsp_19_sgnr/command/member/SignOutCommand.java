@@ -11,9 +11,6 @@ import java.net.URLEncoder;
 
 import java.io.IOException;
 
-/**
- * Command implementation for handling user sign-out.
- */
 public class SignOutCommand implements Command {
     private MemberDao memberDao = new MemberDao();
 

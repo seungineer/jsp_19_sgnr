@@ -13,7 +13,6 @@ import java.util.List;
 import static org.jsp.jsp_19_sgnr.db.DBConnection.getConnection;
 
 public class MemberDao {
-    // Default page size
     private static final int DEFAULT_PAGE_SIZE = 10;
     public int insert(Member member) {
         String sql = "INSERT INTO TB_USER (ID_USER, NM_USER, NM_PASWD, NO_MOBILE, NM_EMAIL, ST_STATUS, CD_USER_TYPE) " +
@@ -233,33 +232,16 @@ public class MemberDao {
         }
     }
 
-    /**
-     * Count total number of regular users (non-admin)
-     * 
-     * @return Total count of regular users
-     */
     public int countAllExceptAdmin() {
         String sql = "SELECT COUNT(*) FROM TB_USER WHERE CD_USER_TYPE != '20'";
         return countWithQuery(sql);
     }
 
-    /**
-     * Count total number of admin users
-     * 
-     * @return Total count of admin users
-     */
     public int countOnlyAdmin() {
         String sql = "SELECT COUNT(*) FROM TB_USER WHERE CD_USER_TYPE = '20'";
         return countWithQuery(sql);
     }
 
-    /**
-     * Count users by status and user type
-     * 
-     * @param status User status
-     * @param userType User type
-     * @return Total count of users with the specified status and type
-     */
     public int countByStatusAndUserType(String status, String userType) {
         String sql = "SELECT COUNT(*) FROM TB_USER WHERE ST_STATUS = ? AND CD_USER_TYPE = ?";
         try (Connection conn = getConnection();
@@ -277,9 +259,6 @@ public class MemberDao {
         return 0;
     }
 
-    /**
-     * Helper method to count records with a simple query
-     */
     private int countWithQuery(String sql) {
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -293,13 +272,6 @@ public class MemberDao {
         return 0;
     }
 
-    /**
-     * Get paginated list of regular users (non-admin)
-     * 
-     * @param page The page number (1-based)
-     * @param pageSize The number of items per page
-     * @return List of regular users for the specified page
-     */
     public List<Member> getPaginatedMembersExceptAdmin(int page, int pageSize) {
         int startRow = (page - 1) * pageSize + 1;
         int endRow = page * pageSize;
@@ -313,13 +285,6 @@ public class MemberDao {
         return getPaginatedMembers(sql, startRow, endRow);
     }
 
-    /**
-     * Get paginated list of admin users
-     * 
-     * @param page The page number (1-based)
-     * @param pageSize The number of items per page
-     * @return List of admin users for the specified page
-     */
     public List<Member> getPaginatedAdminMembers(int page, int pageSize) {
         int startRow = (page - 1) * pageSize + 1;
         int endRow = page * pageSize;
@@ -333,15 +298,6 @@ public class MemberDao {
         return getPaginatedMembers(sql, startRow, endRow);
     }
 
-    /**
-     * Get paginated list of users by status and user type
-     * 
-     * @param status User status
-     * @param userType User type
-     * @param page The page number (1-based)
-     * @param pageSize The number of items per page
-     * @return List of users with the specified status and type for the specified page
-     */
     public List<Member> getPaginatedMembersByStatusAndUserType(String status, String userType, int page, int pageSize) {
         int startRow = (page - 1) * pageSize + 1;
         int endRow = page * pageSize;
@@ -378,9 +334,6 @@ public class MemberDao {
         return list;
     }
 
-    /**
-     * Helper method to get paginated members with a prepared SQL query
-     */
     private List<Member> getPaginatedMembers(String sql, int startRow, int endRow) {
         List<Member> list = new ArrayList<>();
         try (Connection conn = getConnection();

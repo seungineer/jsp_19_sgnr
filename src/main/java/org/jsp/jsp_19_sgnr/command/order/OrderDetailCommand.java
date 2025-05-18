@@ -17,17 +17,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Command implementation for displaying the details of a specific order.
- * This command retrieves the order items for a given order ID and forwards to the order detail page.
- */
 public class OrderDetailCommand implements Command {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
 
-        // Check if user is logged in
         HttpSession session = request.getSession(false);
 
         if (session == null || session.getAttribute("member") == null) {
@@ -37,7 +32,6 @@ public class OrderDetailCommand implements Command {
 
         Member member = (Member) session.getAttribute("member");
 
-        // Get order ID from request
         String orderId = request.getParameter("orderId");
 
         if (orderId == null || orderId.isEmpty()) {
@@ -46,7 +40,6 @@ public class OrderDetailCommand implements Command {
             return;
         }
 
-        // Get order items and order
         OrderDao orderDao = new OrderDao();
         List<OrderItem> orderItems = orderDao.getOrderItems(orderId);
         Order order = orderDao.getOrderById(orderId);
@@ -57,7 +50,6 @@ public class OrderDetailCommand implements Command {
             return;
         }
 
-        // Get product details for each order item
         ProductDao productDao = new ProductDao();
         Map<String, Product> productMap = new HashMap<>();
 
@@ -68,12 +60,10 @@ public class OrderDetailCommand implements Command {
             }
         }
 
-        // Set order, order items and product map as request attributes
         request.setAttribute("order", order);
         request.setAttribute("orderItems", orderItems);
         request.setAttribute("productMap", productMap);
 
-        // Forward to order detail page
         request.getRequestDispatcher("/WEB-INF/views/order/detail.jsp").forward(request, response);
     }
 }

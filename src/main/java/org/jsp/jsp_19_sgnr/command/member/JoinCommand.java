@@ -11,9 +11,6 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.regex.Pattern;
 
-/**
- * Command implementation for handling member registration.
- */
 public class JoinCommand implements Command {
 
     // 정규식 패턴

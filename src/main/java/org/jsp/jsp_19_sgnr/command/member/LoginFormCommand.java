@@ -7,10 +7,6 @@ import org.jsp.jsp_19_sgnr.command.Command;
 
 import java.io.IOException;
 
-/**
- * Command for displaying the login form.
- * This command forwards the request to the login.jsp page.
- */
 public class LoginFormCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -13,11 +13,6 @@ import org.jsp.jsp_19_sgnr.dto.Member;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Command for displaying the basket contents.
- * This command retrieves the user's basket items and forwards to the basket view page.
- * It checks if the user is logged in before displaying the basket.
- */
 public class BasketViewCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -14,38 +14,29 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Command for displaying product details.
- */
 public class ProductDetailCommand implements Command {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Get product ID from request
         String productId = request.getParameter("productId");
         
         if (productId == null || productId.isEmpty()) {
-            // No product ID provided, redirect to product list
             response.sendRedirect(request.getContextPath() + "/product/list.do");
             return;
         }
         
-        // Get product details
         ProductDao productDao = new ProductDao();
         Product product = productDao.getProductById(productId);
         
         if (product == null) {
-            // Product not found, redirect to product list
             response.sendRedirect(request.getContextPath() + "/product/list.do");
             return;
         }
         
-        // Get product categories
         List<Integer> categoryIds = productDao.getCategoryMappings(productId);
         CategoryDao categoryDao = new CategoryDao();
         List<Category> categories = categoryDao.findByIds(categoryIds);
         
-        // Get product image information
         String fileId = product.getId_file();
         String imagePath = "";
         
@@ -63,12 +54,10 @@ public class ProductDetailCommand implements Command {
             }
         }
         
-        // Set attributes for the view
         request.setAttribute("product", product);
         request.setAttribute("categories", categories);
         request.setAttribute("imagePath", imagePath);
         
-        // Forward to product detail page
         request.getRequestDispatcher("/product/detail.jsp").forward(request, response);
     }
 }

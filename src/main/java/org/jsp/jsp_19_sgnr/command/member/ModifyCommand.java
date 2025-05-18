@@ -11,9 +11,6 @@ import org.jsp.jsp_19_sgnr.dto.Member;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-/**
- * Command implementation for handling user profile modification.
- */
 public class ModifyCommand implements Command {
 
     private static final Pattern PASSWORD_REGEX =

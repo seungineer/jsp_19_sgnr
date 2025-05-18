@@ -78,7 +78,6 @@
         margin-top: 20px;
     }
 
-    /* Pagination styles */
     .pagination-container {
         display: flex;
         justify-content: center;
@@ -140,11 +139,9 @@
 </form>
 
 <%
-    // Get search parameters
     String searchType = request.getParameter("searchType");
     String keyword = request.getParameter("keyword");
 
-    // Get products and pagination data from request attributes
     List<Product> products = (List<Product>) request.getAttribute("products");
     Integer currentPage = (Integer) request.getAttribute("currentPage");
     Integer totalPages = (Integer) request.getAttribute("totalPages");
@@ -156,7 +153,6 @@
     if (totalProducts == null) totalProducts = 0;
     if (pageSize == null) pageSize = 10;
 
-    // Use the products directly since filtering is now done on the server side
     List<Product> filteredProducts = products;
     NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.KOREA);
 %>
@@ -188,7 +184,6 @@
                     <td><%= product.getNm_product() %></td>
                     <td>
                         <%
-                            // Get categories for this product from the pre-loaded map
                             Map<String, List<Category>> productCategoryMap = (Map<String, List<Category>>) request.getAttribute("productCategoryMap");
                             List<Category> productCategories = productCategoryMap != null ? productCategoryMap.get(product.getNo_product()) : null;
 
@@ -197,11 +192,9 @@
                             if (productCategories != null && !productCategories.isEmpty()) {
                                 for (int i = 0; i < productCategories.size(); i++) {
                                     Category cat = productCategories.get(i);
-                                    // Display the fullname if available, otherwise display the name
                                     String displayName = cat.getNmFullCategory() != null ? cat.getNmFullCategory() : cat.getNmCategory();
                                     categoryDisplay.append(displayName);
 
-                                    // Add comma if not the last category
                                     if (i < productCategories.size() - 1) {
                                         categoryDisplay.append(", ");
                                     }
@@ -221,7 +214,6 @@
     </table>
 <% } %>
 
-<!-- Pagination Controls -->
 <div class="pagination-container">
     <div class="pagination-controls">
         <% if (currentPage > 1) { %>
@@ -231,7 +223,6 @@
         <% } %>
 
         <% 
-        // Display page numbers
         int startPage = Math.max(1, currentPage - 2);
         int endPage = Math.min(totalPages, currentPage + 2);
 
@@ -252,14 +243,11 @@
     </div>
 </div>
 
-<!-- Pagination Info -->
 <div class="pagination-info">
     페이지 <%= currentPage %> / <%= totalPages %>
 </div>
 
 <script>
-    // Add any JavaScript functionality here if needed
     document.addEventListener('DOMContentLoaded', function() {
-        // Example: Add event listeners or other initialization code
     });
 </script>

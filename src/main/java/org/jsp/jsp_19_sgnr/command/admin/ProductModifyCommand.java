@@ -19,9 +19,6 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Command implementation for handling product modification.
- */
 public class ProductModifyCommand implements Command {
 
     @Override
@@ -38,13 +35,11 @@ public class ProductModifyCommand implements Command {
             return;
         }
 
-        // Get all parameter names to find modified and deleted products
         Enumeration<String> paramNames = request.getParameterNames();
         Set<String> modifiedProducts = new HashSet<>();
         Set<String> deletedProducts = new HashSet<>();
 
 
-        // Find all products that have been modified or deleted
         while (paramNames.hasMoreElements()) {
             String paramName = paramNames.nextElement();
             String paramValue = request.getParameter(paramName);
@@ -58,11 +53,9 @@ public class ProductModifyCommand implements Command {
             }
         }
 
-        // Remove products that are marked for deletion from the modified list
         modifiedProducts.removeAll(deletedProducts);
 
 
-        // Get pagination parameter
         String page = request.getParameter("page");
 
         if (modifiedProducts.isEmpty() && deletedProducts.isEmpty()) {
@@ -84,30 +77,23 @@ public class ProductModifyCommand implements Command {
             ProductDao productDao = new ProductDao();
             ContentDao contentDao = new ContentDao();
 
-            // Process each deleted product first
             for (String productId : deletedProducts) {
 
-                // Get the file ID associated with the product before deleting it
                 String fileId = productDao.getProductFileId(productId, conn);
 
-                // Remove all category mappings for the product
                 int mappingResult = productDao.removeAllCategoryMappings(productId, conn);
 
-                // Delete the product
                 int deleteResult = productDao.deleteProduct(productId, conn);
                 if (deleteResult <= 0) {
                     throw new SQLException("Failed to delete product: " + productId);
                 }
 
-                // Delete the file if it's not used by other products
                 if (fileId != null && !fileId.isEmpty()) {
                     boolean fileDeleted = contentDao.deleteFileIfNotUsed(fileId, productId, conn);
                 }
             }
 
-            // Process each modified product
             for (String productId : modifiedProducts) {
-                // Create a Product object with the updated values
                 Product product = new Product();
                 product.setNo_product(productId);
                 product.setNm_product(request.getParameter("nm_product_" + productId));
@@ -115,13 +101,11 @@ public class ProductModifyCommand implements Command {
                 product.setQt_stock(Integer.parseInt(request.getParameter("qt_stock_" + productId)));
                 product.setSale_status(Integer.parseInt(request.getParameter("sale_status_" + productId)));
 
-                // Update product information
                 int result = productDao.updateProduct(product, conn);
                 if (result <= 0) {
                     throw new SQLException("Failed to update product: " + productId);
                 }
 
-                // Handle image update if present
                 Part filePart = request.getPart("newImage_" + productId);
                 if (filePart != null && filePart.getSize() > 0) {
                     String originalFileName = filePart.getSubmittedFileName();
@@ -129,9 +113,8 @@ public class ProductModifyCommand implements Command {
                     String saveFileName = contentDao.generateSaveFileName(originalFileName);
                     String fileExt = contentDao.getFileExtension(originalFileName);
                     String fileType = filePart.getContentType();
-                    String filePath = "/upload/images/";  // Virtual path for DB storage
+                    String filePath = "/upload/images/";
 
-                    // Insert new file data into TB_CONTENT
                     String fileId = contentDao.insertFile(
                             originalFileName,
                             saveFileName,
@@ -144,7 +127,6 @@ public class ProductModifyCommand implements Command {
                     );
 
                     if (fileId != null) {
-                        // Update product with new file ID
                         result = productDao.updateProductImage(productId, fileId, conn);
                         if (result <= 0) {
                             throw new SQLException("Failed to update product image: " + productId);
@@ -162,7 +144,7 @@ public class ProductModifyCommand implements Command {
             success = false;
             if (conn != null) {
                 try {
-                    conn.rollback();  // Rollback on error
+                    conn.rollback();
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 }

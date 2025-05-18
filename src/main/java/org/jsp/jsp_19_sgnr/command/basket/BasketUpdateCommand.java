@@ -13,10 +13,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Command implementation for handling basket updates.
- * This includes updating quantities and selected status of items.
- */
 public class BasketUpdateCommand implements Command {
 
     @Override
@@ -25,7 +21,6 @@ public class BasketUpdateCommand implements Command {
 
         request.setCharacterEncoding("UTF-8");
 
-        // Check if user is logged in
         HttpSession session = request.getSession();
         Member member = (Member) session.getAttribute("member");
         if (member == null) {
@@ -33,7 +28,6 @@ public class BasketUpdateCommand implements Command {
             return;
         }
 
-        // Get basket ID from request
         int basketId;
         try {
             basketId = Integer.parseInt(request.getParameter("basketId"));
@@ -43,36 +37,29 @@ public class BasketUpdateCommand implements Command {
             return;
         }
 
-        // Get BasketDao
         BasketDao basketDao = new BasketDao();
 
-        // Process selected items
         String[] selectedItems = request.getParameterValues("selectedItems");
         Map<Integer, Boolean> selectedStatus = new HashMap<>();
 
-        // First, mark all items as unselected
         basketDao.getBasketItems(basketId).forEach(item -> {
             selectedStatus.put(item.getItemId(), false);
         });
 
-        // Then, mark selected items
         if (selectedItems != null) {
             for (String itemIdStr : selectedItems) {
                 try {
                     int itemId = Integer.parseInt(itemIdStr);
                     selectedStatus.put(itemId, true);
                 } catch (NumberFormatException e) {
-                    // Skip invalid item IDs
                 }
             }
         }
 
-        // Update selected status for all items
         for (Map.Entry<Integer, Boolean> entry : selectedStatus.entrySet()) {
             basketDao.updateBasketItemSelected(entry.getKey(), entry.getValue());
         }
 
-        // Process quantity updates
         Enumeration<String> parameterNames = request.getParameterNames();
         while (parameterNames.hasMoreElements()) {
             String paramName = parameterNames.nextElement();
@@ -86,19 +73,16 @@ public class BasketUpdateCommand implements Command {
                         basketDao.updateBasketItemQuantity(itemId, quantity);
                     }
                 } catch (NumberFormatException e) {
-                    // Skip invalid parameters
                 }
             }
         }
 
-        // Update session basket to match database
         Map<String, Integer> sessionBasket = new HashMap<>();
         basketDao.getBasketItems(basketId).forEach(item -> {
             sessionBasket.put(item.getProductId(), item.getQuantity());
         });
         session.setAttribute("basket", sessionBasket);
 
-        // Redirect back to basket view
         response.sendRedirect(request.getContextPath() + "/basket/view.do");
     }
 }

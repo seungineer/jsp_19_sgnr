@@ -25,12 +25,12 @@
       box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
       padding: 20px; display: flex;
       flex-direction: column; justify-content: space-between;
-      position: fixed; /* Make sidebar fixed */
-      height: 100vh; /* Full height */
-      top: 0; /* Align to top */
-      left: 0; /* Align to left */
-      z-index: 1000; /* Ensure sidebar is above other content */
-      overflow-y: auto; /* Allow scrolling if content is too tall */
+      position: fixed;
+      height: 100vh;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      overflow-y: auto;
     }
     .sidebar h2 { font-size: 18px; margin-bottom: 20px; color: #333; }
     .header-row {
@@ -69,7 +69,7 @@
     .logout-link:hover { text-decoration: underline; }
     .content {
       flex: 1; padding: 40px; background-color: #f5f5f5;
-      margin-left: 260px; /* Width of sidebar (220px) + padding (20px*2) */
+      margin-left: 260px;
     }
     .content-box {
       height: 90%;

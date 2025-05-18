@@ -1,8 +1,5 @@
 package org.jsp.jsp_19_sgnr.dto;
 
-/**
- * DTO class for TB_ORDER table.
- */
 public class Order {
     private String id_order;
     private String no_user;
@@ -22,15 +19,9 @@ public class Order {
     private String no_register;
     private String da_first_date;
 
-    /**
-     * Default constructor
-     */
     public Order() {
     }
 
-    /**
-     * Constructor with all fields
-     */
     public Order(String id_order, String no_user, int qt_order_amount, int qt_deli_money, int qt_deli_period,
                 String nm_order_person, String nm_receiver, String no_delivery_zipno, String nm_delivery_address,
                 String nm_receiver_telno, String nm_delivery_space, String cd_order_type, String da_order,
@@ -54,7 +45,6 @@ public class Order {
         this.da_first_date = da_first_date;
     }
 
-    // Getters and Setters
     public String getId_order() {
         return id_order;
     }
@@ -191,26 +181,4 @@ public class Order {
         this.da_first_date = da_first_date;
     }
 
-    @Override
-    public String toString() {
-        return "Order{" +
-                "id_order='" + id_order + '\'' +
-                ", no_user='" + no_user + '\'' +
-                ", qt_order_amount=" + qt_order_amount +
-                ", qt_deli_money=" + qt_deli_money +
-                ", qt_deli_period=" + qt_deli_period +
-                ", nm_order_person='" + nm_order_person + '\'' +
-                ", nm_receiver='" + nm_receiver + '\'' +
-                ", no_delivery_zipno='" + no_delivery_zipno + '\'' +
-                ", nm_delivery_address='" + nm_delivery_address + '\'' +
-                ", nm_receiver_telno='" + nm_receiver_telno + '\'' +
-                ", nm_delivery_space='" + nm_delivery_space + '\'' +
-                ", cd_order_type='" + cd_order_type + '\'' +
-                ", da_order='" + da_order + '\'' +
-                ", st_order='" + st_order + '\'' +
-                ", st_payment='" + st_payment + '\'' +
-                ", no_register='" + no_register + '\'' +
-                ", da_first_date='" + da_first_date + '\'' +
-                '}';
-    }
 }

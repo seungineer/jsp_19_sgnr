@@ -127,7 +127,7 @@
     const formattedEnd = document.getElementById("formattedEndDate");
 
     function formatDate(input) {
-        return input.value.replaceAll("-", "");  // "2024-01-01" → "20240101"
+        return input.value.replaceAll("-", "");
     }
 
     startDateInput.addEventListener("change", () => {

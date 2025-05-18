@@ -10,10 +10,6 @@ import org.jsp.jsp_19_sgnr.dto.Member;
 
 import java.io.IOException;
 
-/**
- * Command implementation for handling category-product mapping operations.
- * This class is responsible for adding and removing mappings between categories and products.
- */
 public class ProductCategoryMappingCommand implements Command {
 
     @Override
@@ -42,7 +38,6 @@ public class ProductCategoryMappingCommand implements Command {
         boolean result = false;
 
         if ("add".equals(action)) {
-            // Handle adding product to category
             String productId = request.getParameter("productId");
 
             if (productId == null || productId.trim().isEmpty()) {
@@ -52,7 +47,6 @@ public class ProductCategoryMappingCommand implements Command {
 
             result = dao.addProductToCategory(Integer.parseInt(categoryId), productId, member.getName());
         } else if ("remove".equals(action)) {
-            // Handle removing product from category
             String productId = request.getParameter("productId");
 
             if (productId == null || productId.trim().isEmpty()) {

@@ -9,11 +9,6 @@ import org.jsp.jsp_19_sgnr.dto.Member;
 
 import java.io.IOException;
 
-/**
- * Command for displaying the member information modification form.
- * This command forwards the request to the modify.jsp page.
- * It checks if the user is logged in before displaying the form.
- */
 public class ModifyFormCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -24,7 +19,6 @@ public class ModifyFormCommand implements Command {
             return;
         }
 
-        // Redirect to mypage with modify menu
         response.sendRedirect(request.getContextPath() + "/mypage.do?menu=modify");
     }
 }

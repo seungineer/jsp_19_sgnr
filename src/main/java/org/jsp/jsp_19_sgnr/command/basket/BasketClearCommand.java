@@ -11,9 +11,6 @@ import org.jsp.jsp_19_sgnr.dto.Member;
 import java.io.IOException;
 import java.util.HashMap;
 
-/**
- * Command implementation for handling clearing all items from the basket.
- */
 public class BasketClearCommand implements Command {
 
     @Override
@@ -22,7 +19,6 @@ public class BasketClearCommand implements Command {
 
         request.setCharacterEncoding("UTF-8");
 
-        // Check if user is logged in
         HttpSession session = request.getSession();
         Member member = (Member) session.getAttribute("member");
         if (member == null) {
@@ -30,7 +26,6 @@ public class BasketClearCommand implements Command {
             return;
         }
 
-        // Get basket ID from request
         int basketId;
         try {
             basketId = Integer.parseInt(request.getParameter("basketId"));
@@ -40,10 +35,8 @@ public class BasketClearCommand implements Command {
             return;
         }
 
-        // Get BasketDao
         BasketDao basketDao = new BasketDao();
 
-        // Clear the basket in the database
         boolean success = basketDao.clearBasket(basketId);
         if (!success) {
             request.setAttribute("errorMessage", "장바구니를 비울 수 없습니다.");
@@ -51,10 +44,8 @@ public class BasketClearCommand implements Command {
             return;
         }
 
-        // Clear the session basket
         session.setAttribute("basket", new HashMap<String, Integer>());
 
-        // Redirect back to basket view
         response.sendRedirect(request.getContextPath() + "/basket/view.do");
     }
 }

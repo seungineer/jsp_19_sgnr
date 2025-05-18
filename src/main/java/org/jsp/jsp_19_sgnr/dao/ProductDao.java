@@ -16,12 +16,6 @@ import static org.jsp.jsp_19_sgnr.db.DBConnection.getConnection;
 
 public class ProductDao {
 
-    /**
-     * Searches products by keyword in product name.
-     * 
-     * @param keyword The search keyword
-     * @return List of products matching the keyword
-     */
     public List<Product> searchProductsByKeyword(String keyword) {
         String sql = "SELECT * FROM TB_PRODUCT WHERE NM_PRODUCT LIKE ? ORDER BY DA_FIRST_DATE DESC";
         List<Product> products = new ArrayList<>();
@@ -57,14 +51,6 @@ public class ProductDao {
         }
     }
 
-    /**
-     * Searches paginated products by keyword in product name.
-     * 
-     * @param keyword The search keyword
-     * @param page The page number (1-based)
-     * @param pageSize The number of items per page
-     * @return List of products matching the keyword for the specified page
-     */
     public List<Product> searchPaginatedProductsByKeyword(String keyword, int page, int pageSize) {
         int startRow = (page - 1) * pageSize + 1;
         int endRow = page * pageSize;
@@ -110,12 +96,6 @@ public class ProductDao {
         }
     }
 
-    /**
-     * Gets the total count of products matching a keyword.
-     * 
-     * @param keyword The search keyword
-     * @return Total number of products matching the keyword
-     */
     public int getTotalProductCountByKeyword(String keyword) {
         String sql = "SELECT COUNT(*) FROM TB_PRODUCT WHERE NM_PRODUCT LIKE ?";
 
@@ -137,12 +117,6 @@ public class ProductDao {
         }
     }
 
-    /**
-     * Gets a product by its ID.
-     * 
-     * @param productId The product ID
-     * @return The product, or null if not found
-     */
     public Product getProductById(String productId) {
         String sql = "SELECT * FROM TB_PRODUCT WHERE NO_PRODUCT = ?";
 
@@ -175,12 +149,6 @@ public class ProductDao {
         return null;
     }
 
-    /**
-     * Finds all products mapped to a specific category.
-     * 
-     * @param categoryId The category ID
-     * @return List of products mapped to the category
-     */
     public List<Product> findProductsByCategory(int categoryId) {
         String sql = "SELECT p.* FROM TB_PRODUCT p " +
                 "JOIN TB_CATEGORY_PRODUCT_MAPPING m ON p.NO_PRODUCT = m.no_product " +
@@ -221,14 +189,6 @@ public class ProductDao {
         }
     }
 
-    /**
-     * Finds paginated products mapped to a specific category.
-     * 
-     * @param categoryId The category ID
-     * @param page The page number (1-based)
-     * @param pageSize The number of items per page
-     * @return List of products mapped to the category for the specified page
-     */
     public List<Product> findPaginatedProductsByCategory(int categoryId, int page, int pageSize) {
         int startRow = (page - 1) * pageSize + 1;
         int endRow = page * pageSize;
@@ -277,12 +237,6 @@ public class ProductDao {
         }
     }
 
-    /**
-     * Gets the total count of products in a specific category.
-     * 
-     * @param categoryId The category ID
-     * @return Total number of products in the category
-     */
     public int getTotalProductCountByCategory(int categoryId) {
         String sql = "SELECT COUNT(*) FROM TB_PRODUCT p " +
                 "JOIN TB_CATEGORY_PRODUCT_MAPPING m ON p.NO_PRODUCT = m.no_product " +
@@ -306,12 +260,6 @@ public class ProductDao {
         }
     }
 
-    /**
-     * Finds all products not mapped to a specific category.
-     * 
-     * @param categoryId The category ID
-     * @return List of products not mapped to the category
-     */
     public List<Product> findUnmappedProducts(int categoryId) {
         String sql = "SELECT * FROM TB_PRODUCT p " +
                 "WHERE NOT EXISTS (" +
@@ -352,14 +300,6 @@ public class ProductDao {
         }
     }
 
-    /**
-     * Adds a product to a category.
-     * 
-     * @param categoryId The category ID
-     * @param productId The product ID
-     * @param registerName The name of the user registering the mapping
-     * @return true if successful, false otherwise
-     */
     public boolean addProductToCategory(int categoryId, String productId, String registerName) {
         String sqlCheckExisting = "SELECT COUNT(*) FROM TB_CATEGORY_PRODUCT_MAPPING " +
                 "WHERE nb_category = ? AND no_product = ?";
@@ -374,7 +314,6 @@ public class ProductDao {
         try (Connection conn = DBConnection.getConnection()) {
             conn.setAutoCommit(false);
 
-            // Check if mapping already exists
             try (PreparedStatement psCheck = conn.prepareStatement(sqlCheckExisting)) {
                 psCheck.setInt(1, categoryId);
                 psCheck.setString(2, productId);
@@ -387,7 +326,6 @@ public class ProductDao {
                 }
             }
 
-            // Get the next order number
             int nextOrder = 1;
             try (PreparedStatement psOrder = conn.prepareStatement(sqlGetMaxOrder)) {
                 psOrder.setInt(1, categoryId);
@@ -399,7 +337,6 @@ public class ProductDao {
                 }
             }
 
-            // Insert the mapping
             try (PreparedStatement psInsert = conn.prepareStatement(sqlInsertMapping)) {
                 psInsert.setInt(1, categoryId);
                 psInsert.setString(2, productId);
@@ -416,13 +353,6 @@ public class ProductDao {
         }
     }
 
-    /**
-     * Removes a product from a category.
-     * 
-     * @param categoryId The category ID
-     * @param productId The product ID
-     * @return true if successful, false otherwise
-     */
     public boolean removeProductFromCategory(int categoryId, String productId) {
         String sql = "DELETE FROM TB_CATEGORY_PRODUCT_MAPPING " +
                 "WHERE nb_category = ? AND no_product = ?";
@@ -440,14 +370,7 @@ public class ProductDao {
             return false;
         }
     }
-    /**
-     * Inserts category mappings for a product.
-     * 
-     * @param productId   The product ID
-     * @param categoryIds Array of category IDs
-     * @param registerName The name of the user registering the mapping
-     * @return true if successful, false otherwise
-     */
+
     public boolean insertCategoryMappings(String productId, String[] categoryIds, String registerName) {
         String sqlCheckExisting = "SELECT COUNT(*) FROM TB_CATEGORY_PRODUCT_MAPPING " +
                 "WHERE nb_category = ? AND no_product = ?";
@@ -465,7 +388,6 @@ public class ProductDao {
                 for (int i = 0; i < categoryIds.length; i++) {
                     int categoryId = Integer.parseInt(categoryIds[i]);
 
-                    // Check if mapping already exists
                     psCheck.setInt(1, categoryId);
                     psCheck.setString(2, productId);
 
@@ -476,7 +398,6 @@ public class ProductDao {
                         }
                     }
 
-                    // Skip if mapping already exists
                     if (!exists) {
                         psInsert.setInt(1, categoryId);
                         psInsert.setString(2, productId);
@@ -497,12 +418,6 @@ public class ProductDao {
         }
     }
 
-    /**
-     * Gets all category mappings for a product.
-     * 
-     * @param productId The product ID
-     * @return Array of category IDs mapped to the product
-     */
     public List<Integer> getCategoryMappings(String productId) {
         String sql = "SELECT nb_category FROM TB_CATEGORY_PRODUCT_MAPPING " +
                 "WHERE no_product = ? ORDER BY cn_order";
@@ -527,12 +442,6 @@ public class ProductDao {
         }
     }
 
-    /**
-     * Gets all category mappings for all products in a single query.
-     * This method is optimized to avoid N+1 query problem when sorting products by category.
-     * 
-     * @return Map with product ID as key and list of category IDs as value
-     */
     public Map<String, List<Integer>> getAllCategoryMappings() {
         String sql = "SELECT NO_PRODUCT, NB_CATEGORY FROM TB_CATEGORY_PRODUCT_MAPPING ORDER BY cn_order";
 
@@ -546,7 +455,6 @@ public class ProductDao {
                 String productId = rs.getString("NO_PRODUCT");
                 int categoryId = rs.getInt("NB_CATEGORY");
 
-                // Get or create the list of category IDs for this product
                 List<Integer> categoryIds = mappings.computeIfAbsent(productId, k -> new ArrayList<>());
                 categoryIds.add(categoryId);
             }
@@ -558,11 +466,6 @@ public class ProductDao {
         }
     }
 
-    /**
-     * Gets all products.
-     * 
-     * @return List of all products
-     */
     public List<Product> getAllProducts() {
         String sql = "SELECT * FROM TB_PRODUCT ORDER BY DA_FIRST_DATE DESC";
         List<Product> products = new ArrayList<>();
@@ -596,13 +499,6 @@ public class ProductDao {
         }
     }
 
-    /**
-     * Gets paginated products.
-     * 
-     * @param page The page number (1-based)
-     * @param pageSize The number of items per page
-     * @return List of products for the specified page
-     */
     public List<Product> getPaginatedProducts(int page, int pageSize) {
         int startRow = (page - 1) * pageSize + 1;
         int endRow = page * pageSize;
@@ -647,11 +543,6 @@ public class ProductDao {
         }
     }
 
-    /**
-     * Gets the total count of all products.
-     * 
-     * @return Total number of products
-     */
     public int getTotalProductCount() {
         String sql = "SELECT COUNT(*) FROM TB_PRODUCT";
 
@@ -670,13 +561,6 @@ public class ProductDao {
         }
     }
 
-    /**
-     * Removes category mappings for a product.
-     * 
-     * @param productId   The product ID
-     * @param categoryIds Array of category IDs to remove
-     * @return true if successful, false otherwise
-     */
     public boolean removeCategoryMappings(String productId, String[] categoryIds) {
         String sql = "DELETE FROM TB_CATEGORY_PRODUCT_MAPPING " +
                 "WHERE no_product = ? AND nb_category = ?";
@@ -702,14 +586,6 @@ public class ProductDao {
         }
     }
 
-    /**
-     * Inserts a product using the provided connection for transaction support.
-     * 
-     * @param product The product to insert
-     * @param conn The database connection to use
-     * @return The number of rows affected
-     * @throws SQLException If a database error occurs
-     */
     public int insertProduct(Product product, Connection conn) throws SQLException {
         String sql = "INSERT INTO TB_PRODUCT (" +
                 "NO_PRODUCT, NM_PRODUCT, NM_DETAIL_EXPLAIN, " +
@@ -739,14 +615,6 @@ public class ProductDao {
         }
     }
 
-    /**
-     * Updates a product using the provided connection for transaction support.
-     * 
-     * @param product The product to update
-     * @param conn The database connection to use
-     * @return The number of rows affected
-     * @throws SQLException If a database error occurs
-     */
     public int updateProduct(Product product, Connection conn) throws SQLException {
         String sql = "UPDATE TB_PRODUCT SET " +
                 "NM_PRODUCT = ?, QT_SALE_PRICE = ?, QT_STOCK = ?, " +
@@ -763,15 +631,6 @@ public class ProductDao {
         }
     }
 
-    /**
-     * Updates a product's image reference.
-     * 
-     * @param productId The product ID
-     * @param fileId The new file ID
-     * @param conn The database connection to use
-     * @return The number of rows affected
-     * @throws SQLException If a database error occurs
-     */
     public int updateProductImage(String productId, String fileId, Connection conn) throws SQLException {
         String sql = "UPDATE TB_PRODUCT SET ID_FILE = ? WHERE NO_PRODUCT = ?";
 
@@ -783,14 +642,6 @@ public class ProductDao {
         }
     }
 
-    /**
-     * Deletes a product from TB_PRODUCT.
-     * 
-     * @param productId The product ID to delete
-     * @param conn The database connection to use
-     * @return The number of rows affected
-     * @throws SQLException If a database error occurs
-     */
     public int deleteProduct(String productId, Connection conn) throws SQLException {
         String sql = "DELETE FROM TB_PRODUCT WHERE NO_PRODUCT = ?";
 
@@ -804,14 +655,6 @@ public class ProductDao {
         }
     }
 
-    /**
-     * Removes all category mappings for a product.
-     * 
-     * @param productId The product ID
-     * @param conn The database connection to use
-     * @return The number of rows affected
-     * @throws SQLException If a database error occurs
-     */
     public int removeAllCategoryMappings(String productId, Connection conn) throws SQLException {
         String sql = "DELETE FROM TB_CATEGORY_PRODUCT_MAPPING WHERE no_product = ?";
 
@@ -825,14 +668,6 @@ public class ProductDao {
         }
     }
 
-    /**
-     * Gets the file ID associated with a product.
-     * 
-     * @param productId The product ID
-     * @param conn The database connection to use
-     * @return The file ID or null if not found
-     * @throws SQLException If a database error occurs
-     */
     public String getProductFileId(String productId, Connection conn) throws SQLException {
         String sql = "SELECT ID_FILE FROM TB_PRODUCT WHERE NO_PRODUCT = ?";
 

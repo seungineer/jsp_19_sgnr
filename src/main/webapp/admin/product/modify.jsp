@@ -5,32 +5,26 @@
 <%
     ProductDao productDao = new ProductDao();
 
-    // Pagination parameters
     int currentPage = 1;
     int pageSize = 10;
 
-    // Get page from request parameter
     String pageParam = request.getParameter("page");
     if (pageParam != null && !pageParam.isEmpty()) {
         try {
             currentPage = Integer.parseInt(pageParam);
             if (currentPage < 1) currentPage = 1;
         } catch (NumberFormatException e) {
-            // If invalid, default to page 1
             currentPage = 1;
         }
     }
 
-    // Get total count and calculate total pages
     int totalProducts = productDao.getTotalProductCount();
     int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
 
-    // Ensure current page is not greater than total pages
     if (totalPages > 0 && currentPage > totalPages) {
         currentPage = totalPages;
     }
 
-    // Get paginated list of products
     List<Product> products = productDao.getPaginatedProducts(currentPage, pageSize);
     String status = request.getParameter("status");
 %>
@@ -318,14 +312,11 @@
 </style>
 
 <script>
-    // Track modified fields
     document.querySelectorAll('.editable-field').forEach(field => {
         field.addEventListener('change', function() {
             this.classList.add('modified');
 
-            // Get the product code from the field name
             const fieldName = this.name;
-            // Extract product code by removing the known prefixes
             let productCode = fieldName;
             const knownPrefixes = ["nm_product_", "qt_sale_price_", "qt_stock_", "sale_status_"];
             for (const prefix of knownPrefixes) {
@@ -336,24 +327,19 @@
             }
 
 
-            // Set the modified flag for this product
             const modifiedFlag = document.querySelector("input[name=\"modified_" + productCode + "\"]");
             if (modifiedFlag) {
                 modifiedFlag.value = "true";
             } else {
-                // List all modified flags for debugging
                 const allFlags = document.querySelectorAll('.modified-flag');
             }
         });
     });
 
-    // Handle image uploads
     document.querySelectorAll('.image-upload').forEach(fileInput => {
         fileInput.addEventListener('change', function() {
             if (this.files && this.files[0]) {
-                // Get the product code from the field name
                 const fieldName = this.name;
-                // Extract product code by removing the known prefixes
                 let productCode = fieldName;
                 const knownPrefixes = ["newImage_"];
                 for (const prefix of knownPrefixes) {
@@ -364,28 +350,22 @@
                 }
 
 
-                // Set the modified flag for this product
                 const modifiedFlag = document.querySelector("input[name=\"modified_" + productCode + "\"]");
                 if (modifiedFlag) {
                     modifiedFlag.value = "true";
                 } else {
-                    // List all modified flags for debugging
                     const allFlags = document.querySelectorAll('.modified-flag');
                 }
 
-                // Show image preview
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const row = fileInput.closest('tr');
                     const imgCell = row.querySelector('td:first-child');
 
-                    // Check if there's an existing image or placeholder
                     const imgElement = imgCell.querySelector('img');
                     if (imgElement) {
-                        // Update existing image
                         imgElement.src = e.target.result;
                     } else {
-                        // Replace placeholder with new image
                         imgCell.innerHTML = `
                             <img src="${e.target.result}" style="max-width: 100px; max-height: 100px;"><br>
                             <small>새 이미지</small>
@@ -397,14 +377,11 @@
         });
     });
 
-    // Form submission - only include modified products
     document.getElementById('modifyForm').addEventListener('submit', function(e) {
         e.preventDefault();
 
-        // Check for delete flags
         const deleteFlags = document.querySelectorAll('input[name^="delete_"][value="true"]');
 
-        // Check if any products were modified (either by flag or by modified class)
         const modifiedFlags = document.querySelectorAll('.modified-flag[value="true"]');
         const modifiedFields = document.querySelectorAll('.editable-field.modified');
 
@@ -413,11 +390,9 @@
             return;
         }
 
-        // If we have modified fields but no flags set, set the flags now
         if (modifiedFlags.length === 0 && modifiedFields.length > 0) {
             modifiedFields.forEach(field => {
                 const fieldName = field.name;
-                // Extract product code by removing the known prefixes
                 let productCode = fieldName;
                 const knownPrefixes = ["nm_product_", "qt_sale_price_", "qt_stock_", "sale_status_"];
                 for (const prefix of knownPrefixes) {
@@ -440,12 +415,10 @@
         this.submit();
     });
 
-    // Handle delete buttons
     document.querySelectorAll('.delete-button').forEach(button => {
         button.addEventListener('click', function() {
             const productId = this.getAttribute('data-product-id');
 
-            // Find the product name input within the same row as the delete button
             const row = this.closest('tr');
             const productNameInput = row.querySelector('input[name="nm_product_'+productId+'"]');
 
@@ -453,18 +426,13 @@
 
             if (confirm('정말로 상품 '+productName+'을(를) 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) {
 
-                // Set the delete flag for this product (find it within the same row)
                 const deleteFlag = row.querySelector(`.delete-flag`);
 
                 if (deleteFlag) {
                     deleteFlag.value = "true";
 
-                    // Visually indicate that the product will be deleted
                     row.style.backgroundColor = '#ffdddd';
                     row.style.textDecoration = 'line-through';
-
-                    // Create a hidden input for the product name to ensure it's submitted
-                    // We already have productNameInput from earlier
 
                     if (productNameInput) {
                         const hiddenNameInput = document.createElement('input');
@@ -474,18 +442,15 @@
                         row.appendChild(hiddenNameInput);
                     }
 
-                    // Disable inputs for this product
                     row.querySelectorAll('input, select').forEach(input => {
                         if (!input.name.startsWith('delete_')) {
                             input.disabled = true;
                         }
                     });
 
-                    // Change button text and disable it
                     this.textContent = '삭제 예정';
                     this.disabled = true;
 
-                    // Add a cancel button
                     const cancelButton = document.createElement('button');
                     cancelButton.type = 'button';
                     cancelButton.textContent = '취소';
@@ -493,22 +458,18 @@
                     cancelButton.style.marginLeft = '5px';
                     this.parentNode.appendChild(cancelButton);
 
-                    // Handle cancel button click
                     cancelButton.addEventListener('click', function() {
                         deleteFlag.value = "false";
                         row.style.backgroundColor = '';
                         row.style.textDecoration = '';
 
-                        // Re-enable inputs
                         row.querySelectorAll('input, select').forEach(input => {
                             input.disabled = false;
                         });
 
-                        // Restore delete button
                         button.textContent = '삭제';
                         button.disabled = false;
 
-                        // Remove cancel button
                         this.remove();
                     });
                 }
@@ -516,7 +477,6 @@
         });
     });
 
-    // Show status messages
     const status = "<%= status %>";
     if (status === "success") {
         alert("✅ 상품이 성공적으로 수정/삭제되었습니다.");
@@ -525,7 +485,6 @@
     }
 </script>
 
-<!-- Pagination Controls -->
 <div class="pagination-container">
     <div class="pagination-controls">
         <% if (currentPage > 1) { %>
@@ -535,7 +494,6 @@
         <% } %>
 
         <% 
-        // Display page numbers
         int startPage = Math.max(1, currentPage - 2);
         int endPage = Math.min(totalPages, currentPage + 2);
 
@@ -556,7 +514,6 @@
     </div>
 </div>
 
-<!-- Pagination Info -->
 <div class="pagination-info">
     총 <%= totalProducts %>개의 상품 (페이지 <%= currentPage %> / <%= totalPages %>)
 </div>

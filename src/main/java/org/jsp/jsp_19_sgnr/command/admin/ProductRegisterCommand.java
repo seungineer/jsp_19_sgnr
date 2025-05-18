@@ -16,9 +16,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-/**
- * Command implementation for handling product registration.
- */
 public class ProductRegisterCommand implements Command {
 
     @Override
@@ -57,7 +54,6 @@ public class ProductRegisterCommand implements Command {
             conn = DBConnection.getConnection();
             conn.setAutoCommit(false);  // Start transaction
 
-            // Handle file upload if present
             Part filePart = request.getPart("productImage");
             if (filePart != null && filePart.getSize() > 0) {
                 String originalFileName = filePart.getSubmittedFileName();
@@ -68,7 +64,6 @@ public class ProductRegisterCommand implements Command {
                 String fileType = filePart.getContentType();
                 String filePath = "/upload/images/";  // Virtual path for DB storage
 
-                // Insert file data into TB_CONTENT
                 String fileId = contentDao.insertFile(
                     originalFileName,
                     saveFileName,
@@ -87,7 +82,6 @@ public class ProductRegisterCommand implements Command {
                 }
             }
 
-            // Insert product data
             ProductDao dao = new ProductDao();
             int result = dao.insertProduct(product, conn);
 

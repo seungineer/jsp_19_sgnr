@@ -8,9 +8,6 @@ import org.jsp.jsp_19_sgnr.dao.MemberDao;
 
 import java.io.IOException;
 
-/**
- * Command implementation for handling batch member updates.
- */
 public class UpdateMemberCommand implements Command {
     private MemberDao memberDao = new MemberDao();
 
@@ -24,7 +21,6 @@ public class UpdateMemberCommand implements Command {
         String menu = request.getParameter("menu");
         String page = request.getParameter("page");
 
-        // Default to "member" if menu is not provided
         if (menu == null || menu.isEmpty()) {
             menu = "member";
         }
@@ -41,7 +37,6 @@ public class UpdateMemberCommand implements Command {
             }
         }
 
-        // Redirect back to the same page with pagination parameter
         String redirectUrl = request.getContextPath() + "/admin/admin.jsp?menu=" + menu + "&status=success";
         if (page != null && !page.isEmpty()) {
             redirectUrl += "&page=" + page;

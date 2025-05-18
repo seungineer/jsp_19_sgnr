@@ -13,7 +13,6 @@ public class AdminMainCommand implements Command {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 관리자 권한 확인
         HttpSession session = request.getSession();
         Member member = (Member) session.getAttribute("member");
 
@@ -22,7 +21,6 @@ public class AdminMainCommand implements Command {
             return;
         }
 
-        // 관리자 메인 페이지로 리다이렉트
         response.sendRedirect(request.getContextPath() + "/admin/admin.jsp");
     }
 }

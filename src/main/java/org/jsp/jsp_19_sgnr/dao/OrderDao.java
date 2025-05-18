@@ -12,24 +12,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * DAO class for handling order and order item operations.
- */
 public class OrderDao {
 
-    /**
-     * Inserts a new order into the database.
-     * 
-     * @param order The order to insert
-     * @return The generated order ID if successful, null otherwise
-     */
     public String insertOrder(Order order) {
         String sql = "INSERT INTO TB_ORDER (id_order, no_user, qt_order_amount, qt_deli_money, qt_deli_period, " +
                 "nm_order_person, nm_receiver, no_delivery_zipno, nm_delivery_address, nm_receiver_telno, " +
                 "nm_delivery_space, cd_order_type, da_order, st_order, st_payment, no_register, da_first_date) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, SYSDATE, ?, ?, ?, SYSDATE)";
 
-        // Generate a unique order ID if not provided
         if (order.getId_order() == null || order.getId_order().isEmpty()) {
             order.setId_order(generateOrderId());
         }
@@ -64,24 +54,16 @@ public class OrderDao {
         return null;
     }
 
-    /**
-     * Inserts a new order item into the database.
-     * 
-     * @param item The order item to insert
-     * @return true if successful, false otherwise
-     */
     public boolean insertOrderItem(OrderItem item) {
         String sql = "INSERT INTO TB_ORDER_ITEM (id_order_item, id_order, cn_order_item, no_product, no_user, " +
                 "qt_unit_price, qt_order_item, qt_order_item_amount, qt_order_item_delivery_fee, st_payment, " +
                 "no_register, da_first_date) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, SYSDATE)";
 
-        // Generate a unique order item ID if not provided
         if (item.getId_order_item() == null || item.getId_order_item().isEmpty()) {
             item.setId_order_item(generateOrderItemId());
         }
 
-        // Calculate the order item amount if not provided
         if (item.getQt_order_item_amount() == null) {
             item.setQt_order_item_amount(item.getQt_unit_price() * item.getQt_order_item());
         }
@@ -109,25 +91,16 @@ public class OrderDao {
         return false;
     }
 
-    /**
-     * Creates an order with its items in a single transaction.
-     * 
-     * @param order The order to create
-     * @param items The order items to create
-     * @return The generated order ID if successful, null otherwise
-     */
     public String createOrder(Order order, List<OrderItem> items) {
         Connection conn = null;
         try {
             conn = DBConnection.getConnection();
-            conn.setAutoCommit(false);  // Start transaction
+            conn.setAutoCommit(false);
 
-            // Generate a unique order ID if not provided
             if (order.getId_order() == null || order.getId_order().isEmpty()) {
                 order.setId_order(generateOrderId());
             }
 
-            // Insert the order
             String orderSql = "INSERT INTO TB_ORDER (id_order, no_user, qt_order_amount, qt_deli_money, qt_deli_period, " +
                     "nm_order_person, nm_receiver, no_delivery_zipno, nm_delivery_address, nm_receiver_telno, " +
                     "nm_delivery_space, cd_order_type, da_order, st_order, st_payment, no_register, da_first_date) " +
@@ -157,7 +130,6 @@ public class OrderDao {
                 }
             }
 
-            // Insert the order items
             String itemSql = "INSERT INTO TB_ORDER_ITEM (id_order_item, id_order, cn_order_item, no_product, no_user, " +
                     "qt_unit_price, qt_order_item, qt_order_item_amount, qt_order_item_delivery_fee, st_payment, " +
                     "no_register, da_first_date) " +
@@ -167,20 +139,16 @@ public class OrderDao {
                 for (int i = 0; i < items.size(); i++) {
                     OrderItem item = items.get(i);
 
-                    // Set the order ID for the item
                     item.setId_order(order.getId_order());
 
-                    // Generate a unique order item ID if not provided
                     if (item.getId_order_item() == null || item.getId_order_item().isEmpty()) {
                         item.setId_order_item(generateOrderItemId());
                     }
 
-                    // Set the order item number if not provided
                     if (item.getCn_order_item() <= 0) {
                         item.setCn_order_item(i + 1);
                     }
 
-                    // Calculate the order item amount if not provided
                     if (item.getQt_order_item_amount() == null) {
                         item.setQt_order_item_amount(item.getQt_unit_price() * item.getQt_order_item());
                     }
@@ -209,13 +177,13 @@ public class OrderDao {
                 }
             }
 
-            conn.commit();  // Commit transaction
+            conn.commit();
             return order.getId_order();
         } catch (SQLException e) {
             e.printStackTrace();
             if (conn != null) {
                 try {
-                    conn.rollback();  // Rollback transaction on error
+                    conn.rollback();
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 }
@@ -223,7 +191,7 @@ public class OrderDao {
         } finally {
             if (conn != null) {
                 try {
-                    conn.setAutoCommit(true);  // Reset auto-commit
+                    conn.setAutoCommit(true);
                     conn.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -234,12 +202,6 @@ public class OrderDao {
         return null;
     }
 
-    /**
-     * Gets all orders for a user.
-     * 
-     * @param userId The user ID
-     * @return A list of orders for the user
-     */
     public List<Order> getOrdersByUser(String userId) {
         String sql = "SELECT * FROM TB_ORDER WHERE no_user = ? ORDER BY da_order DESC";
         List<Order> orders = new ArrayList<>();
@@ -280,12 +242,6 @@ public class OrderDao {
         return orders;
     }
 
-    /**
-     * Counts the total number of orders for a user.
-     * 
-     * @param userId The user ID
-     * @return The total number of orders
-     */
     public int countOrdersByUser(String userId) {
         String sql = "SELECT COUNT(*) FROM TB_ORDER WHERE no_user = ?";
 
@@ -306,14 +262,6 @@ public class OrderDao {
         return 0;
     }
 
-    /**
-     * Gets paginated orders for a user.
-     * 
-     * @param userId The user ID
-     * @param page The page number (1-based)
-     * @param pageSize The number of items per page
-     * @return A list of orders for the specified page
-     */
     public List<Order> getPaginatedOrdersByUser(String userId, int page, int pageSize) {
         int startRow = (page - 1) * pageSize + 1;
         int endRow = page * pageSize;
@@ -364,12 +312,6 @@ public class OrderDao {
         return orders;
     }
 
-    /**
-     * Gets all order items for an order.
-     * 
-     * @param orderId The order ID
-     * @return A list of order items for the order
-     */
     public List<OrderItem> getOrderItems(String orderId) {
         String sql = "SELECT * FROM TB_ORDER_ITEM WHERE id_order = ? ORDER BY cn_order_item";
         List<OrderItem> items = new ArrayList<>();
@@ -405,31 +347,14 @@ public class OrderDao {
         return items;
     }
 
-    /**
-     * Generates a unique order ID.
-     * 
-     * @return A unique order ID
-     */
     private String generateOrderId() {
         return "ORD" + UUID.randomUUID().toString().replaceAll("-", "").substring(0, 27);
     }
 
-    /**
-     * Generates a unique order item ID.
-     * 
-     * @return A unique order item ID
-     */
     private String generateOrderItemId() {
         return "ORI" + UUID.randomUUID().toString().replaceAll("-", "").substring(0, 27);
     }
 
-    /**
-     * Updates the status of an order.
-     * 
-     * @param orderId The order ID
-     * @param status The new status
-     * @return true if successful, false otherwise
-     */
     public boolean updateOrderStatus(String orderId, String status) {
         String sql = "UPDATE TB_ORDER SET st_order = ? WHERE id_order = ?";
 
@@ -447,12 +372,6 @@ public class OrderDao {
         return false;
     }
 
-    /**
-     * Gets an order by its ID.
-     * 
-     * @param orderId The order ID
-     * @return The order, or null if not found
-     */
     public Order getOrderById(String orderId) {
         String sql = "SELECT * FROM TB_ORDER WHERE id_order = ?";
 
@@ -492,13 +411,6 @@ public class OrderDao {
         return null;
     }
 
-    /**
-     * Gets all orders with user information, with optional filtering by order ID or user name.
-     * 
-     * @param orderId The order ID to filter by (optional)
-     * @param userName The user name to filter by (optional)
-     * @return A list of orders with user information
-     */
     public List<OrderWithUser> getAllOrders(String orderId, String userName) {
         StringBuilder sqlBuilder = new StringBuilder();
         sqlBuilder.append("SELECT o.*, m.NM_USER as nm_user FROM TB_ORDER o ");
@@ -570,21 +482,13 @@ public class OrderDao {
         return orders;
     }
 
-    /**
-     * Gets detailed order information including order items and product details.
-     * 
-     * @param orderId The order ID
-     * @return A map containing order, order items, and product information
-     */
     public Map<String, Object> getOrderDetail(String orderId) {
         Map<String, Object> result = new HashMap<>();
 
-        // Get the order with user information
         String orderSql = "SELECT o.*, m.NM_USER as nm_user FROM TB_ORDER o " +
                           "JOIN TB_USER m ON o.no_user = m.ID_USER " +
                           "WHERE o.id_order = ?";
 
-        // Get the order items with product information
         String itemsSql = "SELECT oi.*, p.NM_PRODUCT FROM TB_ORDER_ITEM oi " +
                           "LEFT JOIN TB_PRODUCT p ON oi.no_product = p.NO_PRODUCT " +
                           "WHERE oi.id_order = ? " +
@@ -594,7 +498,6 @@ public class OrderDao {
              PreparedStatement orderPs = conn.prepareStatement(orderSql);
              PreparedStatement itemsPs = conn.prepareStatement(itemsSql)) {
 
-            // Get order with user information
             orderPs.setString(1, orderId);
             try (ResultSet rs = orderPs.executeQuery()) {
                 if (rs.next()) {
@@ -622,7 +525,6 @@ public class OrderDao {
                 }
             }
 
-            // Get order items with product information
             List<Map<String, Object>> orderItems = new ArrayList<>();
             itemsPs.setString(1, orderId);
             try (ResultSet rs = itemsPs.executeQuery()) {

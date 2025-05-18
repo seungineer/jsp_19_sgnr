@@ -9,9 +9,6 @@ import org.jsp.jsp_19_sgnr.dto.Category;
 
 import java.io.IOException;
 
-/**
- * Command implementation for handling category registration.
- */
 public class CategoryRegisterCommand implements Command {
 
     @Override

@@ -375,7 +375,6 @@
                 </tbody>
             </table>
 
-            <!-- Pagination Controls -->
             <%
                 Integer currentPage = (Integer) request.getAttribute("currentPage");
                 Integer totalPages = (Integer) request.getAttribute("totalPages");
@@ -392,7 +391,6 @@
                     <% } %>
 
                     <% 
-                    // Display page numbers
                     int startPage = Math.max(1, currentPage - 2);
                     int endPage = Math.min(totalPages, currentPage + 2);
 
@@ -413,7 +411,6 @@
                 </div>
             </div>
 
-            <!-- Pagination Info -->
             <div style="text-align: center; margin-top: 10px; color: #666;">
                 총 <%= totalOrders %>개의 주문 (페이지 <%= currentPage %> / <%= totalPages %>)
             </div>
@@ -424,7 +421,6 @@
 
     </div>
 
-    <!-- Order Detail Modal -->
     <div id="orderDetailModal" class="modal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
@@ -437,48 +433,38 @@
     </div>
 
     <script>
-        // Get the modal
         const modal = document.getElementById("orderDetailModal");
         const modalBody = modal.querySelector(".modal-body");
         const closeBtn = modal.querySelector(".close-modal");
 
-        // Close the modal when clicking the close button
         closeBtn.onclick = function() {
             modal.style.display = "none";
         }
 
-        // Close the modal when clicking outside of it
         window.onclick = function(event) {
             if (event.target == modal) {
                 modal.style.display = "none";
             }
         }
 
-        // Function to load order details
         function loadOrderDetails(orderId) {
-            // Show loading message
             modalBody.innerHTML = '<div class="modal-loading"><p>주문 정보를 불러오는 중입니다...</p></div>';
             modal.style.display = "block";
 
-            // Fetch order details
             fetch('${pageContext.request.contextPath}/order/detail.do?orderId=' + orderId)
                 .then(response => response.text())
                 .then(html => {
-                    // Extract the content from the response
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(html, 'text/html');
                     const container = doc.querySelector('.container');
 
                     if (container) {
-                        // Create a title element
                         const title = document.createElement('h1');
                         title.textContent = '주문 상세 정보';
 
-                        // Clear the modal body and add the title
                         modalBody.innerHTML = '';
                         modalBody.appendChild(title);
 
-                        // Add the container content
                         modalBody.appendChild(container);
                     } else {
                         modalBody.innerHTML = '<p>주문 정보를 불러오는데 실패했습니다.</p>';
@@ -490,7 +476,6 @@
                 });
         }
 
-        // Update all detail buttons to use the modal
         document.querySelectorAll('.detail-btn').forEach(button => {
             button.addEventListener('click', function(e) {
                 e.preventDefault();

@@ -9,9 +9,6 @@ import org.jsp.jsp_19_sgnr.dto.Member;
 
 import java.io.IOException;
 
-/**
- * Command implementation for handling member approval.
- */
 public class ApproveMemberCommand implements Command {
     private MemberDao memberDao = new MemberDao();
 
@@ -34,7 +31,6 @@ public class ApproveMemberCommand implements Command {
             }
         }
 
-        // Redirect back to the same page with pagination parameter
         String redirectUrl = request.getContextPath() + "/admin/admin.jsp?menu=approval";
         if (page != null && !page.isEmpty()) {
             redirectUrl += "&page=" + page;

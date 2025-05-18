@@ -1,20 +1,15 @@
 package org.jsp.jsp_19_sgnr.dto;
 
-/**
- * DTO class representing an item in a user's shopping basket.
- * Maps to the TB_BASKET_ITEM table.
- */
 public class BasketItem {
-    private int itemId;          // Primary key
-    private int basketId;        // Foreign key to Basket.basketId
-    private String productId;    // Foreign key to Product.no_product
-    private int quantity;        // Quantity of the product
-    private int price;           // Price at the time of adding to basket
-    private String createDate;   // Creation date
-    private String updateDate;   // Last update date
-    private boolean selected;    // Whether the item is selected for checkout
+    private int itemId;
+    private int basketId;
+    private String productId;
+    private int quantity;
+    private int price;
+    private String createDate;
+    private String updateDate;
+    private boolean selected;
 
-    // Additional fields for display purposes (not stored in DB)
     private String productName;
     private String productImage;
     

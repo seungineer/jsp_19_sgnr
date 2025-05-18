@@ -176,7 +176,6 @@
 
                 NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.KOREA);
 
-                // Calculate totals
                 int totalAmount = 0;
                 int totalDeliveryFee = 0;
 

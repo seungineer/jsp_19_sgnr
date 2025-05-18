@@ -5,7 +5,6 @@
 <%@ page import="java.util.*" %>
 
 <style>
-/* 토글 스위치 스타일 */
 .switch {
   position: relative;
   display: inline-block;
@@ -59,33 +58,27 @@ input:checked + .slider:after {
 }
 </style>
 <%
-    // Check if user is logged in and is admin
     Member member = (Member) session.getAttribute("member");
     if (member == null || !"20".equals(member.getUserType())) {
         response.sendRedirect(request.getContextPath() + "/member/loginForm.do");
         return;
     }
 
-    // Get all categories
     CategoryDao categoryDao = new CategoryDao();
     List<Category> categories = categoryDao.findAll();
 
-    // Organize categories by level and parent for hierarchical display
     Map<Integer, List<Category>> levelMap = new HashMap<>();
     Map<Integer, List<Category>> parentChildMap = new HashMap<>();
 
-    // Initialize maps
     for (Category category : categories) {
         int level = category.getLevel();
         Integer parentId = category.getUpperId();
 
-        // Group by level
         if (!levelMap.containsKey(level)) {
             levelMap.put(level, new ArrayList<>());
         }
         levelMap.get(level).add(category);
 
-        // Group by parent
         if (parentId != null) {
             if (!parentChildMap.containsKey(parentId)) {
                 parentChildMap.put(parentId, new ArrayList<>());
@@ -94,17 +87,14 @@ input:checked + .slider:after {
         }
     }
 
-    // Sort each level by order
     for (List<Category> categoryList : levelMap.values()) {
         categoryList.sort(Comparator.comparing(Category::getOrder));
     }
 
-    // Sort each parent's children by order
     for (List<Category> children : parentChildMap.values()) {
         children.sort(Comparator.comparing(Category::getOrder));
     }
 
-    // Get status and message for alerts
     String status = request.getParameter("status");
     String message = request.getParameter("message");
 %>
@@ -126,10 +116,8 @@ input:checked + .slider:after {
                 </thead>
                 <tbody>
                     <%
-                    // Get level 1 categories (대분류)
                     List<Category> topCategories = levelMap.getOrDefault(1, new ArrayList<>());
 
-                    // Display categories hierarchically
                     for (Category topCategory : topCategories) {
                     %>
                         <tr>
@@ -158,7 +146,6 @@ input:checked + .slider:after {
                             </td>
                         </tr>
                     <%
-                        // Get and display children (중분류)
                         List<Category> midCategories = parentChildMap.getOrDefault(topCategory.getId(), new ArrayList<>());
                         for (Category midCategory : midCategories) {
                     %>
@@ -189,7 +176,6 @@ input:checked + .slider:after {
                             </td>
                         </tr>
                     <%
-                            // Get and display grandchildren (소분류)
                             List<Category> subCategories = parentChildMap.getOrDefault(midCategory.getId(), new ArrayList<>());
                             for (Category subCategory : subCategories) {
                     %>
@@ -230,7 +216,6 @@ input:checked + .slider:after {
     </div>
 </div>
 
-<!-- Hidden forms for delete and toggle actions -->
 <form id="deleteForm" action="<%= request.getContextPath() %>/admin/category/manage.do" method="post" style="display: none;">
     <input type="hidden" name="action" value="delete">
     <input type="hidden" name="categoryId" id="deleteCategoryId">
@@ -242,12 +227,10 @@ input:checked + .slider:after {
 </form>
 
 <script>
-    // Function to submit the update form
     function submitForm(categoryId) {
         document.getElementById('form-' + categoryId).submit();
     }
 
-    // Function to delete a category
     function deleteCategory(categoryId) {
         if (confirm('정말로 이 카테고리를 삭제하시겠습니까?')) {
             document.getElementById('deleteCategoryId').value = categoryId;
@@ -255,13 +238,11 @@ input:checked + .slider:after {
         }
     }
 
-    // Function to toggle category status
     function toggleCategoryStatus(categoryId) {
         document.getElementById('toggleCategoryId').value = categoryId;
         document.getElementById('toggleForm').submit();
     }
 
-    // Display alerts based on status
     const status = "<%= status %>";
     const message = "<%= message %>";
 

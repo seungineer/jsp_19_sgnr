@@ -1,8 +1,5 @@
 package org.jsp.jsp_19_sgnr.dto;
 
-/**
- * DTO class for TB_ORDER_ITEM table.
- */
 public class OrderItem {
     private String id_order_item;
     private String id_order;
@@ -17,15 +14,9 @@ public class OrderItem {
     private String no_register;
     private String da_first_date;
 
-    /**
-     * Default constructor
-     */
     public OrderItem() {
     }
 
-    /**
-     * Constructor with all fields
-     */
     public OrderItem(String id_order_item, String id_order, int cn_order_item, String no_product, String no_user,
                     int qt_unit_price, int qt_order_item, Integer qt_order_item_amount, int qt_order_item_delivery_fee,
                     String st_payment, String no_register, String da_first_date) {
@@ -43,7 +34,6 @@ public class OrderItem {
         this.da_first_date = da_first_date;
     }
 
-    // Getters and Setters
     public String getId_order_item() {
         return id_order_item;
     }
@@ -140,21 +130,4 @@ public class OrderItem {
         this.da_first_date = da_first_date;
     }
 
-    @Override
-    public String toString() {
-        return "OrderItem{" +
-                "id_order_item='" + id_order_item + '\'' +
-                ", id_order='" + id_order + '\'' +
-                ", cn_order_item=" + cn_order_item +
-                ", no_product='" + no_product + '\'' +
-                ", no_user='" + no_user + '\'' +
-                ", qt_unit_price=" + qt_unit_price +
-                ", qt_order_item=" + qt_order_item +
-                ", qt_order_item_amount=" + qt_order_item_amount +
-                ", qt_order_item_delivery_fee=" + qt_order_item_delivery_fee +
-                ", st_payment='" + st_payment + '\'' +
-                ", no_register='" + no_register + '\'' +
-                ", da_first_date='" + da_first_date + '\'' +
-                '}';
-    }
 }

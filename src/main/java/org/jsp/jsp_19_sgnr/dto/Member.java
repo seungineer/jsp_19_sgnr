@@ -1,17 +1,16 @@
 package org.jsp.jsp_19_sgnr.dto;
 
 public class Member {
-    private String email;       // 사용자ID
-    private String password;    // 비밀번호
-    private String name;        // 사용자명
-    private String phone;       // 휴대전화
+    private String email;
+    private String password;
+    private String name;
+    private String phone;
     private String status;      // 상태 (요청 ST00, 정상 ST01, 해지 ST02, 일시정지 ST03)
     private String userType;    // 사용자 구분 코드 (일반 10, 관리자 20)
 
     public Member() {
     }
 
-    // 회원 가입을 위한 생성자
     public Member(String email, String password, String name, String phone) {
         this.email = email;
         this.password = password;
@@ -21,7 +20,6 @@ public class Member {
         this.userType = "10";
     }
 
-    // 전체 필드 사용 생성자
     public Member(String email, String password, String name, String phone, String status, String userType) {
         this.email = email;
         this.password = password;

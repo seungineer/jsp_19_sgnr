@@ -5,32 +5,26 @@
 <%
     MemberDao memberDao = new MemberDao();
 
-    // Pagination parameters
     int currentPage = 1;
     int pageSize = 10;
 
-    // Get page from request parameter
     String pageParam = request.getParameter("page");
     if (pageParam != null && !pageParam.isEmpty()) {
         try {
             currentPage = Integer.parseInt(pageParam);
             if (currentPage < 1) currentPage = 1;
         } catch (NumberFormatException e) {
-            // If invalid, default to page 1
             currentPage = 1;
         }
     }
 
-    // Get total count and calculate total pages
     int totalUsers = memberDao.countByStatusAndUserType("ST03", "10");
     int totalPages = (int) Math.ceil((double) totalUsers / pageSize);
 
-    // Ensure current page is not greater than total pages
     if (totalPages > 0 && currentPage > totalPages) {
         currentPage = totalPages;
     }
 
-    // Get paginated list of members
     List<Member> pausedMembers = memberDao.getPaginatedMembersByStatusAndUserType("ST03", "10", currentPage, pageSize);
 %>
 
@@ -121,7 +115,6 @@
     </tbody>
 </table>
 
-<!-- Pagination Controls -->
 <div style="display: flex; justify-content: center; margin-top: 20px;">
     <div style="display: flex; align-items: center;">
         <% if (currentPage > 1) { %>
@@ -131,7 +124,6 @@
         <% } %>
 
         <% 
-        // Display page numbers
         int startPage = Math.max(1, currentPage - 2);
         int endPage = Math.min(totalPages, currentPage + 2);
 
@@ -152,7 +144,6 @@
     </div>
 </div>
 
-<!-- Pagination Info -->
 <div style="text-align: center; margin-top: 10px; color: #666;">
     총 <%= totalUsers %>명의 탈퇴 승인 대기 회원 (페이지 <%= currentPage %> / <%= totalPages %>)
 </div>

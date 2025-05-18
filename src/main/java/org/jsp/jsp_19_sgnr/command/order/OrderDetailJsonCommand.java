@@ -10,21 +10,15 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 
-/**
- * Command implementation for returning order details as JSON.
- * This command retrieves the order details for a given order ID and returns them as JSON.
- */
 public class OrderDetailJsonCommand implements Command {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
 
-        // Set response content type to JSON
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        // Get order ID from request
         String orderId = request.getParameter("orderId");
         PrintWriter out = response.getWriter();
 
@@ -33,7 +27,6 @@ public class OrderDetailJsonCommand implements Command {
             return;
         }
 
-        // Get order details
         OrderDao orderDao = new OrderDao();
         Map<String, Object> orderDetail = orderDao.getOrderDetail(orderId);
 
@@ -42,13 +35,9 @@ public class OrderDetailJsonCommand implements Command {
             return;
         }
 
-        // Convert order detail to JSON
-        // For simplicity, we're using a basic approach to JSON conversion
-        // In a production environment, consider using a JSON library like Gson or Jackson
         StringBuilder json = new StringBuilder();
         json.append("{");
 
-        // Add order information
         org.jsp.jsp_19_sgnr.dto.OrderWithUser order = (org.jsp.jsp_19_sgnr.dto.OrderWithUser) orderDetail.get("order");
         if (order != null) {
             json.append("\"order\": {");
@@ -61,7 +50,6 @@ public class OrderDetailJsonCommand implements Command {
             json.append("}");
         }
 
-        // Add order items
         json.append(", \"orderItems\": [");
         Object orderItemsObj = orderDetail.get("orderItems");
         if (orderItemsObj != null && orderItemsObj instanceof java.util.List) {

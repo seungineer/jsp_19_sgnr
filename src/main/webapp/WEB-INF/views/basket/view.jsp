@@ -220,7 +220,6 @@
         }
     </style>
     <script>
-        // Function to update quantity and recalculate prices
         function updateQuantity(itemId, increment) {
             var inputElement = document.getElementById('quantity-' + itemId);
             var currentValue = parseInt(inputElement.value);
@@ -228,12 +227,10 @@
 
             if (newValue > 0) {
                 inputElement.value = newValue;
-                // Trigger price recalculation
                 updateItemPrice(itemId);
             }
         }
 
-        // Function to update item price when quantity changes
         function updateItemPrice(itemId) {
             var quantityInput = document.getElementById('quantity-' + itemId);
             var quantity = parseInt(quantityInput.value);
@@ -241,22 +238,18 @@
             var unitPrice = parseInt(priceElement.getAttribute('data-price'));
             var totalElement = document.getElementById('total-' + itemId);
 
-            // Calculate new total for this item
             var newTotal = quantity * unitPrice;
             totalElement.textContent = formatCurrency(newTotal);
             totalElement.setAttribute('data-total', newTotal);
 
-            // Update the hidden input for form submission
             var hiddenQuantity = document.getElementById('hidden-quantity-' + itemId);
             if (hiddenQuantity) {
                 hiddenQuantity.value = quantity;
             }
 
-            // Recalculate totals
             updateTotalPrice();
         }
 
-        // Function to update total price based on selected items
         function updateTotalPrice() {
             var checkboxes = document.getElementsByName('selectedItems');
             var totalProductPrice = 0;
@@ -268,46 +261,38 @@
                 var deliveryElement = document.getElementById('delivery-' + itemId);
 
                 if (checkboxes[i].checked) {
-                    // Add to total if checkbox is checked
                     totalProductPrice += parseInt(totalElement.getAttribute('data-total'));
                     totalDeliveryFee += parseInt(deliveryElement.getAttribute('data-fee'));
                 }
             }
 
-            // Update summary display
             document.getElementById('summary-product-price').textContent = formatCurrency(totalProductPrice);
             document.getElementById('summary-delivery-fee').textContent = formatCurrency(totalDeliveryFee);
             document.getElementById('summary-total-price').textContent = formatCurrency(totalProductPrice + totalDeliveryFee);
         }
 
-        // Format number as Korean currency
         function formatCurrency(amount) {
             return new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(amount);
         }
 
-        // Toggle all checkboxes
         function toggleSelectAll(source) {
             var checkboxes = document.getElementsByName('selectedItems');
             for (var i = 0; i < checkboxes.length; i++) {
                 checkboxes[i].checked = source.checked;
             }
-            // Update totals after toggling checkboxes
             updateTotalPrice();
         }
 
-        // Handle form submission for selected items
         function submitSelectedItems(action) {
             var form = document.getElementById('basketForm');
             var checkboxes = document.getElementsByName('selectedItems');
             var hasSelected = false;
 
-            // Remove any previously added hidden fields
             var oldHiddenFields = document.querySelectorAll('.dynamic-hidden-field');
             for (var i = 0; i < oldHiddenFields.length; i++) {
                 oldHiddenFields[i].remove();
             }
 
-            // Add hidden fields for selected items
             for (var i = 0; i < checkboxes.length; i++) {
                 if (checkboxes[i].checked) {
                     hasSelected = true;
@@ -335,24 +320,19 @@
                 return false;
             }
 
-            // Set the form action and submit
             form.action = action;
             form.submit();
             return true;
         }
 
-        // Initialize page
         window.onload = function() {
-            // Set initial checked state for all items
             var checkboxes = document.getElementsByName('selectedItems');
             for (var i = 0; i < checkboxes.length; i++) {
                 checkboxes[i].checked = true;
             }
 
-            // Initialize price calculations
             updateTotalPrice();
 
-            // Add event listeners to quantity inputs
             var quantityInputs = document.getElementsByClassName('quantity-input');
             for (var i = 0; i < quantityInputs.length; i++) {
                 quantityInputs[i].addEventListener('change', function() {
@@ -364,13 +344,11 @@
     </script>
 </head>
 <body>
-    <!-- Include header -->
     <jsp:include page="/WEB-INF/views/include/header.jsp" />
 
     <div class="container">
         <h1>장바구니</h1>
         <%
-            // Get basket items from request attributes
             List<BasketItem> basketItems = (List<BasketItem>) request.getAttribute("basketItems");
             Basket userBasket = (Basket) request.getAttribute("userBasket");
 
@@ -425,7 +403,6 @@
                             Product product = null;
 
                             if (productName == null || productName.isEmpty()) {
-                                // If product name is not set in BasketItem, get it from ProductDao
                                 product = productDao.getProductById(item.getProductId());
                                 if (product != null) {
                                     productName = product.getNm_product();
@@ -434,12 +411,10 @@
                                 }
                             }
 
-                            // If product is null, we need to fetch it to get the delivery fee
                             if (product == null) {
                                 product = productDao.getProductById(item.getProductId());
                             }
 
-                            // Add delivery fee for this product
                             if (product != null) {
                                 totalDeliveryFee += product.getQt_delivery_fee();
                             }

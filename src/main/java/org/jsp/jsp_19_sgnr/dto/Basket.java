@@ -1,15 +1,11 @@
 package org.jsp.jsp_19_sgnr.dto;
 
-/**
- * DTO class representing a user's shopping basket.
- * Maps to the TB_BASKET table.
- */
 public class Basket {
-    private int basketId;        // Primary key
-    private String userEmail;    // Foreign key to Member.email
-    private String createDate;   // Creation date
-    private String updateDate;   // Last update date
-    private String status;       // Basket status (e.g., active, ordered)
+    private int basketId;
+    private String userEmail;
+    private String createDate;
+    private String updateDate;
+    private String status;
 
     public Basket() {
     }

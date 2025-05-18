@@ -6,33 +6,27 @@
 <%@ page import="org.jsp.jsp_19_sgnr.dto.Member" %>
 <%@ page import="java.util.*" %>
 <%
-    // Check if user is logged in
     Member member = (Member) session.getAttribute("member");
     if (member == null) {
         response.sendRedirect(request.getContextPath() + "/member/loginForm.do");
         return;
     }
 
-    // Get all categories
     CategoryDao categoryDao = new CategoryDao();
     List<Category> categories = categoryDao.findAll();
 
-    // Organize categories by level and parent for hierarchical display
     Map<Integer, List<Category>> levelMap = new HashMap<>();
     Map<Integer, List<Category>> parentChildMap = new HashMap<>();
 
-    // Initialize maps
     for (Category category : categories) {
         int level = category.getLevel();
         Integer parentId = category.getUpperId();
 
-        // Group by level
         if (!levelMap.containsKey(level)) {
             levelMap.put(level, new ArrayList<>());
         }
         levelMap.get(level).add(category);
 
-        // Group by parent
         if (parentId != null) {
             if (!parentChildMap.containsKey(parentId)) {
                 parentChildMap.put(parentId, new ArrayList<>());
@@ -41,23 +35,15 @@
         }
     }
 
-    // Sort each level by order
 
     for (List<Category> categoryList : levelMap.values()) {
         categoryList.sort(Comparator.comparing(Category::getOrder));
     }
 
-    // Sort each parent's children by order
     for (List<Category> children : parentChildMap.values()) {
         children.sort(Comparator.comparing(Category::getOrder));
     }
 
-    // SQL equivalent of what we're doing:
-    // SELECT * FROM TB_CATEGORY 
-    // WHERE YN_USE = 'Y' AND YN_DELETE = 'N' 
-    // ORDER BY cn_level ASC, cn_order ASC
-
-    // Get selected category and its products
     String selectedCategoryIdStr = request.getParameter("categoryId");
     int selectedCategoryId = 0;
     List<Product> mappedProducts = new ArrayList<>();
@@ -68,7 +54,6 @@
         try {
             selectedCategoryId = Integer.parseInt(selectedCategoryIdStr);
 
-            // Find the selected category first
             for (Category c : categories) {
                 if (c.getId() == selectedCategoryId) {
                     selectedCategory = c;
@@ -76,21 +61,16 @@
                 }
             }
 
-            // Only fetch products if it's a Level 3 category
             if (selectedCategory != null && selectedCategory.getLevel() == 3) {
-                // Get products mapped to this category
                 ProductDao productDao = new ProductDao();
                 mappedProducts = productDao.findProductsByCategory(selectedCategoryId);
 
-                // Get products not mapped to this category
                 unmappedProducts = productDao.findUnmappedProducts(selectedCategoryId);
             }
         } catch (NumberFormatException e) {
-            // Invalid category ID, ignore
         }
     }
 
-    // Get status and message for alerts
     String status = request.getParameter("status");
     String message = request.getParameter("message");
 %>
@@ -99,17 +79,13 @@
 <p>카테고리를 선택하고 상품을 매핑하거나 해제할 수 있습니다.</p>
 
 <div style="display: flex; gap: 20px; margin-top: 20px;">
-    <!-- 왼쪽 컬럼: 카테고리 목록 (계층적 표시) -->
     <div style="flex: 1; border: 1px solid #ddd; padding: 15px; border-radius: 5px;">
         <h4>카테고리 목록</h4>
         <div style="max-height: 500px; overflow-y: scroll;">
             <%
-            // Get level 1 categories (대분류)
             List<Category> topCategories = levelMap.getOrDefault(1, new ArrayList<>());
 
-            // Display categories hierarchically
             for (Category topCategory : topCategories) {
-                // Display top level category (대분류)
             %>
                 <div style="margin-bottom: 8px; padding: 5px;">
                     <div style="margin-left:0px; color: #666;">
@@ -117,7 +93,6 @@
                     </div>
                 </div>
             <%
-                // Get and display children (중분류)
                 List<Category> midCategories = parentChildMap.getOrDefault(topCategory.getId(), new ArrayList<>());
                 for (Category midCategory : midCategories) {
             %>
@@ -127,7 +102,6 @@
                     </div>
                 </div>
             <%
-                    // Get and display grandchildren (소분류)
                     List<Category> subCategories = parentChildMap.getOrDefault(midCategory.getId(), new ArrayList<>());
                     for (Category subCategory : subCategories) {
                         boolean isSelected = selectedCategoryId == subCategory.getId();
@@ -146,13 +120,11 @@
         </div>
     </div>
 
-    <!-- 오른쪽 컬럼: 선택된 카테고리의 상품 목록 및 추가 기능 -->
     <div style="flex: 2; border: 1px solid #ddd; padding: 15px; border-radius: 5px;">
         <% if (selectedCategoryId > 0 && selectedCategory != null) { %>
             <h4>카테고리: <%= selectedCategory.getName() %></h4>
 
             <% if (selectedCategory.getLevel() == 3) { %>
-                <!-- 상품 추가 폼 -->
                 <div style="margin-bottom: 20px; padding: 10px; background-color: #f9f9f9; border-radius: 5px;">
                     <h5>상품 추가하기</h5>
                     <% if (unmappedProducts.isEmpty()) { %>
@@ -177,7 +149,6 @@
                     <% } %>
                 </div>
 
-                <!-- 매핑된 상품 목록 -->
                 <h5>매핑된 상품 목록</h5>
                 <% if (mappedProducts.isEmpty()) { %>
                     <p>현재 매핑된 상품이 없습니다.</p>

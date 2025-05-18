@@ -8,10 +8,6 @@ import org.jsp.jsp_19_sgnr.command.Command;
 
 import java.io.IOException;
 
-/**
- * Command for handling user logout.
- * This command invalidates the user's session and redirects to the login page.
- */
 public class LogoutCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

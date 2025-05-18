@@ -33,7 +33,6 @@ public class Category {
         this.nbCategory = nbCategory;
     }
 
-    // Keeping backward compatibility
     public int getId() {
         return nbCategory;
     }
@@ -50,7 +49,6 @@ public class Category {
         this.nmCategory = nmCategory;
     }
 
-    // Keeping backward compatibility
     public String getName() {
         return nmCategory;
     }
@@ -67,7 +65,6 @@ public class Category {
         this.nbParentCategory = nbParentCategory;
     }
 
-    // Keeping backward compatibility
     public Integer getUpperId() {
         return nbParentCategory;
     }
@@ -84,7 +81,6 @@ public class Category {
         this.cnOrder = cnOrder;
     }
 
-    // Keeping backward compatibility
     public int getOrder() {
         return cnOrder;
     }
@@ -101,7 +97,6 @@ public class Category {
         this.daFirstDate = daFirstDate;
     }
 
-    // Keeping backward compatibility
     public String getRegDate() {
         return daFirstDate;
     }
@@ -118,7 +113,6 @@ public class Category {
         this.cnLevel = cnLevel;
     }
 
-    // Keeping backward compatibility
     public int getLevel() {
         return cnLevel;
     }
@@ -135,7 +129,6 @@ public class Category {
         this.nmFullCategory = nmFullCategory;
     }
 
-    // Keeping backward compatibility
     public String getFullname() {
         return nmFullCategory;
     }
@@ -152,7 +145,6 @@ public class Category {
         this.noRegister = noRegister;
     }
 
-    // Keeping backward compatibility
     public String getRegName() {
         return noRegister;
     }

@@ -9,9 +9,6 @@ import org.jsp.jsp_19_sgnr.dto.Member;
 
 import java.io.IOException;
 
-/**
- * Command implementation for handling member withdrawal processing.
- */
 public class ProcessWithdrawalCommand implements Command {
     private MemberDao memberDao = new MemberDao();
 
@@ -46,7 +43,6 @@ public class ProcessWithdrawalCommand implements Command {
             }
         }
 
-        // Redirect back to the same page with pagination parameter
         String redirectUrl = request.getContextPath() + "/admin/admin.jsp?menu=withdrawal";
         if (page != null && !page.isEmpty()) {
             redirectUrl += "&page=" + page;

@@ -263,20 +263,17 @@
     </style>
 </head>
 <body>
-    <!-- Include header -->
     <jsp:include page="/WEB-INF/views/include/header.jsp" />
 
     <div class="container">
 
 <%
-    // Get search keyword if any
     String keyword = (String) request.getAttribute("keyword");
     Integer selectedCategoryId = (Integer) request.getAttribute("selectedCategoryId");
     NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.KOREA);
 %>
 
 <div class="main-content">
-    <!-- Category sidebar -->
     <div class="sidebar">
         <div class="category-title">카테고리</div>
         <div class="category-item level-1 <%= (selectedCategoryId == null) ? "active" : "" %>">
@@ -286,7 +283,7 @@
             List<Category> categories = (List<Category>) request.getAttribute("categories");
             if (categories != null && !categories.isEmpty()) {
                 for (Category category : categories) {
-                    if (category.getUpperId() == null) { // Top level category
+                    if (category.getUpperId() == null) {
                         String activeClass = (selectedCategoryId != null && selectedCategoryId == category.getId()) ? "active" : "";
         %>
                         <div class="category-item level-1 <%= activeClass %>">
@@ -295,7 +292,6 @@
                             </a>
                         </div>
                         <%
-                            // Display child categories (level 2)
                             for (Category childCategory : categories) {
                                 if (childCategory.getUpperId() != null && childCategory.getUpperId() == category.getId()) {
                                     activeClass = (selectedCategoryId != null && selectedCategoryId == childCategory.getId()) ? "active" : "";
@@ -306,7 +302,6 @@
                                         </a>
                                     </div>
                         <%
-                                    // Display grandchild categories (level 3)
                                     for (Category grandchildCategory : categories) {
                                         if (grandchildCategory.getUpperId() != null && grandchildCategory.getUpperId() == childCategory.getId()) {
                                             activeClass = (selectedCategoryId != null && selectedCategoryId == grandchildCategory.getId()) ? "active" : "";
@@ -333,7 +328,6 @@
         %>
     </div>
 
-    <!-- Main content area -->
     <div class="content">
         <% if (keyword != null && !keyword.isEmpty()) { %>
             <div class="search-result">
@@ -409,7 +403,6 @@
     </div>
 
     <%
-        // Pagination
         Integer currentPage = (Integer) request.getAttribute("currentPage");
         Integer totalPages = (Integer) request.getAttribute("totalPages");
         Integer totalProducts = (Integer) request.getAttribute("totalProducts");
@@ -422,10 +415,8 @@
         </div>
         <div class="pagination">
             <% 
-                // Build the base URL for pagination links
                 String baseUrl = request.getContextPath() + "/product/list.do?";
 
-                // Add existing parameters
                 if (request.getAttribute("keyword") != null) {
                     baseUrl += "keyword=" + request.getAttribute("keyword") + "&";
                 }
@@ -442,14 +433,12 @@
                     baseUrl += "sortOrder=" + request.getAttribute("sortOrder") + "&";
                 }
 
-                // Previous page link
                 if (currentPage > 1) {
             %>
                 <a href="<%= baseUrl %>page=<%= currentPage - 1 %>" class="page-link">&laquo; 이전</a>
             <% 
                 }
 
-                // Page number links
                 int startPage = Math.max(1, currentPage - 2);
                 int endPage = Math.min(totalPages, currentPage + 2);
 
@@ -465,7 +454,6 @@
                     }
                 }
 
-                // Next page link
                 if (currentPage < totalPages) {
             %>
                 <a href="<%= baseUrl %>page=<%= currentPage + 1 %>" class="page-link">다음 &raquo;</a>
@@ -478,9 +466,9 @@
 <%
     }
 %>
-    </div><!-- End of content -->
-</div><!-- End of main-content -->
-</div><!-- End of container -->
+    </div>
+</div>
+</div>
 
 <script>
     function updateSort() {
@@ -488,11 +476,9 @@
         const sortOrder = document.getElementById('sortOrder').value;
         const currentUrl = new URL(window.location.href);
 
-        // Update or add sort parameters
         currentUrl.searchParams.set('sortBy', sortBy);
         currentUrl.searchParams.set('sortOrder', sortOrder);
 
-        // Preserve category and keyword parameters
         const categoryId = currentUrl.searchParams.get('categoryId');
         const keyword = currentUrl.searchParams.get('keyword');
 
@@ -504,7 +490,6 @@
             currentUrl.searchParams.set('keyword', keyword);
         }
 
-        // Navigate to the updated URL
         window.location.href = currentUrl.toString();
     }
 </script>

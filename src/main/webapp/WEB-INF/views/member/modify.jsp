@@ -92,7 +92,6 @@
 </head>
 <body>
 <%
-    // Login check is already done in mypage.jsp or ModifyFormCommand
     Member member = (Member) session.getAttribute("member");
 %>
 

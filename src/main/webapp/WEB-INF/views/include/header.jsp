@@ -4,7 +4,6 @@
 <%@ page import="org.jsp.jsp_19_sgnr.dao.BasketDao" %>
 <%@ page import="java.util.Map" %>
 <%
-    // Check if user is logged in
     Member member = (Member) session.getAttribute("member");
 %>
 <header class="site-header">

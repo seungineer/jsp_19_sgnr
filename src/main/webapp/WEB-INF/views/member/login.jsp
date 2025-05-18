@@ -194,7 +194,6 @@
 
     function updateButtonState() {
         const button = document.querySelector("button[type='submit']");
-        // showError = false → 경고 메시지 표시 안 함
         const valid = validateEmail(false) && validatePassword(false);
         button.disabled = !valid;
     }
@@ -217,8 +216,6 @@
         document.getElementById('rememberId').checked = true;
     }
 
-    // Check for error attribute in request (for forwarded requests)
-    // This will be populated by server-side code when the page loads
     const errorElement = document.getElementById("serverError");
     if (errorElement && errorElement.value) {
         const errorBox = document.createElement("p");
@@ -229,7 +226,6 @@
         document.getElementById("outline").prepend(errorBox);
     }
 
-    // Also check URL parameters for backward compatibility
     const urlParams = new URLSearchParams(window.location.search);
     const error = urlParams.get('error');
     if (error) {

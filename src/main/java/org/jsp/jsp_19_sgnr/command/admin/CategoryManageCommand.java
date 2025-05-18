@@ -16,7 +16,6 @@ public class CategoryManageCommand implements Command {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 관리자 권한 확인
         HttpSession session = request.getSession();
         Member member = (Member) session.getAttribute("member");
 
@@ -25,7 +24,6 @@ public class CategoryManageCommand implements Command {
             return;
         }
 
-        // 요청 파라미터 가져오기
         String action = request.getParameter("action");
         String categoryIdStr = request.getParameter("categoryId");
 
@@ -46,9 +44,7 @@ public class CategoryManageCommand implements Command {
         boolean success = false;
         String message = "";
 
-        // 액션에 따라 처리
         if ("update".equals(action)) {
-            // 카테고리 이름 업데이트
             String categoryName = request.getParameter("categoryName");
 
             if (categoryName == null || categoryName.trim().isEmpty()) {
@@ -61,7 +57,6 @@ public class CategoryManageCommand implements Command {
             message = success ? "카테고리 이름이 성공적으로 업데이트되었습니다." : "카테고리 이름 업데이트에 실패했습니다.";
 
         } else if ("delete".equals(action)) {
-            // 카테고리 삭제 (하위 카테고리가 없는 경우에만)
             if (categoryDao.hasChildren(categoryId)) {
                 redirectWithError(request, response, "하위 카테고리가 존재하여 삭제할 수 없습니다.");
                 return;
@@ -72,7 +67,6 @@ public class CategoryManageCommand implements Command {
             message = success ? "카테고리가 성공적으로 삭제되었습니다." : "카테고리 삭제에 실패했습니다.";
 
         } else if ("toggle".equals(action)) {
-            // 카테고리 활성화/비활성화 토글
             int result = categoryDao.toggleCategoryStatus(categoryId);
             success = (result > 0);
             message = success ? "카테고리 상태가 성공적으로 변경되었습니다." : "카테고리 상태 변경에 실패했습니다.";
@@ -82,7 +76,6 @@ public class CategoryManageCommand implements Command {
             return;
         }
 
-        // 결과에 따라 리다이렉트
         String status = success ? "success" : "fail";
         String encodedMessage = URLEncoder.encode(message, StandardCharsets.UTF_8);
         response.sendRedirect(request.getContextPath() + "/admin/admin.jsp?menu=categoryManage&status=" + status + "&message=" + encodedMessage);

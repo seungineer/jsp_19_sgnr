@@ -1,9 +1,5 @@
 package org.jsp.jsp_19_sgnr.dto;
 
-/**
- * DTO class for Order with User information.
- * Extends the Order class to include user name.
- */
 public class OrderWithUser extends Order {
     private String nm_user; // 사용자명
 

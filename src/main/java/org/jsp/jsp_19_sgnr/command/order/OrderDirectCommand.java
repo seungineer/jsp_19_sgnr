@@ -16,10 +16,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Command implementation for creating a new order directly from product detail page.
- * This command creates an order and order item in a transaction without using the basket.
- */
 public class OrderDirectCommand implements Command {
 
     @Override
@@ -28,7 +24,6 @@ public class OrderDirectCommand implements Command {
 
         request.setCharacterEncoding("UTF-8");
 
-        // Check if user is logged in
         HttpSession session = request.getSession();
         Member member = (Member) session.getAttribute("member");
         if (member == null) {
@@ -36,7 +31,6 @@ public class OrderDirectCommand implements Command {
             return;
         }
 
-        // Get product information from request
         String productId = request.getParameter("productId");
         int quantity = Integer.parseInt(request.getParameter("quantity"));
         int price = Integer.parseInt(request.getParameter("price"));
@@ -47,7 +41,6 @@ public class OrderDirectCommand implements Command {
             return;
         }
 
-        // Get product from database to get delivery fee
         ProductDao productDao = new ProductDao();
         Product product = productDao.getProductById(productId);
         
@@ -57,44 +50,39 @@ public class OrderDirectCommand implements Command {
             return;
         }
 
-        // Calculate order amount and delivery fee
         int totalAmount = price * quantity;
         int deliveryFee = product.getQt_delivery_fee();
 
-        // Create order
         Order order = new Order();
-        // Generate order ID using System.currentTimeMillis()
         order.setId_order(String.valueOf(System.currentTimeMillis()));
         order.setNo_user(member.getEmail());
         order.setQt_order_amount(totalAmount);
         order.setQt_deli_money(deliveryFee);
-        order.setQt_deli_period(3); // Default delivery period (3 days)
+        order.setQt_deli_period(3);
         order.setNm_order_person(member.getName());
         order.setNm_receiver(member.getName());
-        order.setNo_delivery_zipno(""); // Default empty zipcode
-        order.setNm_delivery_address(""); // Default empty address
+        order.setNo_delivery_zipno("");
+        order.setNm_delivery_address("");
         order.setNm_receiver_telno(member.getPhone());
-        order.setNm_delivery_space(""); // Default empty delivery message
-        order.setCd_order_type("10"); // Normal order
-        order.setSt_order("10"); // Waiting for payment
+        order.setNm_delivery_space("");
+        order.setCd_order_type("10");
+        order.setSt_order("10");
         order.setSt_payment("20"); // 결제완료 가정
         order.setNo_register(member.getEmail());
 
-        // Create order item
         List<OrderItem> orderItems = new ArrayList<>();
         OrderItem orderItem = new OrderItem();
-        orderItem.setCn_order_item(1); // Order item number
+        orderItem.setCn_order_item(1);
         orderItem.setNo_product(productId);
         orderItem.setNo_user(member.getEmail());
         orderItem.setQt_unit_price(price);
         orderItem.setQt_order_item(quantity);
         orderItem.setQt_order_item_amount(price * quantity);
         orderItem.setQt_order_item_delivery_fee(deliveryFee);
-        orderItem.setSt_payment("20"); // Payment completed
+        orderItem.setSt_payment("20");
         orderItem.setNo_register(member.getEmail());
         orderItems.add(orderItem);
 
-        // Create order with item in a transaction
         OrderDao orderDao = new OrderDao();
         String orderId = orderDao.createOrder(order, orderItems);
 
@@ -104,10 +92,8 @@ public class OrderDirectCommand implements Command {
             return;
         }
 
-        // Set order ID in request for confirmation page
         request.setAttribute("orderId", orderId);
 
-        // Forward to order confirmation page
         request.getRequestDispatcher("/WEB-INF/views/order/confirmation.jsp").forward(request, response);
     }
 }

@@ -7,10 +7,6 @@ import org.jsp.jsp_19_sgnr.command.Command;
 
 import java.io.IOException;
 
-/**
- * Command for displaying the join (registration) form.
- * This command forwards the request to the join.jsp page.
- */
 public class JoinFormCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

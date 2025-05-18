@@ -201,7 +201,6 @@
     </style>
 </head>
 <body>
-    <!-- Include header -->
     <jsp:include page="/WEB-INF/views/include/header.jsp" />
     <div class="container">
         <a href="<%= request.getContextPath() %>/product/list.do" class="back-button">← 상품 목록으로 돌아가기</a>
@@ -248,7 +247,6 @@
                     </div>
 
                 <%
-                    // Check if user is logged in
                     Member member = (Member) session.getAttribute("member");
                     if (member != null) {
                 %>
@@ -274,7 +272,6 @@
                 </div>
 
                 <script>
-                    // Sync quantity between forms
                     document.getElementById('quantity').addEventListener('change', function() {
                         document.getElementById('cart-quantity').value = this.value;
                         document.getElementById('buy-quantity').value = this.value;

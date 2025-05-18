@@ -9,18 +9,11 @@ import java.util.List;
 
 public class CategoryDao {
 
-    /**
-     * Finds categories by their IDs.
-     * 
-     * @param categoryIds List of category IDs
-     * @return List of categories matching the provided IDs
-     */
     public List<Category> findByIds(List<Integer> categoryIds) {
         if (categoryIds == null || categoryIds.isEmpty()) {
             return new ArrayList<>();
         }
 
-        // Build the IN clause for the SQL query
         StringBuilder placeholders = new StringBuilder();
         for (int i = 0; i < categoryIds.size(); i++) {
             if (i > 0) {
@@ -36,7 +29,6 @@ public class CategoryDao {
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            // Set the parameters for the IN clause
             for (int i = 0; i < categoryIds.size(); i++) {
                 ps.setInt(i + 1, categoryIds.get(i));
             }
@@ -51,7 +43,6 @@ public class CategoryDao {
                     category.setRegDate(rs.getString("DA_FIRST_DATE"));
                     category.setLevel(rs.getInt("CN_LEVEL"));
                     category.setYnUse(rs.getString("YN_USE"));
-                    // Also set the fullname property
                     category.setFullname(rs.getString("NM_FULL_CATEGORY"));
                     categories.add(category);
                 }
@@ -63,12 +54,6 @@ public class CategoryDao {
         return categories;
     }
 
-    /**
-     * 카테고리 이름 업데이트 및 하위 카테고리의 전체 경로 업데이트
-     * @param categoryId 업데이트할 카테고리 ID
-     * @param newName 새 카테고리 이름
-     * @return 업데이트된 행 수
-     */
     public int updateCategoryName(int categoryId, String newName) {
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -79,7 +64,6 @@ public class CategoryDao {
             conn = DBConnection.getConnection();
             conn.setAutoCommit(false);
 
-            // 1. 현재 카테고리 정보 조회
             String selectSql = "SELECT NB_CATEGORY, NB_PARENT_CATEGORY, NM_CATEGORY, CN_LEVEL, NM_FULL_CATEGORY FROM TB_CATEGORY WHERE NB_CATEGORY = ?";
             pstmt = conn.prepareStatement(selectSql);
             pstmt.setInt(1, categoryId);
@@ -90,7 +74,6 @@ public class CategoryDao {
                 String oldFullPath = rs.getString("NM_FULL_CATEGORY");
                 String newFullPath = "";
 
-                // Store parentId before closing ResultSet
                 Integer parentId = null;
                 if (level > 1) {
                     parentId = rs.getInt("NB_PARENT_CATEGORY");
@@ -99,10 +82,8 @@ public class CategoryDao {
                     }
                 }
 
-                // Close the first ResultSet
                 rs.close();
 
-                // 2. 카테고리 이름 업데이트
                 pstmt.close();
                 String updateSql = "UPDATE TB_CATEGORY SET NM_CATEGORY = ? WHERE NB_CATEGORY = ?";
                 pstmt = conn.prepareStatement(updateSql);
@@ -110,12 +91,9 @@ public class CategoryDao {
                 pstmt.setInt(2, categoryId);
                 result = pstmt.executeUpdate();
 
-                // 3. 전체 경로 계산 및 업데이트
                 if (level == 1) {
-                    // 1단계 카테고리인 경우 자신의 이름이 전체 경로
                     newFullPath = newName;
                 } else {
-                    // 2, 3단계 카테고리인 경우 상위 카테고리 경로 + 자신의 이름
                     if (parentId != null) {
                         pstmt.close();
 
@@ -132,7 +110,6 @@ public class CategoryDao {
                     }
                 }
 
-                // 4. 자신의 전체 경로 업데이트
                 pstmt.close();
                 String updateFullPathSql = "UPDATE TB_CATEGORY SET NM_FULL_CATEGORY = ? WHERE NB_CATEGORY = ?";
                 pstmt = conn.prepareStatement(updateFullPathSql);
@@ -140,7 +117,6 @@ public class CategoryDao {
                 pstmt.setInt(2, categoryId);
                 pstmt.executeUpdate();
 
-                // 5. 하위 카테고리의 전체 경로 업데이트
                 updateChildrenFullPath(conn, categoryId, oldFullPath, newFullPath);
 
                 conn.commit();
@@ -168,26 +144,16 @@ public class CategoryDao {
         return result;
     }
 
-    /**
-     * 하위 카테고리의 전체 경로 업데이트
-     * @param conn 데이터베이스 연결
-     * @param parentId 상위 카테고리 ID
-     * @param oldParentPath 이전 상위 경로
-     * @param newParentPath 새 상위 경로
-     * @throws SQLException SQL 예외
-     */
     private void updateChildrenFullPath(Connection conn, int parentId, String oldParentPath, String newParentPath) throws SQLException {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
         try {
-            // 1. 직접적인 자식 카테고리 조회
             String selectSql = "SELECT NB_CATEGORY, NM_CATEGORY, NM_FULL_CATEGORY FROM TB_CATEGORY WHERE NB_PARENT_CATEGORY = ?";
             pstmt = conn.prepareStatement(selectSql);
             pstmt.setInt(1, parentId);
             rs = pstmt.executeQuery();
 
-            // Store all child categories before closing the ResultSet
             List<ChildCategory> childCategories = new ArrayList<>();
             while (rs.next()) {
                 int childId = rs.getInt("NB_CATEGORY");
@@ -196,13 +162,10 @@ public class CategoryDao {
                 childCategories.add(new ChildCategory(childId, childName, oldChildPath));
             }
 
-            // Close ResultSet after reading all data
             rs.close();
             rs = null;
 
-            // Process each child category
             for (ChildCategory child : childCategories) {
-                // 2. 자식 카테고리의 전체 경로 업데이트
                 String newChildPath = newParentPath + " > " + child.name;
 
                 if (pstmt != null) {
@@ -215,7 +178,6 @@ public class CategoryDao {
                 pstmt.setInt(2, child.id);
                 pstmt.executeUpdate();
 
-                // 3. 재귀적으로 자식의 자식 업데이트
                 updateChildrenFullPath(conn, child.id, child.oldPath, newChildPath);
             }
         } finally {
@@ -224,7 +186,6 @@ public class CategoryDao {
         }
     }
 
-    // Helper class to store child category information
     private static class ChildCategory {
         final int id;
         final String name;
@@ -237,11 +198,6 @@ public class CategoryDao {
         }
     }
 
-    /**
-     * 카테고리에 하위 카테고리가 있는지 확인
-     * @param categoryId 확인할 카테고리 ID
-     * @return 하위 카테고리가 있으면 true, 없으면 false
-     */
     public boolean hasChildren(int categoryId) {
         String sql = "SELECT COUNT(*) FROM TB_CATEGORY WHERE NB_PARENT_CATEGORY = ?";
 
@@ -262,11 +218,6 @@ public class CategoryDao {
         return false;
     }
 
-    /**
-     * 카테고리 삭제
-     * @param categoryId 삭제할 카테고리 ID
-     * @return 삭제된 행 수
-     */
     public int deleteCategory(int categoryId) {
         String sql = "DELETE FROM TB_CATEGORY WHERE NB_CATEGORY = ?";
 
@@ -283,11 +234,6 @@ public class CategoryDao {
         return 0;
     }
 
-    /**
-     * 카테고리 활성화 상태 토글
-     * @param categoryId 토글할 카테고리 ID
-     * @return 업데이트된 행 수
-     */
     public int toggleCategoryStatus(int categoryId) {
         String sql = "UPDATE TB_CATEGORY SET YN_USE = CASE WHEN YN_USE = 'Y' THEN 'N' ELSE 'Y' END WHERE NB_CATEGORY = ?";
 
