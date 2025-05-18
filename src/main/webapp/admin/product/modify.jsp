@@ -4,7 +4,34 @@
 <%@ page import="java.util.List" %>
 <%
     ProductDao productDao = new ProductDao();
-    List<Product> products = productDao.getAllProducts();
+
+    // Pagination parameters
+    int currentPage = 1;
+    int pageSize = 10;
+
+    // Get page from request parameter
+    String pageParam = request.getParameter("page");
+    if (pageParam != null && !pageParam.isEmpty()) {
+        try {
+            currentPage = Integer.parseInt(pageParam);
+            if (currentPage < 1) currentPage = 1;
+        } catch (NumberFormatException e) {
+            // If invalid, default to page 1
+            currentPage = 1;
+        }
+    }
+
+    // Get total count and calculate total pages
+    int totalProducts = productDao.getTotalProductCount();
+    int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
+
+    // Ensure current page is not greater than total pages
+    if (totalPages > 0 && currentPage > totalPages) {
+        currentPage = totalPages;
+    }
+
+    // Get paginated list of products
+    List<Product> products = productDao.getPaginatedProducts(currentPage, pageSize);
     String status = request.getParameter("status");
 %>
 <style>
@@ -120,6 +147,46 @@
     small {
         color: #888;
     }
+
+    /* Pagination styles */
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .pagination-controls {
+        display: flex;
+        align-items: center;
+    }
+
+    .pagination-controls a, .pagination-controls span {
+        margin: 0 5px;
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        text-decoration: none;
+        border-radius: 3px;
+    }
+
+    .pagination-controls a:hover {
+        background-color: #f0f0f0;
+    }
+
+    .pagination-controls span.current-page {
+        background-color: #4285f4;
+        color: white;
+        border-color: #4285f4;
+    }
+
+    .pagination-controls span.disabled {
+        color: #ccc;
+    }
+
+    .pagination-info {
+        text-align: center;
+        margin-top: 10px;
+        color: #666;
+    }
 </style>
 
 
@@ -127,6 +194,7 @@
 <p>아래 표에서 상품 정보를 수정할 수 있습니다. 변경된 항목은 연두색으로 표시됩니다.</p>
 
 <form action="<%= request.getContextPath() %>/admin/product/modify.do" method="post" enctype="multipart/form-data" id="modifyForm">
+    <input type="hidden" name="page" value="<%= currentPage %>">
     <div style="text-align: right; margin-bottom: 10px;">
         <button type="submit" class="save-button">변경사항 저장</button>
     </div>
@@ -456,3 +524,39 @@
         alert("❌ 상품 수정/삭제에 실패했습니다. 다시 시도해주세요.");
     }
 </script>
+
+<!-- Pagination Controls -->
+<div class="pagination-container">
+    <div class="pagination-controls">
+        <% if (currentPage > 1) { %>
+            <a href="?menu=productModify&page=<%= currentPage - 1 %>">이전</a>
+        <% } else { %>
+            <span class="disabled">이전</span>
+        <% } %>
+
+        <% 
+        // Display page numbers
+        int startPage = Math.max(1, currentPage - 2);
+        int endPage = Math.min(totalPages, currentPage + 2);
+
+        for (int i = startPage; i <= endPage; i++) { 
+        %>
+            <% if (i == currentPage) { %>
+                <span class="current-page"><%= i %></span>
+            <% } else { %>
+                <a href="?menu=productModify&page=<%= i %>"><%= i %></a>
+            <% } %>
+        <% } %>
+
+        <% if (currentPage < totalPages) { %>
+            <a href="?menu=productModify&page=<%= currentPage + 1 %>">다음</a>
+        <% } else { %>
+            <span class="disabled">다음</span>
+        <% } %>
+    </div>
+</div>
+
+<!-- Pagination Info -->
+<div class="pagination-info">
+    총 <%= totalProducts %>개의 상품 (페이지 <%= currentPage %> / <%= totalPages %>)
+</div>

@@ -38,6 +38,22 @@ public class ProductListCommand implements Command {
         String sortBy = request.getParameter("sortBy");
         String sortOrder = request.getParameter("sortOrder");
 
+        // Pagination parameters
+        int currentPage = 1;
+        int pageSize = 10;
+
+        // Get page from request parameter
+        String pageParam = request.getParameter("page");
+        if (pageParam != null && !pageParam.isEmpty()) {
+            try {
+                currentPage = Integer.parseInt(pageParam);
+                if (currentPage < 1) currentPage = 1;
+            } catch (NumberFormatException e) {
+                // If invalid, default to page 1
+                currentPage = 1;
+            }
+        }
+
         // Default sort is by category name ascending
         if (sortBy == null || sortBy.isEmpty()) {
             sortBy = "category";
@@ -53,17 +69,30 @@ public class ProductListCommand implements Command {
 
         ProductDao productDao = new ProductDao();
         List<Product> products;
+        int totalProducts;
+        int totalPages;
 
         if (categoryIdStr != null && !categoryIdStr.isEmpty()) {
             try {
                 int categoryId = Integer.parseInt(categoryIdStr);
-                products = productDao.findProductsByCategory(categoryId);
+                products = productDao.findPaginatedProductsByCategory(categoryId, currentPage, pageSize);
+                totalProducts = productDao.getTotalProductCountByCategory(categoryId);
                 request.setAttribute("selectedCategoryId", categoryId);
             } catch (NumberFormatException e) {
-                products = productDao.getAllProducts();
+                products = productDao.getPaginatedProducts(currentPage, pageSize);
+                totalProducts = productDao.getTotalProductCount();
             }
         } else {
-            products = productDao.getAllProducts();
+            products = productDao.getPaginatedProducts(currentPage, pageSize);
+            totalProducts = productDao.getTotalProductCount();
+        }
+
+        // Calculate total pages
+        totalPages = (int) Math.ceil((double) totalProducts / pageSize);
+
+        // Ensure current page is not greater than total pages
+        if (totalPages > 0 && currentPage > totalPages) {
+            currentPage = totalPages;
         }
 
         // Sort products
@@ -124,6 +153,12 @@ public class ProductListCommand implements Command {
         request.setAttribute("sortBy", sortBy);
         request.setAttribute("sortOrder", sortOrder);
         request.setAttribute("productCategoryMap", productCategoryMap);
+
+        // Set pagination attributes
+        request.setAttribute("currentPage", currentPage);
+        request.setAttribute("pageSize", pageSize);
+        request.setAttribute("totalProducts", totalProducts);
+        request.setAttribute("totalPages", totalPages);
 
         // Forward to admin.jsp with productList menu
         request.getRequestDispatcher("/admin/admin.jsp?menu=productList").forward(request, response);

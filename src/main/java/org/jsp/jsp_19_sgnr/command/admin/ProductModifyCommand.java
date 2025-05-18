@@ -62,8 +62,15 @@ public class ProductModifyCommand implements Command {
         modifiedProducts.removeAll(deletedProducts);
 
 
+        // Get pagination parameter
+        String page = request.getParameter("page");
+
         if (modifiedProducts.isEmpty() && deletedProducts.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/admin/admin.jsp?menu=productModify&status=nochange");
+            String redirectUrl = request.getContextPath() + "/admin/admin.jsp?menu=productModify&status=nochange";
+            if (page != null && !page.isEmpty()) {
+                redirectUrl += "&page=" + page;
+            }
+            response.sendRedirect(redirectUrl);
             return;
         }
 
@@ -172,9 +179,17 @@ public class ProductModifyCommand implements Command {
         }
 
         if (success) {
-            response.sendRedirect(request.getContextPath() + "/admin/admin.jsp?menu=productModify&status=success");
+            String redirectUrl = request.getContextPath() + "/admin/admin.jsp?menu=productModify&status=success";
+            if (page != null && !page.isEmpty()) {
+                redirectUrl += "&page=" + page;
+            }
+            response.sendRedirect(redirectUrl);
         } else {
-            response.sendRedirect(request.getContextPath() + "/admin/admin.jsp?menu=productModify&status=fail");
+            String redirectUrl = request.getContextPath() + "/admin/admin.jsp?menu=productModify&status=fail";
+            if (page != null && !page.isEmpty()) {
+                redirectUrl += "&page=" + page;
+            }
+            response.sendRedirect(redirectUrl);
         }
     }
 }
