@@ -106,7 +106,7 @@
       <% } else if ("productModify".equals(menu)) { %>
       <jsp:include page="product/modify.jsp" />
       <% } else if ("productList".equals(menu)) { %>
-      <jsp:include page="/WEB-INF/views/product/productList.jsp" />
+      <jsp:include page="/WEB-INF/views/admin/productList.jsp" />
       <% } else { %>
       <p>좌측 메뉴를 클릭해주세요.</p>
       <% } %>
