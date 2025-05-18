@@ -175,6 +175,30 @@
             border-radius: 4px;
             color: #856404;
         }
+
+        .product-detail-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-description-section {
+            background-color: white;
+            padding: 30px;
+            margin-top: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-description-section h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .product-description-section .product-description {
+            line-height: 1.6;
+            color: #555;
+        }
     </style>
 </head>
 <body>
@@ -193,43 +217,40 @@
                 double discountRate = (double) discountAmount / product.getQt_customer_price() * 100;
         %>
 
-        <div class="product-detail">
-            <div class="product-image">
-                <% if (imagePath != null && !imagePath.isEmpty()) { %>
-                    <img src="<%= imagePath %>" alt="<%= product.getNm_product() %>">
-                <% } else { %>
-                    <div style="width: 400px; height: 400px; background-color: #eee; display: flex; align-items: center; justify-content: center;">
-                        상품 이미지가 없습니다
+        <div class="product-detail-wrapper">
+            <div class="product-detail">
+                <div class="product-image">
+                    <% if (imagePath != null && !imagePath.isEmpty()) { %>
+                        <img src="<%= imagePath %>" alt="<%= product.getNm_product() %>">
+                    <% } else { %>
+                        <div style="width: 400px; height: 400px; background-color: #eee; display: flex; align-items: center; justify-content: center;">
+                            상품 이미지가 없습니다
+                        </div>
+                    <% } %>
+                </div>
+
+                <div class="product-info">
+                    <div class="product-title"><%= product.getNm_product() %></div>
+
+                    <div class="product-categories">
+                        <% if (categories != null && !categories.isEmpty()) { 
+                            for (Category category : categories) { %>
+                                <span><%= category.getName() %></span>
+                            <% } 
+                        } %>
                     </div>
-                <% } %>
-            </div>
 
-            <div class="product-info">
-                <div class="product-title"><%= product.getNm_product() %></div>
+                    <div class="product-original-price"><%= currencyFormatter.format(product.getQt_customer_price()) %></div>
+                    <div class="product-price"><%= currencyFormatter.format(product.getQt_sale_price()) %></div>
+                    <div class="product-discount">(<%= String.format("%.1f", discountRate) %>% 할인)</div>
 
-                <div class="product-categories">
-                    <% if (categories != null && !categories.isEmpty()) { 
-                        for (Category category : categories) { %>
-                            <span><%= category.getName() %></span>
-                        <% } 
-                    } %>
-                </div>
+                    <div class="product-stock">
+                        재고: <%= product.getQt_stock() %> 개
+                    </div>
 
-                <div class="product-original-price"><%= currencyFormatter.format(product.getQt_customer_price()) %></div>
-                <div class="product-price"><%= currencyFormatter.format(product.getQt_sale_price()) %></div>
-                <div class="product-discount">(<%= String.format("%.1f", discountRate) %>% 할인)</div>
-
-                <div class="product-stock">
-                    재고: <%= product.getQt_stock() %> 개
-                </div>
-
-                <div class="product-description">
-                    <%= product.getNm_detail_explain() %>
-                </div>
-
-                <div class="delivery-info">
-                    <p>배송비: <%= product.getQt_delivery_fee() > 0 ? currencyFormatter.format(product.getQt_delivery_fee()) : "무료" %></p>
-                </div>
+                    <div class="delivery-info">
+                        <p>배송비: <%= product.getQt_delivery_fee() > 0 ? currencyFormatter.format(product.getQt_delivery_fee()) : "무료" %></p>
+                    </div>
 
                 <%
                     // Check if user is logged in
@@ -269,6 +290,13 @@
                     상품을 구매하려면 <a href="<%= request.getContextPath() %>/member/loginForm.do">로그인</a>이 필요합니다.
                 </div>
                 <% } %>
+            </div>
+        </div>
+
+        <div class="product-description-section">
+            <h2>상세 설명</h2>
+            <div class="product-description">
+                <%= product.getNm_detail_explain() %>
             </div>
         </div>
 
