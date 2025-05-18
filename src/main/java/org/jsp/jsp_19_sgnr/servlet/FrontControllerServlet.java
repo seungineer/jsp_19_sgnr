@@ -62,6 +62,7 @@ public class FrontControllerServlet extends HttpServlet {
         commandMap.put("/order/create.do", new org.jsp.jsp_19_sgnr.command.order.OrderCreateCommand());
         commandMap.put("/order/list.do", new org.jsp.jsp_19_sgnr.command.order.OrderListCommand());
         commandMap.put("/order/detail.do", new org.jsp.jsp_19_sgnr.command.order.OrderDetailCommand());
+        commandMap.put("/order/detail-json.do", new org.jsp.jsp_19_sgnr.command.order.OrderDetailJsonCommand());
         commandMap.put("/order/cancel.do", new org.jsp.jsp_19_sgnr.command.order.OrderCancelCommand());
         commandMap.put("/order/checkout.do", new org.jsp.jsp_19_sgnr.command.order.OrderCreateCommand());
         commandMap.put("/order/direct.do", new org.jsp.jsp_19_sgnr.command.order.OrderDirectCommand());

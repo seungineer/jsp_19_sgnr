@@ -7,7 +7,9 @@ import org.jsp.jsp_19_sgnr.dto.OrderWithUser;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -482,5 +484,86 @@ public class OrderDao {
         }
 
         return orders;
+    }
+
+    /**
+     * Gets detailed order information including order items and product details.
+     * 
+     * @param orderId The order ID
+     * @return A map containing order, order items, and product information
+     */
+    public Map<String, Object> getOrderDetail(String orderId) {
+        Map<String, Object> result = new HashMap<>();
+
+        // Get the order with user information
+        String orderSql = "SELECT o.*, m.NM_USER as nm_user FROM TB_ORDER o " +
+                          "JOIN TB_USER m ON o.no_user = m.ID_USER " +
+                          "WHERE o.id_order = ?";
+
+        // Get the order items with product information
+        String itemsSql = "SELECT oi.*, p.NM_PRODUCT FROM TB_ORDER_ITEM oi " +
+                          "LEFT JOIN TB_PRODUCT p ON oi.no_product = p.NO_PRODUCT " +
+                          "WHERE oi.id_order = ? " +
+                          "ORDER BY oi.cn_order_item";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement orderPs = conn.prepareStatement(orderSql);
+             PreparedStatement itemsPs = conn.prepareStatement(itemsSql)) {
+
+            // Get order with user information
+            orderPs.setString(1, orderId);
+            try (ResultSet rs = orderPs.executeQuery()) {
+                if (rs.next()) {
+                    OrderWithUser order = new OrderWithUser();
+                    order.setId_order(rs.getString("id_order"));
+                    order.setNo_user(rs.getString("no_user"));
+                    order.setQt_order_amount(rs.getInt("qt_order_amount"));
+                    order.setQt_deli_money(rs.getInt("qt_deli_money"));
+                    order.setQt_deli_period(rs.getInt("qt_deli_period"));
+                    order.setNm_order_person(rs.getString("nm_order_person"));
+                    order.setNm_receiver(rs.getString("nm_receiver"));
+                    order.setNo_delivery_zipno(rs.getString("no_delivery_zipno"));
+                    order.setNm_delivery_address(rs.getString("nm_delivery_address"));
+                    order.setNm_receiver_telno(rs.getString("nm_receiver_telno"));
+                    order.setNm_delivery_space(rs.getString("nm_delivery_space"));
+                    order.setCd_order_type(rs.getString("cd_order_type"));
+                    order.setDa_order(rs.getString("da_order"));
+                    order.setSt_order(rs.getString("st_order"));
+                    order.setSt_payment(rs.getString("st_payment"));
+                    order.setNo_register(rs.getString("no_register"));
+                    order.setDa_first_date(rs.getString("da_first_date"));
+                    order.setNm_user(rs.getString("nm_user"));
+
+                    result.put("order", order);
+                }
+            }
+
+            // Get order items with product information
+            List<Map<String, Object>> orderItems = new ArrayList<>();
+            itemsPs.setString(1, orderId);
+            try (ResultSet rs = itemsPs.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, Object> item = new HashMap<>();
+                    item.put("id_order_item", rs.getString("id_order_item"));
+                    item.put("id_order", rs.getString("id_order"));
+                    item.put("cn_order_item", rs.getInt("cn_order_item"));
+                    item.put("no_product", rs.getString("no_product"));
+                    item.put("nm_product", rs.getString("NM_PRODUCT"));
+                    item.put("qt_unit_price", rs.getInt("qt_unit_price"));
+                    item.put("qt_order_item", rs.getInt("qt_order_item"));
+                    item.put("qt_order_item_amount", rs.getInt("qt_order_item_amount"));
+                    item.put("st_payment", rs.getString("st_payment"));
+
+                    orderItems.add(item);
+                }
+            }
+
+            result.put("orderItems", orderItems);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 }
