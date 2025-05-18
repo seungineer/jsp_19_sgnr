@@ -4,10 +4,15 @@
 <%@ page import="org.jsp.jsp_19_sgnr.db.DBConnection" %>
 <%@ page trimDirectiveWhitespaces="true" %>
 <%
-    String idFile = request.getParameter("fileId");
+    // Check for both parameter names (id and fileId) for backward compatibility
+    String idFile = request.getParameter("id");
     if (idFile == null || idFile.trim().isEmpty()) {
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Image ID is required");
-        return;
+        // Try the alternative parameter name
+        idFile = request.getParameter("fileId");
+        if (idFile == null || idFile.trim().isEmpty()) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Image ID is required");
+            return;
+        }
     }
 
     Connection conn = null;
